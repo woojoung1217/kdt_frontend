@@ -9,6 +9,7 @@ import Testing from '@pages/scale/Testing';
 import EmotionMessage from '@pages/emotion/message/EmotionMessage';
 import EmotionRecordPage from '@pages/emotion/record/EmotionRecordPage';
 import WelcomePage from '@pages/User/welcome/WelcomePage';
+import ScaleList from '@pages/scale/ScaleList';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: '/counseling',
         element: <Counseling />,
+      },
+      {
+        path: '/scale/list',
+        element: <ScaleList />,
       },
       {
         path: '/scale/testing',
