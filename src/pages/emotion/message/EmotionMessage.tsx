@@ -113,6 +113,7 @@ const EmotionMessage = () => {
     setIsLoading(true);
     const data = await fetchGPT(prompt, userInput, 'record');
     const dataToObj = JSON.parse(data.choices[0].message.content);
+    console.log(dataToObj);
 
     updateAnalysis(dataToObj);
     updateStep(currentStep + 1);
