@@ -3,9 +3,7 @@ import styled from '@emotion/styled';
 import Button from '@components/common/Button';
 import variables from '@styles/Variables';
 import checkArrow from '@assets/Images/checkArrow.svg';
-import checkedArrow from '@assets/Images/checkedArrow.svg'; // 체크된 상태의 아이콘
 
-// TODO - 모든 동의가 완료되면 가입이 진행되도록 수정해야함
 interface CheckAgreementProps {
   submitSignup: () => void | undefined;
   onClose?: () => void;
@@ -34,8 +32,11 @@ const CheckAgreement = ({ submitSignup }: CheckAgreementProps) => {
   return (
     <BottomSheetContainer isVisible={true}>
       <CheckboxAgreeAllbox>
-        <CheckAgreeAll>
-          <AllAgreeButton onClick={handleMainCheckboxChange} />
+        <CheckAgreeAll isChecked={isChecked}>
+          <AllAgreeButton
+            onClick={handleMainCheckboxChange}
+            isChecked={isChecked} // 색상 변경을 위한 상태 전달
+          />
           <AgreeTitle>약관에 모두 동의</AgreeTitle>
         </CheckAgreeAll>
       </CheckboxAgreeAllbox>
@@ -103,22 +104,24 @@ const CheckboxAgreeAllbox = styled.div`
   padding-top: ${variables.layoutPadding};
 `;
 
-const CheckAgreeAll = styled.div`
-  border: 1px solid #ddd;
+const CheckAgreeAll = styled.div<{ isChecked: boolean }>`
+  border: 0.1rem solid #ddd;
   width: 100%;
   height: 6rem;
-
   border-radius: ${variables.borderRadius};
+  background-color: ${({ isChecked }) =>
+    isChecked ? `${variables.colors.primarySoft}` : '#fff'}; // 체크된 경우 색상 변경
   display: flex;
   align-items: center;
   padding: 1.2rem;
 `;
 
-const AllAgreeButton = styled.div`
+const AllAgreeButton = styled.div<{ isChecked: boolean }>`
   width: 3.3rem;
   height: 3.3rem;
   border-radius: 50%;
-  background-color: #fff;
+  background-color: ${({ isChecked }) =>
+    isChecked ? `${variables.colors.primaryStrong}` : '#fff'}; // 체크된 경우 색상 변경
   border: 1px solid #ddd;
   background-image: url(${checkArrow});
   background-position: center;
@@ -126,6 +129,7 @@ const AllAgreeButton = styled.div`
   cursor: pointer;
 `;
 
+// AgreeTitle 스타일
 const AgreeTitle = styled.h2`
   margin-left: 1.7rem;
   font-size: ${variables.size.large};
@@ -151,14 +155,6 @@ const Checkbox = styled.input`
   height: 3.3rem;
   margin-right: 1rem;
   cursor: pointer;
-
-  &:checked {
-    background-image: url(${checkedArrow});
-  }
-
-  &:not(:checked) {
-    background-image: url(${checkArrow});
-  }
 `;
 
 const CheckboxLabel = styled.label`
