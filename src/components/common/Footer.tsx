@@ -44,8 +44,8 @@ const FooterContainer = styled.footer`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top-left-radius: ${variables.borderRadius}+ 1.2rem;
-  border-top-right-radius: ${variables.borderRadius}+ 1.2rem;
+  border-top-left-radius: ${variables.borderRadius}+ 2.2rem;
+  border-top-right-radius: ${variables.borderRadius}+ 2.2rem;
   box-shadow: ${variables.BoxShadow};
   @media (min-width: 500px) {
     width: 100%;
