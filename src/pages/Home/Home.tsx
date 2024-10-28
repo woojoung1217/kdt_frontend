@@ -4,8 +4,7 @@ import HomePageTitle from '@components/home/HomePageTitle';
 import Footer from '@components/common/Footer';
 import styled from '@emotion/styled';
 import CoupleInfomation from '@components/home/CoupleInfomation';
-import OurReport from '@components/home/OurReport';
-
+const OurReport = React.lazy(() => import('@components/home/OurReport'));
 //  홈에서 쓰는 컴포넌트
 //<HomePageTitle /> = 제목 컴포넌트
 //<CoupleInfomation /> = 부부연동 ,미션

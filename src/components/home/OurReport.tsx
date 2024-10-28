@@ -2,8 +2,9 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import React, { useState } from 'react';
 import ECharts from 'echarts-for-react';
-
+/* eslint-disable */
 const OurReport = () => {
+  console.log('rendered');
   const [options, setOptions] = useState({
     xAxis: {
       type: 'category',
