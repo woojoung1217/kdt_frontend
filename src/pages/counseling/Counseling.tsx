@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css, keyframes } from '@emotion/react';
 import variables from '@styles/Variables';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import fetchGPT from '../../hooks/useGPT';
 import prevIcon from '/img/icon-page-prev.svg';
 import wishIcon from '/img/icon-wish-profile.svg';
@@ -15,6 +15,7 @@ interface Message {
 
 const Counseling = () => {
   const name = '위시';
+  const scrollBoxRef = useRef<HTMLDivElement>(null);
   const initMessage = {
     sender: 'gpt',
     message: `안녕하세요 ${name}님😊 사회적 관계에서 느끼는 부담이나 배우자의 소통문제, 그리고 부부관계에 대한 고민까지, 난임으로 인해 힘드신 모든 마음을 편하게 나눠주세요. 어려움을 해결할 수 있도록 도와드릴게요☺️`,
@@ -54,6 +55,13 @@ const Counseling = () => {
       - 스트레스를 제공한 대상 또는 장소, 상황
       - 다른 상담과 구분될 수 있는 유니크한 단어
     - 이때 사용자의 단어를 그대로 사용해줘.`;
+
+  const moveScrollDown = () => {
+    const { scrollHeight, clientHeight } = scrollBoxRef.current as HTMLDivElement;
+    if (!scrollBoxRef.current) return;
+
+    scrollBoxRef.current.scrollTo({ top: scrollHeight - clientHeight, behavior: 'smooth' });
+  };
 
   const addMessage = (sender: string, message: string) => {
     setMessages((prev) => [...prev, { sender, message }]);
@@ -128,6 +136,10 @@ const Counseling = () => {
       setGuideVisible(false);
     }
   }, [step]);
+
+  useEffect(() => {
+    moveScrollDown();
+  }, [messages]);
 
   //가이드 설명 위치 변경 함수
   const guideDesc = (step: number, targetStep: number) => {
@@ -224,15 +236,21 @@ const Counseling = () => {
           </button>
         </div>
 
-        <div css={dateText}>{toDay}</div>
+        <div
+          className="scroll-box"
+          ref={scrollBoxRef}
+          css={{ width: '100%', height: 'calc(100% - 146px)', overflow: 'hidden auto' }}
+        >
+          <div css={dateText}>{toDay}</div>
+          <ul css={[messageBox, step === 2 && priority]}>
+            {messages.map(({ sender, message }, idx) => (
+              <li key={`${sender}-${message!.slice(0, 10)}-${idx}`} className={sender}>
+                <p> {message}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <ul css={[messageBox, step === 2 && priority]}>
-          {messages.map(({ sender, message }, idx) => (
-            <li key={`${sender}-${message!.slice(0, 10)}-${idx}`} className={sender}>
-              <p> {message}</p>
-            </li>
-          ))}
-        </ul>
         <form css={[inputBox, step === 1 && priority]} onSubmit={(e) => handleSubmit(e)}>
           <input type="text" name="" id="" value={userInput} onChange={(e) => setUserInput(e.target.value)} />
           <button>
