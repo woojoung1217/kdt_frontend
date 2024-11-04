@@ -10,6 +10,7 @@ import Testing from '@pages/scale/Testing';
 import EmotionMessage from '@pages/emotion/message/EmotionMessage';
 import EmotionRecordPage from '@pages/emotion/record/EmotionRecordPage';
 import WelcomePage from '@pages/User/welcome/WelcomePage';
+import ScaleList from '@pages/scale/ScaleList';
 import EmotionMission from '@pages/emotion/mission/EmotionMission';
 import EmotionResult from '@pages/emotion/result/EmotionResult';
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: 'counseling',
         element: <Counseling />,
+      },
+      {
+        path: '/scale/list',
+        element: <ScaleList />,
       },
       {
         path: 'counseling/:id',

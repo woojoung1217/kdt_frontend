@@ -4,9 +4,12 @@ import { useFunnel } from '@hooks/useFunnel';
 import variables from '@styles/Variables';
 import { useCallback, useState } from 'react';
 import Questions from './Questions';
+import fetchGPT from '@hooks/useGPT';
 
-export interface TestingFormData {
+interface Data {
   [key: string]: string;
+}
+export interface TestingFormData extends Data {
   total: string;
   social: string;
   sexual: string;
@@ -17,7 +20,7 @@ export interface TestingFormData {
 
 const Testing = () => {
   const steps = ['1', '2', '3', '4', '5'];
-  const [accData, setAccData] = useState({});
+  const [accData, setAccData] = useState<Data>({});
   const [result, setResult] = useState<TestingFormData>({
     total: '0',
     social: '0',
@@ -31,10 +34,27 @@ const Testing = () => {
   const totalSteps = steps.length;
   const currentStepIndex = steps.indexOf(currentStep);
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
+  const prompt = `- 난임 스트레스 척도를 통해 핵심 신념을 최대 5개 평가해줘
+  - 답은 높을수록 강한 긍정을 의미해.
+  - 핵심 신념: 스트레스 상황을 접하여 떠올린 자기, 미래, 세상에 대한 부정적인 자동적 사고를 활성화시키는 기저 신념
+  - 응답 형식: ["핵심신념1"]`;
+
+  // const toNextPage = async (formData: TestingFormData) => {
+  //   setAccData((prev) => {
+  //     const newResult = { ...prev };
+  //     for (const key in formData) {
+  //       const [_, isReversed, title] = key.split('-');
+  //       const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
+  //       newResult[title] = `${value}`;
+  //     }
+  //     return newResult;
+  //   });
+  //   setStep(`${+currentStep + 1}`);
+  // };
 
   const onSubmit = useCallback(
     async (formData: TestingFormData) => {
-      setAccData({ ...accData, ...formData });
+      // setAccData({ ...accData, ...formData });
       setResult((prev) => {
         const newResult = { ...prev };
         for (const key in formData) {
@@ -46,11 +66,27 @@ const Testing = () => {
         return newResult;
       });
 
-      if (currentStep !== '5') setStep(`${+currentStep + 1}`);
-      else {
+      if (currentStep !== '5') {
+        setAccData((prev) => {
+          const newResult = { ...prev };
+          for (const key in formData) {
+            const [_, isReversed, title] = key.split('-');
+            console.log(_);
+            const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
+            newResult[title] = `${value}`;
+          }
+          return newResult;
+        });
+        setStep(`${+currentStep + 1}`);
+      } else {
         // 폼 제출
-        console.log(result);
+        // console.log(result);
+
+        const data = await fetchGPT(prompt, JSON.stringify(accData));
+        const dataToObj = JSON.parse(data.choices[0].message.content);
+        console.log(data, dataToObj);
       }
+      console.log(result, accData);
     },
     [currentStep]
   );
