@@ -164,7 +164,7 @@ const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<TestingFormData
                   type="radio"
                   id={`${question.num}-${example}`}
                   value={example}
-                  {...register(`${question.type}-${question.isReversed}-${question.num}`, {
+                  {...register(`${question.type}-${question.isReversed}-${question.title}`, {
                     required: '보기를 선택해주세요.',
                   })}
                 />
