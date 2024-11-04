@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import CoupleInfomation from '@components/home/CoupleInfomation';
 
 //  홈에서 쓰는 컴포넌트
-// <HomePageTitle /> = 제목 컴포넌트   |  <CoupleInfomation /> = 부부연동 ,미션  | <Footer> =푸터는 메인에서만 필요해서 호출
+// <HomePageTitle /> = 제목 컴포넌트   |  <CoupleInfomation /> = 부부연동 ,미션  | <Footer> = 푸터는 메인에서만 필요해서 호출
 
 const Home = () => {
   return (
@@ -24,6 +24,7 @@ const HompageContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
+  margin-top: 9rem;
 `;
 
 const ContentWrapper = styled.div`

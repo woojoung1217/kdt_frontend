@@ -10,7 +10,7 @@ interface SetupSubfertilityProps {
   onChange: (value: string) => void;
 }
 
-const SetupSubfertility: React.FC<SetupSubfertilityProps> = ({ onNext, value, onChange }) => {
+const SetupSubfertility = ({ onNext, value, onChange }: SetupSubfertilityProps) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(value || null);
 
   useEffect(() => {
@@ -41,7 +41,6 @@ const SetupSubfertility: React.FC<SetupSubfertilityProps> = ({ onNext, value, on
             checked={selectedOption === 'true'}
             onChange={handleChange}
           />
-          <CustomRadioButton selected={selectedOption === 'true'} />
           네, 진단을 받았어요.
         </Label>
         <Label>
@@ -52,7 +51,6 @@ const SetupSubfertility: React.FC<SetupSubfertilityProps> = ({ onNext, value, on
             checked={selectedOption === 'false'}
             onChange={handleChange}
           />
-          <CustomRadioButton selected={selectedOption === 'false'} />
           아니요, 진단은 받지 않았어요.
         </Label>
       </SubfertilityCheckboxContainer>
@@ -85,25 +83,13 @@ const SubfertilityCheckboxContainer = styled.div`
 `;
 
 const SubfertilityCheckbox = styled.input`
-  display: none !important;
+  margin-right: 0.5rem; /* 라디오 버튼과 텍스트 사이의 간격 조정 */
 `;
 
 const Label = styled.label`
   display: flex;
   align-items: center;
   cursor: pointer;
-`;
-
-const CustomRadioButton = styled.div<{ selected: boolean }>`
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid ${({ selected }) => (selected ? variables.colors.primary : 'gray')};
-  background-color: ${({ selected }) => (selected ? variables.colors.primary : 'transparent')};
-  margin-right: 0.5rem;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
 `;
 
 export default SetupSubfertility;

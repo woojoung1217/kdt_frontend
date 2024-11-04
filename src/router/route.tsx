@@ -5,11 +5,14 @@ import Home from '@pages/Home/Home';
 import LoginPage from '@pages/User/login/LoginPage';
 import SignUpPage from '@pages/User/signup/SignUpPage';
 import Counseling from '@pages/counseling/Counseling';
+import CounselingList from '@pages/counseling/CounselingList';
 import Testing from '@pages/scale/Testing';
 import EmotionMessage from '@pages/emotion/message/EmotionMessage';
 import EmotionRecordPage from '@pages/emotion/record/EmotionRecordPage';
 import WelcomePage from '@pages/User/welcome/WelcomePage';
 import ScaleList from '@pages/scale/ScaleList';
+import EmotionMission from '@pages/emotion/mission/EmotionMission';
+import EmotionResult from '@pages/emotion/result/EmotionResult';
 
 const router = createBrowserRouter([
   {
@@ -37,12 +40,20 @@ const router = createBrowserRouter([
         element: <WelcomePage />,
       },
       {
-        path: '/counseling',
+        path: 'counseling',
         element: <Counseling />,
       },
       {
         path: '/scale/list',
         element: <ScaleList />,
+      },
+      {
+        path: 'counseling/:id',
+        element: <Counseling />,
+      },
+      {
+        path: 'counseling/list',
+        element: <CounselingList />,
       },
       {
         path: '/scale/testing',
@@ -55,6 +66,14 @@ const router = createBrowserRouter([
       {
         path: 'emotion/message',
         element: <EmotionMessage />,
+      },
+      {
+        path: 'emotion/mission',
+        element: <EmotionMission />,
+      },
+      {
+        path: 'emotion/result',
+        element: <EmotionResult />,
       },
     ],
   },
