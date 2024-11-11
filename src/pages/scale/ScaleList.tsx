@@ -1,32 +1,137 @@
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import ListGraph from './ListGraph';
+import { useState } from 'react';
+import Button from '@components/common/Button';
 
 const ScaleList = () => {
   const data = [
     {
-      testId: '1',
-      email: 'email',
-      total: '120',
-      social: '23',
-      sexual: '21',
-      relational: '25',
-      refusing: '18',
-      essential: '33',
-      createAt: '2023-09-25',
+      id: 1,
+      total: 200,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: 'null',
+      created_at: '2024-10-27T16:28:38.470913+09:00',
+      member_id: 1,
     },
     {
-      testId: '2',
-      email: 'email',
-      total: '120',
-      social: '23',
-      sexual: '21',
-      relational: '25',
-      refusing: '18',
-      essential: '33',
-      createAt: '2023-10-25',
+      id: 2,
+      total: 130,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-10-28T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 3,
+      total: 100,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-10-27T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 4,
+      total: 140,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: 'null',
+      created_at: '2024-10-29T16:28:38.470913+09:00',
+      member_id: 1,
+    },
+    {
+      id: 5,
+      total: 130,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-10-29T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 6,
+      total: 100,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-11-08T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 7,
+      total: 130,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-11-09T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 8,
+      total: 100,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-11-10T16:31:57.003731+09:00',
+      member_id: 1,
+    },
+    {
+      id: 9,
+      total: 130,
+      social: 10,
+      sexual: 20,
+      relational: 30,
+      refusing: 40,
+      essential: 40,
+      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
+      created_at: '2024-11-11T16:31:57.003731+09:00',
+      member_id: 1,
     },
   ];
+
+  const navigate = useNavigate();
+  const [showModal, setModal] = useState(false);
+
+  const isMonthPassed = () => {
+    const lastTestDate = new Date(data[data.length - 1].created_at.split('T')[0]);
+    const today = new Date();
+    const oneMonthLater = new Date(lastTestDate);
+    oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+    return today >= oneMonthLater;
+  };
+
+  const toTestBtn = () => {
+    if (isMonthPassed()) navigate('/scale/testing');
+    else setModal(true);
+  };
 
   const ScaleList = styled.div`
     margin: -2rem calc(${variables.layoutPadding}*-1);
@@ -63,10 +168,10 @@ const ScaleList = () => {
         }
       }
     }
-    .btn {
+    button {
       display: block;
       margin-top: 3rem;
-      background-color: ${variables.colors.primary};
+      background-color: ${variables.colors.primaryStrong};
       color: ${variables.colors.white};
       height: 4.6rem;
       line-height: 4.4rem;
@@ -74,8 +179,9 @@ const ScaleList = () => {
       font-size: ${variables.size.big};
       box-shadow: 0 0.4rem 0.4rem ${variables.colors.primarySoft};
       transition: all ${variables.TransitionDuration};
+      padding: 0;
       &:hover {
-        background-color: ${variables.colors.primaryStrong};
+        background-color: ${variables.colors.primary};
       }
     }
   `;
@@ -110,27 +216,72 @@ const ScaleList = () => {
       }
     }
   `;
+  const Modal = styled.div`
+    position: fixed;
+    inset: 0;
+    background: rgba(115, 121, 128, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .inner {
+      background: #fff;
+      border-radius: 1.6rem;
+      padding: 3rem;
+      text-align: center;
+      width: calc(100% - calc(${variables.layoutPadding} * 2));
+      max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+      .tit {
+        font-size: ${variables.size.large};
+        font-weight: 600;
+        margin-bottom: 1.6rem;
+      }
+      .cont {
+        font-size: ${variables.size.medium};
+        color: ${variables.colors.gray100};
+      }
+      .btn-box {
+        margin-top: 2rem;
+        display: flex;
+        gap: ${variables.size.min};
+      }
+    }
+  `;
 
   return (
     <ScaleList className="scale-list">
       <TopBox>
         <h2>난임 스트레스 검사 기록</h2>
         <div className="chart">
-          차트 자리
-          <span className="desc">스트레스 검사 지수</span>
+          <ListGraph data={data} />
         </div>
-        <Link to="/scale/testing" className="btn">
-          난임 스트레스 검사 하러가기
-        </Link>
+        <Button onClick={toTestBtn} text="난임 스트레스 검사 하러가기" size="medium" disabled={false} />
       </TopBox>
 
       <BottomBox>
         {data.map((item) => (
-          <li>
-            <Link to={`/scale/${item.testId}`}>{item.createAt.split('-').join('.')}</Link>
+          <li key={item.id}>
+            <Link to={`/scale/${item.id}`}>{item.created_at.split('T')[0].split('-').join('.')}</Link>
           </li>
         ))}
       </BottomBox>
+
+      {showModal && (
+        <Modal>
+          <div className="inner">
+            <p className="tit">한 달에 한 번 검사를 권장해요</p>
+            <p className="cont">
+              아직 최근 검사 일자에서 한달이 지나지 않았어요 <br />
+              그래도 검사를 진행 하실건가요?
+            </p>
+            <div className="btn-box">
+              <Button text="취소하기" variant="gray" size="medium" disabled={false} onClick={() => setModal(false)} />
+              <Button text="검사하기" size="medium" disabled={false} onClick={() => navigate('/scale/testing')} />
+            </div>
+          </div>
+        </Modal>
+      )}
     </ScaleList>
   );
 };
