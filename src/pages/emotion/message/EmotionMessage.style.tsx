@@ -10,6 +10,7 @@ export const MessageSection = styled.section`
   background-color: ${variables.colors.gray5};
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 `;
 
 export const ProgressBar = styled.div`
