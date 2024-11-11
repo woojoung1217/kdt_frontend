@@ -4,9 +4,9 @@ import React from 'react';
 import profileImg from '@assets/Images/mainFemaleProfile.svg';
 import mainlock from '@assets/Images/mainlock.svg';
 
-const CoupleInfomation = () => {
+const CoupleInformation = () => {
   return (
-    <CoupleInfomationContainer>
+    <CoupleInformationContainer>
       <CoupleInfoTitle>원활한 사용을 위해 부부 연동이 필요해요!</CoupleInfoTitle>
       <CoupleCardsWrapper>
         <PersonalCard>
@@ -21,13 +21,13 @@ const CoupleInfomation = () => {
         </SpouseCard>
       </CoupleCardsWrapper>
       <CoupleMission>배우자 연동을 하면 미션 등록이 가능해요</CoupleMission>
-    </CoupleInfomationContainer>
+    </CoupleInformationContainer>
   );
 };
 
-export default CoupleInfomation;
+export default CoupleInformation;
 
-const CoupleInfomationContainer = styled.div`
+const CoupleInformationContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
