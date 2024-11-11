@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 
 export const MessageSection = styled.section`
-  height: 100vh;
+  height: 100dvh;
   margin: calc(-1 * ${variables.layoutPadding});
   padding: ${variables.layoutPadding};
   margin-bottom: -4rem;
