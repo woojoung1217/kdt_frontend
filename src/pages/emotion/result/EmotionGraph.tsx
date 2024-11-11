@@ -27,8 +27,13 @@ const EmotionGraph: React.FC = () => {
       trigger: 'item',
     },
     legend: {
+      orient: 'verticla',
       top: '5%',
-      left: 'center',
+      right: 0,
+      icon: 'circle',
+      itemWidth: 20,
+      itemHeight: 20,
+      padding: [40, 40, 0, 0],
     },
     series: [
       {
@@ -47,7 +52,6 @@ const EmotionGraph: React.FC = () => {
         avoidLabelOverlap: false,
         label: {
           show: false,
-          position: 'center',
         },
         emphasis: {
           label: {
@@ -59,6 +63,8 @@ const EmotionGraph: React.FC = () => {
         labelLine: {
           show: false,
         },
+        clockwise: true,
+        left: '-20%',
       },
     ],
   });
