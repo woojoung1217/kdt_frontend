@@ -2,7 +2,7 @@
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
 
-type ButtonVariant = 'primary' | 'secondary' | 'non' | 'success';
+type ButtonVariant = 'primary' | 'secondary' | 'non' | 'success' | 'gray';
 
 interface ButtonProps {
   text: string; // 버튼 이름
@@ -26,27 +26,15 @@ const Button = ({
   // 각 버튼 크기에 따른 스타일 정의
   const sizeStyles = {
     small: css`
-      width: 100%;
-      padding: 0.8rem 1.2rem;
       font-size: 1.4rem;
-      text-align: center;
-      box-sizing: border-box;
     `,
     medium: css`
-      width: 100%;
-      padding: 1.4rem 2rem;
       font-size: 1.6rem;
       height: 4.6rem;
-      text-align: center;
-      box-sizing: border-box;
     `,
     large: css`
-      width: 100%;
-      padding: 1.6rem 2.4rem;
       font-size: 1.8rem;
       height: 5.6rem;
-      text-align: center;
-      box-sizing: border-box;
     `,
   };
 
@@ -55,6 +43,11 @@ const Button = ({
     border-radius: 0.8rem;
     color: white;
     cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 
     ${sizeStyles[size]} // 선택한 크기 스타일 적용
 
@@ -65,6 +58,10 @@ const Button = ({
     ${variant === 'secondary' &&
     `
       background-color: #6c757d;
+    `}
+    ${variant === 'gray' &&
+    `
+      background-color: ${variables.colors.gray70};
     `}
     ${variant === 'non' &&
     `
@@ -83,7 +80,6 @@ const Button = ({
 
     ${fixed &&
     `
-      padding: 1.8rem; 
       position: fixed;
       bottom: 3rem;
       left: 50%;
