@@ -6,13 +6,7 @@ import styled from '@emotion/styled';
 import CoupleInformation from '@components/home/CoupleInformation';
 import OurKeyword from '@components/home/OurKeyword';
 import CoupleReport from '@components/home/CoupleReport';
-
-//  홈에서 쓰는 컴포넌트
-//<HomePageTitle /> = 제목 컴포넌트
-//<CoupleInfomation /> = 부부연동 ,미션
-//<Footer> = 푸터는 메인에서만 필요해서 호출
-
-const OurReport = React.lazy(() => import('@components/home/OurReport'));
+import OurReport from '@components/home/OurReport';
 
 const Home = () => {
   return (
@@ -41,10 +35,6 @@ const ContentWrapper = styled.div`
   flex: 1;
   overflow-y: auto;
   padding-bottom: 1rem;
-  /* 스크롤바 숨기기 */
-  ::-webkit-scrollbar {
-    display: none;
-  }
   -ms-overflow-style: none;
   scrollbar-width: none;
 `;
