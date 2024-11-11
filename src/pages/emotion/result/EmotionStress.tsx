@@ -4,7 +4,6 @@ import ECharts from 'echarts-for-react';
 
 interface StressData {
   value: number;
-  name: string;
   color: string;
 }
 
@@ -14,7 +13,6 @@ const EmotionStress = () => {
   const data: StressData[] = [
     {
       value: 55,
-      name: '기존 점수',
       color: `${variables.colors.primary}`,
     },
   ];
@@ -48,7 +46,7 @@ const EmotionStress = () => {
         },
         axisLine: {
           lineStyle: {
-            width: 40,
+            width: 20,
           },
         },
         splitLine: {
@@ -64,29 +62,19 @@ const EmotionStress = () => {
           distance: 50,
         },
         data: data,
-        title: {
-          fontSize: 14,
-        },
         detail: {
-          width: 50,
-          height: 14,
-          fontSize: 14,
+          fontSize: 22,
           color: `${variables.colors.primary}`,
-          borderColor: `${variables.colors.primary}`,
-          borderRadius: 20,
-          borderWidth: 1,
-          formatter: '{value}%',
+          formatter: '{value}',
+          offsetCenter: ['0', '0%'],
         },
+        radius: '40%',
+        clockwise: false,
       },
     ],
   });
 
-  return (
-    <div>
-      <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
-      <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
-    </div>
-  );
+  return <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />;
 };
 
 export default EmotionStress;
