@@ -45,12 +45,8 @@ export const WishImage = styled.img`
 
 export const EmotionGraphContainer = styled.div`
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
 
   & > div {
-    padding: 5rem;
     border-radius: 1rem;
     border: 1px solid ${variables.colors.gray10};
     background-color: white;
@@ -76,13 +72,15 @@ const EmotionResult = () => {
 
         <EmotionGraphContainer>
           <EmotionGraph />
-          <div>{analysisResult.keywords.map((v) => v)}</div>
         </EmotionGraphContainer>
         <ResultTextBox>
           <pre>난임 스트레스 예상점수</pre>
         </ResultTextBox>
         <EmotionGraphContainer>
-          <EmotionStress />
+          <div>
+            <EmotionStress />
+            <EmotionStress />
+          </div>
           <div>예상 분포도 자리</div>
         </EmotionGraphContainer>
       </ResultSection>
