@@ -135,8 +135,8 @@ const ScaleList = () => {
   };
 
   return (
-    <div css={ScaleWr} className="scale-list">
-      <div css={TopBox}>
+    <div css={ScaleWr}>
+      <div css={ScaleChart}>
         <h2>난임 스트레스 검사 기록</h2>
         <div className="chart">
           <ListGraph data={data} />
@@ -144,13 +144,13 @@ const ScaleList = () => {
         <Button onClick={toTestBtn} text="난임 스트레스 검사 하러가기" size="medium" disabled={false} />
       </div>
 
-      <div css={BottomBox}>
+      <ul css={ScaleLists}>
         {data.map((item) => (
           <li key={item.id}>
             <Link to={`/scale/${item.id}`}>{item.created_at.split('T')[0].split('-').join('.')}</Link>
           </li>
         ))}
-      </div>
+      </ul>
 
       {showModal && (
         <div css={Modal}>
@@ -178,7 +178,7 @@ const ScaleWr = css`
   background-color: ${variables.colors.gray5};
   min-height: 100vh;
 `;
-const TopBox = css`
+const ScaleChart = css`
   text-align: center;
   background-color: ${variables.colors.white};
   padding: 2rem ${variables.layoutPadding} 2.5rem;
@@ -225,7 +225,7 @@ const TopBox = css`
     }
   }
 `;
-const BottomBox = css`
+const ScaleLists = css`
   padding: 2.6rem ${variables.layoutPadding};
   display: flex;
   flex-direction: column;
