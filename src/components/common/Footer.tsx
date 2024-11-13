@@ -20,13 +20,13 @@ const Footer = () => {
         <FooterItem>
           <StyledLink to="/counseling">
             <FooterIcon src="/img/footer-03.svg" alt="심리 상담 아이콘" />
-            스트레스
+            AI 심리상담
           </StyledLink>
         </FooterItem>
         <FooterItem>
           <StyledLink to="/emotion/record">
             <FooterIcon src="/img/footer-04.svg" alt="감정 기록 아이콘" />
-            AI 심리상담
+            스트레스
           </StyledLink>
         </FooterItem>
       </FooterNav>
@@ -37,6 +37,7 @@ const Footer = () => {
 const FooterContainer = styled.footer`
   position: fixed;
   bottom: 0;
+  max-width: 50rem;
   width: 100%;
   margin: calc(-1 * ${variables.layoutPadding});
   height: 10rem;
