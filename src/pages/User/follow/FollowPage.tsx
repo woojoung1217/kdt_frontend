@@ -8,7 +8,7 @@ import variables from '@styles/Variables';
 import { handleValidation } from '@utils/validation/handleValidation';
 import { useEffect, useState } from 'react';
 
-const FOLLOW_URL = 'https://www.wishkr.site/accounts/couple';
+const FOLLOW_URL = '/accounts/couple/';
 
 const FollowSection = styled.section`
   height: calc(100svh - 2 * ${variables.layoutPadding});
@@ -22,6 +22,15 @@ const FollowSection = styled.section`
 const FollowPage = () => {
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>('');
+  const [memberId, setMemberId] = useState<number | null>();
+  const [token, setToken] = useState<string | null>();
+
+  useEffect(() => {
+    setMemberId(Number(localStorage.getItem('MemberId')));
+    // setMemberId(12);
+
+    setToken(localStorage.getItem('authToken'));
+  }, []);
 
   const emailStatus = handleValidation('email', email);
   const isValid = emailStatus === 'valid';
@@ -37,17 +46,22 @@ const FollowPage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log(token);
+    console.log(memberId);
+
     const formData = {
       spouseEmail: email,
-      memberId: 1, // localStorage에서 꺼내기
+      memberId: memberId,
     };
+
+    console.log(formData);
 
     try {
       const response = await fetch(FOLLOW_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
