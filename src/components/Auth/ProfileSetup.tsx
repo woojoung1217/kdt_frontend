@@ -16,8 +16,8 @@ export interface ProfileSetupInterface {
   Funnel: React.ComponentType<FunnelProps>;
   Step: React.ComponentType<StepProps>;
   formData: {
-    name: string;
-    koreanId: string;
+    username: string;
+    identification: string;
     email: string;
     password: string;
     subfertility: string;
@@ -40,16 +40,16 @@ const ProfileSetup = ({
       <Step name="이름 입력">
         <SetupName
           onNext={() => nextClickHandler(steps[1])}
-          value={formData.name}
-          onChange={(value) => updateFormData('name', value)}
+          value={formData.username}
+          onChange={(value) => updateFormData('username', value)}
         />
       </Step>
 
       <Step name="주민등록번호 입력">
         <SetupKoreanIDInput
           onNext={() => nextClickHandler(steps[2])}
-          value={formData.koreanId}
-          onChange={(value) => updateFormData('koreanId', value)}
+          value={formData.identification}
+          onChange={(value) => updateFormData('identification', value)}
         />
       </Step>
 

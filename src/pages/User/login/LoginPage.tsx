@@ -5,8 +5,9 @@ import welcome from '@assets/Images/welcome.svg';
 import Input from '@components/common/Input';
 import { handleValidation } from '@utils/validation/handleValidation';
 import Button from '@components/common/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import variables from '@styles/Variables';
+import axios from 'axios';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -17,13 +18,33 @@ const LoginPage = () => {
   const passwordStatus = handleValidation('password', password);
   const isValid = emailStatus === 'valid' && passwordStatus === 'valid';
 
+  const navigate = useNavigate();
+
   const handleLogin = async () => {
     if (!isValid) {
       setErrorMessage('이메일 또는 비밀번호가 유효하지 않습니다.');
       return;
     }
     // 로그인 로직 처리
-    console.log('login form is valid');
+    try {
+      const response = await axios.post('/accounts/login/', { email, password });
+
+      if (response.status === 200) {
+        console.log('Login successful:', response.data);
+        const token = response.data.result.token;
+        const Email = response.data.result.email;
+        const MemberId = response.data.result.memberId;
+        console.log(token);
+
+        // 토큰을 로컬 스토리지에 저장하거나 상태 관리 설정
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userEmail', Email);
+        localStorage.setItem('MemberId', MemberId);
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
   };
 
   return (
