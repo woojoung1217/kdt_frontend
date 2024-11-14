@@ -7,6 +7,7 @@ import prevIcon from '/img/icon-page-prev.svg';
 import wishIcon from '/img/icon-wish-profile.svg';
 import sendIcon from '/img/icon-send.svg';
 import CounselingGuide from './CounslingGuide';
+import { useParams } from 'react-router-dom';
 
 interface Message {
   sender?: string;
@@ -106,14 +107,21 @@ const Counseling = () => {
   //가이드 영역
   const [step, setStep] = useState<number>(1);
   const [guideVisible, setGuideVisible] = useState(false);
+  const params = useParams();
 
   //페이지 진입시 .5초뒤에 가이드 시작
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setGuideVisible(true);
-    }, 500);
+    const popupShown = localStorage.getItem('counselingGuide');
 
-    return () => clearTimeout(timer);
+    if (!params.id) localStorage.removeItem('counselingGuide');
+
+    if (!popupShown) {
+      localStorage.setItem('counselingGuide', 'true');
+      const timer = setTimeout(() => {
+        setGuideVisible(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   useEffect(() => {
