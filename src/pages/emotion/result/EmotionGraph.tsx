@@ -48,6 +48,10 @@ const EmotionGraph: React.FC = () => {
           },
         })),
         type: 'pie',
+        pointer: {
+          show: false,
+        },
+
         radius: ['40%', '70%'],
         avoidLabelOverlap: false,
         label: {

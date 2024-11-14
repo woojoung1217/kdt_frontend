@@ -3,6 +3,94 @@ import useAnalysisStore from '@store/useAnalysisStore';
 import variables from '@styles/Variables';
 import EmotionGraph from './EmotionGraph';
 import EmotionStress from './EmotionStress';
+import ECharts from 'echarts-for-react';
+import Footer from '@components/common/Footer';
+
+const EmotionResult = () => {
+  const analysisResult = useAnalysisStore((state) => state.analysis);
+
+  console.log(analysisResult.keywords);
+
+  const option = {
+    radar: {
+      indicator: [
+        { name: '사회적', max: 6500 },
+        { name: '성적', max: 16000 },
+        { name: '필요성', max: 30000 },
+        {
+          name: `아이가 없는
+일상에대한 거부`,
+          max: 38000,
+        },
+        { name: '관계적', max: 25000 },
+      ],
+      splitLine: {},
+      axisLine: {},
+    },
+    series: [
+      {
+        name: 'Budget vs spending',
+        type: 'radar',
+        data: [
+          {
+            value: [4200, 3000, 20000, 35000, 18000],
+            name: 'Allocated Budget',
+            itemStyle: {
+              color: variables.colors.primary,
+            },
+          },
+          {
+            value: [5000, 14000, 28000, 26000, 21000],
+            name: 'Actual Spending',
+            itemStyle: {
+              color: variables.colors.secondaryStrong,
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  return (
+    <>
+      <ResultSection>
+        <ResultTitleBox>
+          <ResultTextBox>
+            <h2>오늘 희선님의 예상감정</h2>
+            <pre>위시와 대화한 내용으로 분석되었어요</pre>
+          </ResultTextBox>
+          <WishImage src="/src/assets/Images/emotionResultSad.svg" alt="감정분석가 위시" />
+        </ResultTitleBox>
+
+        <EmotionGraphContainer>
+          <EmotionGraph />
+        </EmotionGraphContainer>
+        <ResultTextBox>
+          <pre>난임 스트레스 예상점수</pre>
+        </ResultTextBox>
+        <EmotionGraphContainer>
+          <div className="flex-box">
+            <EmotionStress />
+            <EmotionStress />
+          </div>
+        </EmotionGraphContainer>
+
+        <ResultTextBox>
+          <pre>난임 스트레스 예상점수</pre>
+        </ResultTextBox>
+        <EmotionGraphContainer>
+          <ChartCover>
+            <ECharts option={option} />
+          </ChartCover>
+        </EmotionGraphContainer>
+      </ResultSection>
+
+      <Footer />
+    </>
+  );
+};
+
+export default EmotionResult;
 
 export const ResultSection = styled.section`
   height: 100%;
@@ -49,43 +137,18 @@ export const EmotionGraphContainer = styled.div`
   & > div {
     border-radius: 1rem;
     border: 1px solid ${variables.colors.gray10};
-    background-color: white;
+    background-color: #ffffff;
     box-shadow: 0px 0px 4px rgba(217, 203, 245, 0.3);
+  }
+
+  //난임스트레스 예상점수 도표
+  .flex-box {
+    display: flex;
   }
 `;
 
-const EmotionResult = () => {
-  const analysisResult = useAnalysisStore((state) => state.analysis);
-
-  console.log(analysisResult.keywords);
-
-  return (
-    <>
-      <ResultSection>
-        <ResultTitleBox>
-          <ResultTextBox>
-            <h2>오늘 희선님의 예상감정</h2>
-            <pre>위시와 대화한 내용으로 분석되었어요</pre>
-          </ResultTextBox>
-          <WishImage src="/src/assets/Images/emotionResultSad.svg" alt="감정분석가 위시" />
-        </ResultTitleBox>
-
-        <EmotionGraphContainer>
-          <EmotionGraph />
-        </EmotionGraphContainer>
-        <ResultTextBox>
-          <pre>난임 스트레스 예상점수</pre>
-        </ResultTextBox>
-        <EmotionGraphContainer>
-          <div>
-            <EmotionStress />
-            <EmotionStress />
-          </div>
-          <div>예상 분포도 자리</div>
-        </EmotionGraphContainer>
-      </ResultSection>
-    </>
-  );
-};
-
-export default EmotionResult;
+const ChartCover = styled.div`
+  width: 100%;
+  height: 100%;
+  margin-bottom: 5rem;
+`;
