@@ -1,18 +1,40 @@
 import variables from '@styles/Variables';
 import React, { useState } from 'react';
 import ECharts from 'echarts-for-react';
+import useAnalysisStore from '@store/useAnalysisStore';
+import styled from '@emotion/styled';
 
 interface StressData {
-  value: number;
+  value: number | string;
   color: string;
 }
 
+export const StressText = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .stress-box {
+    width: 100%;
+    height: 18rem;
+  }
+
+  .stress-sub-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: ${variables.colors.gray100};
+    margin: 4em 0 6rem 0;
+  }
+`;
+
 const EmotionStress = () => {
-  // const analysisResult = useAnalysisStore((state) => state.analysis);
+  const analysisResult = useAnalysisStore((state) => state.analysis);
+  console.log(analysisResult.prediction.totalScore);
 
   const data: StressData[] = [
     {
-      value: 55,
+      value: `${analysisResult.prediction.totalScore}`,
       color: `${variables.colors.primary}`,
     },
   ];
@@ -31,6 +53,7 @@ const EmotionStress = () => {
         startAngle: 90,
         endAngle: -270,
         color: `${variables.colors.primaryStrong}`,
+
         pointer: {
           show: false,
         },
@@ -68,13 +91,20 @@ const EmotionStress = () => {
           formatter: '{value}',
           offsetCenter: ['0', '0%'],
         },
-        radius: '40%',
+        radius: '60%',
         clockwise: false,
       },
     ],
   });
 
-  return <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />;
+  return (
+    <StressText>
+      <div className="stress-box">
+        <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
+      </div>
+      <p className="stress-sub-text">기존 점수</p>
+    </StressText>
+  );
 };
 
 export default EmotionStress;
