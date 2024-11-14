@@ -24,7 +24,7 @@ const Footer = () => {
           </StyledLink>
         </FooterItem>
         <FooterItem>
-          <StyledLink to="/emotion/record">
+          <StyledLink to="/scale/list">
             <FooterIcon src="/img/footer-04.svg" alt="감정 기록 아이콘" />
             스트레스
           </StyledLink>

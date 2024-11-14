@@ -6,13 +6,14 @@ import PageTitleHeader from '@components/Auth/PageTitleHeader';
 import SignupProgressBar from '@components/common/GenericProgressBar';
 import { useNavigate } from 'react-router-dom';
 import { determineGenderFromKoreanId } from '@utils/validation/handleValidation';
+import axios from 'axios';
 
 const steps = ['이름 입력', '주민등록번호 입력', '이메일 입력', '비밀번호 입력', '난임여부', '약관동의'];
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    koreanId: '',
+    username: '',
+    identification: '',
     email: '',
     password: '',
     gender: '',
@@ -32,13 +33,13 @@ const SignUpPage = () => {
     setFormData((prevData) => {
       const newData = { ...prevData, [field]: value };
 
-      if (field === 'koreanId') {
-        const gender = determineGenderFromKoreanId(value); // Gender 결정 함수 호출
+      if (field === 'identification') {
+        const gender = determineGenderFromKoreanId(value);
 
         if (gender) {
-          newData['gender'] = gender; // 유효한 성별이면 추가
+          newData['gender'] = gender;
         } else {
-          return prevData; // 오류일 때는 기존 데이터를 반환하여 반려
+          return prevData;
         }
       }
 
@@ -47,11 +48,20 @@ const SignUpPage = () => {
     });
   }, []);
 
-  const submitSignup = useCallback(() => {
-    console.log('Submitting signup data:', formData);
+  const submitSignup = useCallback(async () => {
+    try {
+      const response = await axios.post('/accounts/signup/', formData);
 
-    navigate('/users/welcome');
-  }, [formData]);
+      if (response.status === 201) {
+        // 성공적으로 생성되었을 때
+        console.log('Signup successful:', response.data);
+        navigate('/users/welcome'); // 성공 시 웰컴 페이지로 이동
+      }
+    } catch (error) {
+      console.error('Signup failed:', error);
+      alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+    }
+  }, [formData, navigate]);
 
   const nextClickHandler = useCallback(
     (nextStep: string | null) => {

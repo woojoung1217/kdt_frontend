@@ -5,8 +5,10 @@ import welcome from '@assets/Images/welcome.svg';
 import Input from '@components/common/Input';
 import { handleValidation } from '@utils/validation/handleValidation';
 import Button from '@components/common/Button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import variables from '@styles/Variables';
+import axios from 'axios';
+import useAuthStore from '@store/useAuthStore';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -17,13 +19,43 @@ const LoginPage = () => {
   const passwordStatus = handleValidation('password', password);
   const isValid = emailStatus === 'valid' && passwordStatus === 'valid';
 
+  const navigate = useNavigate();
+
+  // Zustand store에서 setAuthState 가져오기
+  const setAuthState = useAuthStore((state) => state.setAuthState);
   const handleLogin = async () => {
     if (!isValid) {
       setErrorMessage('이메일 또는 비밀번호가 유효하지 않습니다.');
       return;
     }
-    // 로그인 로직 처리
-    console.log('login form is valid');
+
+    // 로그인 API 호출
+    try {
+      const response = await axios.post('/accounts/login/', { email, password });
+
+      if (response.status === 200) {
+        console.log('Login successful:', response.data);
+        const token = response.data.result.token;
+        const Email = response.data.result.email;
+        const MemberId = response.data.result.memberId;
+        console.log(token);
+
+        // Zustand 상태에 로그인 정보 저장
+
+        // 로컬 스토리지에도 로그인 정보 저장
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userEmail', Email);
+        localStorage.setItem('MemberId', MemberId);
+
+        setAuthState(token, Email, MemberId);
+
+        // 홈 페이지로 이동
+        navigate('/home');
+      }
+    } catch (error) {
+      setErrorMessage('이메일 또는 비밀번호가 유효하지 않습니다.');
+      console.error('Login failed:', error);
+    }
   };
 
   return (

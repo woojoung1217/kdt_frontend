@@ -48,4 +48,13 @@ export default defineConfig({
       { find: '@router', replacement: '/src/router' },
     ],
   },
+  server: {
+    proxy: {
+      '/accounts': {
+        target: 'https://www.wishkr.site',
+        changeOrigin: true,
+        secure: false, // https일 경우 필요할 수 있음
+      },
+    },
+  },
 });
