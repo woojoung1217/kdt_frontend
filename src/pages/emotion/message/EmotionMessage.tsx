@@ -32,10 +32,22 @@ const EmotionMessage = () => {
 
   // 임시 데이터
   const isInfertility = true;
+  /* 키워드 변경할 것 */
   const keywords = ['운동', '영화', '휴식'].join(',');
+  /* 난임스트레스 척도 검사 결과 */
   const [currentTotalScore, currentSocial, currentSexual, currentRelational, currentRefusing, currentEssential] = [
     120, 23, 21, 25, 18, 33,
   ];
+  /* 전일 난임스트레스 척도 예상점수 */
+  const [
+    predictedTotalScore,
+    predictedSocial,
+    predictedSexual,
+    predictedRelational,
+    predictedRefusing,
+    predictedEssential,
+  ] = [0, 0, 0, 0, 0, 0];
+
   // 프롬프트 작성
   const prompt = `
   - 답변 형식: {"prediction": {"totalScore": "숫자", "social": "숫자", "sexual": "숫자", "relational": "숫자", "refusing": "숫자", "essential": "숫자"}, "emotions": {"joy": "숫자", "sadness": "숫자", "anger": "숫자", "fear": "숫자", "surprise": "숫자", "disgust": "숫자"}, "missions": ["내용", "내용"], "keywords": ["내용", "내용", "내용"]}
@@ -56,6 +68,7 @@ const EmotionMessage = () => {
   각 문항별 답변 점수는 매우 그렇다 1점 ~ 전혀 그렇지 않다 5점으로, 총 46점 ~ 230점의 결과가 나오는데 점수는 낮을수록 좋은거야.
   
   가장 최근 검사 결과는 총점 ${currentTotalScore}점, 사회적 영역 ${currentSocial}점, 관계적 영역 ${currentRelational}점, 성적 영역 ${currentSexual}점, 아이 없는 일상에 대한 거부 영역 ${currentRefusing}점, 부모됨의 필요성 영역 ${currentEssential}점이야.
+  ${predictedTotalScore > 0 && `어제 감정기록을 통해 얻은 예상 점수는 총점 ${predictedTotalScore}점, 사회적 영역 ${predictedSocial}점, 관계적 영역 ${predictedSexual}점, 성적 영역 ${predictedRelational}점, 아이 없는 일상에 대한 거부 영역 ${predictedRefusing}점, 부모됨의 필요성 영역 ${predictedEssential}점이야.`} 
 
   사용자의 특성을 고려하여 오늘 사용자의 기분 좋았던 일, 안 좋았던 일, 임신을 위해 한 노력, 본인과 배우자에게 해 주고 싶은 말을 토대로 척도 총점수를 예상해줘.
   사회적 영역(10점~50점)은 몇 점일지 예상해서 "social"에 숫자 형태로 저장해주고, 성적 영역(8점~40점)은 몇 점일지 예상해서 "sexual"에 숫자 형태로 저장해줘.
