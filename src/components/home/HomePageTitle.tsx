@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 
 const HomePageTitle = () => {
-  return <PageTitle>희선님, 오늘하루는 어떠셨나요?</PageTitle>;
+  const userEmail = localStorage.getItem('userEmail');
+  return <PageTitle>{userEmail ? userEmail : 'Guest'} 오늘하루는 어떠셨나요?</PageTitle>;
 };
 
 export default HomePageTitle;

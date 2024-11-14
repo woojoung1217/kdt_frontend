@@ -4,14 +4,14 @@ import Welcome from '@assets/Images/welcome.svg';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 
-const userName = '윤우중';
+//TODO - 유저 이름으로 변경 해야함
 
 const WelcomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate('/home'); // 메인 페이지로 이동
+      navigate('/users/login'); // 메인 페이지로 이동
     }, 4000);
 
     return () => clearTimeout(timer); // 컴포넌트 언마운트 시 타이머 클리어
@@ -21,11 +21,7 @@ const WelcomePage = () => {
     <WelcomePageContainer>
       <ImageContainer>
         <BackgroundCircle />
-        <FloatingText>
-          {userName}님 만나서
-          <br />
-          반가워요
-        </FloatingText>
+        <FloatingText>반가워요 위시에서 함께 노력해봐요</FloatingText>
         <StyledImage src={Welcome} alt="환영합니다" />
       </ImageContainer>
       <DescriptionText>위시에 처음 가입하셨네요!</DescriptionText>

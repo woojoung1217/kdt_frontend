@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
 import HomePageTitle from '@components/home/HomePageTitle';
 import Footer from '@components/common/Footer';
 import styled from '@emotion/styled';
@@ -8,10 +7,14 @@ import OurKeyword from '@components/home/OurKeyword';
 import CoupleReport from '@components/home/CoupleReport';
 import OurReport from '@components/home/OurReport';
 import useAuthStore from '@store/useAuthStore';
+import useAuthRedirect from '@hooks/useAuthRedirect';
 
 const Home = () => {
   const { authToken, userEmail, memberId } = useAuthStore();
   console.log(authToken, userEmail, memberId);
+
+  const redirect = useAuthRedirect();
+  if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
 
   return (
     <HomepageContainer>
