@@ -7,8 +7,12 @@ import CoupleInformation from '@components/home/CoupleInformation';
 import OurKeyword from '@components/home/OurKeyword';
 import CoupleReport from '@components/home/CoupleReport';
 import OurReport from '@components/home/OurReport';
+import useAuthStore from '@store/useAuthStore';
 
 const Home = () => {
+  const { authToken, userEmail, memberId } = useAuthStore();
+  console.log(authToken, userEmail, memberId);
+
   return (
     <HomepageContainer>
       <ContentWrapper>

@@ -8,6 +8,7 @@ import Button from '@components/common/Button';
 import { Link, useNavigate } from 'react-router-dom';
 import variables from '@styles/Variables';
 import axios from 'axios';
+import useAuthStore from '@store/useAuthStore';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -20,12 +21,15 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
+  // Zustand store에서 setAuthState 가져오기
+  const setAuthState = useAuthStore((state) => state.setAuthState);
   const handleLogin = async () => {
     if (!isValid) {
       setErrorMessage('이메일 또는 비밀번호가 유효하지 않습니다.');
       return;
     }
-    // 로그인 로직 처리
+
+    // 로그인 API 호출
     try {
       const response = await axios.post('/accounts/login/', { email, password });
 
@@ -36,13 +40,20 @@ const LoginPage = () => {
         const MemberId = response.data.result.memberId;
         console.log(token);
 
-        // 토큰을 로컬 스토리지에 저장하거나 상태 관리 설정
+        // Zustand 상태에 로그인 정보 저장
+
+        // 로컬 스토리지에도 로그인 정보 저장
         localStorage.setItem('authToken', token);
         localStorage.setItem('userEmail', Email);
         localStorage.setItem('MemberId', MemberId);
+
+        setAuthState(token, Email, MemberId);
+
+        // 홈 페이지로 이동
         navigate('/home');
       }
     } catch (error) {
+      setErrorMessage('이메일 또는 비밀번호가 유효하지 않습니다.');
       console.error('Login failed:', error);
     }
   };
