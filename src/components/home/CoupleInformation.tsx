@@ -1,26 +1,40 @@
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
-import React from 'react';
-import profileImg from '@assets/Images/mainFemaleProfile.svg';
+import profileImgWomen from '@assets/Images/mainFemaleProfile.svg';
+import profileImgMan from '@assets/Images/mainManProfile.svg';
 import mainlock from '@assets/Images/mainlock.svg';
+import { useNavigate } from 'react-router-dom';
+import { useCoupleInfo } from '@hooks/useCoupleInfo';
 
 const CoupleInformation = () => {
+  const navigate = useNavigate();
+
+  const { partnerName, myName, gender, isConnected } = useCoupleInfo();
+
   return (
     <CoupleInformationContainer>
-      <CoupleInfoTitle>원활한 사용을 위해 부부 연동이 필요해요!</CoupleInfoTitle>
+      <CoupleInfoTitle>{partnerName ? '부부 한마디' : '원활한 사용을 위해 부부 연동이 필요해요!'}</CoupleInfoTitle>
       <CoupleCardsWrapper>
         <PersonalCard>
-          <CardImage src={profileImg} alt="User Image" />
-          <CardName>내 이름</CardName>
+          <CardImage src={gender === 'M' ? profileImgMan : profileImgWomen} alt="User Image" />
+          <CardName>{myName}</CardName>
           <EmotionAnalysis>감정 분석 필요</EmotionAnalysis>
         </PersonalCard>
-        <SpouseCard>
-          <CardImage src={mainlock} alt="Spouse Image" />
-          <CardName>배우자 이름</CardName>
-          <EmotionAnalysis>연동필수</EmotionAnalysis>
+        <SpouseCard
+          onClick={() => {
+            navigate('/users/follow');
+          }}
+        >
+          <CardImage
+            src={isConnected ? (gender === 'M' ? profileImgWomen : profileImgMan) : mainlock}
+            alt="Spouse Image"
+          />
+          <CardName>{partnerName ? partnerName : '배우자 이름'}</CardName>
+          <EmotionAnalysis>{partnerName ? '감정분석 필요' : '연동 필수'}</EmotionAnalysis>
         </SpouseCard>
       </CoupleCardsWrapper>
       <CoupleMission>배우자 연동을 하면 미션 등록이 가능해요</CoupleMission>
+      <CoupleMissionWeekly>배우자 연동을 하면 미션 등록이 가능해요</CoupleMissionWeekly>
     </CoupleInformationContainer>
   );
 };
@@ -92,11 +106,26 @@ const CardName = styled.div`
 `;
 
 const EmotionAnalysis = styled.div`
-  font-size: ${variables.size.small};
+  font-size: ${variables.size.medium};
   text-align: center;
+  color: ${variables.colors.primary};
 `;
 
 const CoupleMission = styled.div`
+  width: 100%;
+  height: 6rem;
+  font-size: ${variables.size.medium};
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: ${variables.BoxShadow};
+  border-radius: calc(${variables.borderRadius} + 0.4rem);
+  color: ${variables.colors.black};
+  margin-bottom: 1.4rem;
+`;
+
+const CoupleMissionWeekly = styled.div`
   width: 100%;
   height: 6rem;
   font-size: ${variables.size.medium};

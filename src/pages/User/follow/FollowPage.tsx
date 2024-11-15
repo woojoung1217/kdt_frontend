@@ -67,6 +67,7 @@ const FollowPage = () => {
       if (response.status === 201) {
         console.log(data);
         alert('부부 연동에 성공하였습니다!');
+        localStorage.setItem('connect', 'true');
         navigate('/');
       } else {
         setEmail('');

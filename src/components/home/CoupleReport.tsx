@@ -7,14 +7,25 @@ const CoupleReport = () => {
   const option = {
     radar: {
       indicator: [
-        { name: '사회적', max: 6500 },
-        { name: '성적', max: 16000 },
-        { name: '필요성', max: 30000 },
-        { name: '아이가 없는 일상에대한 거부', max: 38000 },
-        { name: '관계적', max: 25000 },
+        { name: '사회적', min: 0, max: 7000 },
+        { name: '성적', min: 0, max: 16000 },
+        { name: '필요성', min: 0, max: 30000 },
+        { name: '아이가 없는 일상에 대한 거부', min: 0, max: 38000 },
+        { name: '관계적', min: 0, max: 25000 },
       ],
-      splitLine: {},
-      axisLine: {},
+      splitNumber: 5, // 눈금 개수를 조절하여 가독성 개선
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: '#ddd',
+        },
+      },
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: '#ddd',
+        },
+      },
     },
     series: [
       {
