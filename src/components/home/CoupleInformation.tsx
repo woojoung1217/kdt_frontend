@@ -106,7 +106,7 @@ const CardName = styled.div`
 `;
 
 const EmotionAnalysis = styled.div`
-  font-size: ${variables.size.small};
+  font-size: ${variables.size.medium};
   text-align: center;
   color: ${variables.colors.primary};
 `;
