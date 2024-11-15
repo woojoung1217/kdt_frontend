@@ -38,11 +38,12 @@ const ToggleContainer = styled.div`
 const ToggleOption = styled.div<ToggleOptionProps>`
   flex: 1;
   display: flex;
+
   align-items: center;
   justify-content: center;
   height: 100%;
   font-size: 1.4rem;
-  color: ${({ isSelected }) => (isSelected ? '#8a4baf' : '#6e6e6e')};
+  color: ${({ isSelected }) => (isSelected ? '#B691FF' : '#6e6e6e')};
   background-color: ${({ isSelected }) => (isSelected ? '#efe6fa' : 'transparent')};
   transition:
     background-color 0.3s,

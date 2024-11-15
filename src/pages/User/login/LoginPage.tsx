@@ -38,6 +38,8 @@ const LoginPage = () => {
         const token = response.data.result.token;
         const Email = response.data.result.email;
         const MemberId = response.data.result.memberId;
+        const userName = response.data.result.username;
+        const Gender = response.data.result.gender;
         console.log(token);
 
         // Zustand 상태에 로그인 정보 저장
@@ -46,8 +48,10 @@ const LoginPage = () => {
         localStorage.setItem('authToken', token);
         localStorage.setItem('userEmail', Email);
         localStorage.setItem('MemberId', MemberId);
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('Gender', Gender);
 
-        setAuthState(token, Email, MemberId);
+        setAuthState(token, Email, MemberId, userName);
 
         // 홈 페이지로 이동
         navigate('/home');
