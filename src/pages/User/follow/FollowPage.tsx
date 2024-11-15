@@ -7,8 +7,9 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import { handleValidation } from '@utils/validation/handleValidation';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const FOLLOW_URL = 'https://www.wishkr.site/accounts/couple';
+const FOLLOW_URL = '/accounts/couple/';
 
 const FollowSection = styled.section`
   height: calc(100svh - 2 * ${variables.layoutPadding});
@@ -22,6 +23,14 @@ const FollowSection = styled.section`
 const FollowPage = () => {
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>('');
+  const [memberId, setMemberId] = useState<number | null>();
+  const [token, setToken] = useState<string | null>();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setMemberId(Number(localStorage.getItem('MemberId')));
+    setToken(localStorage.getItem('authToken'));
+  }, []);
 
   const emailStatus = handleValidation('email', email);
   const isValid = emailStatus === 'valid';
@@ -39,7 +48,7 @@ const FollowPage = () => {
 
     const formData = {
       spouseEmail: email,
-      memberId: 1, // localStorage에서 꺼내기
+      memberId: memberId,
     };
 
     try {
@@ -47,15 +56,24 @@ const FollowPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
 
+      console.log(response);
       const data = await response.json();
-      console.log(data);
+
+      if (response.status === 201) {
+        console.log(data);
+        alert('부부 연동에 성공하였습니다!');
+        navigate('/');
+      } else {
+        setEmail('');
+        throw new Error(data.error);
+      }
     } catch (e) {
-      if (e instanceof Error) console.log(e.message);
+      if (e instanceof Error) alert(e.message);
     }
   };
 
@@ -112,7 +130,7 @@ const FollowPage = () => {
             name="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="배우자의 가입/가입예정 이메일을 입력해주세요"
+            placeholder="배우자의 이메일을 입력해주세요"
             status={emailStatus}
           />
           {error && <AuthError message={error} />}
