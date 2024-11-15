@@ -12,11 +12,11 @@ const CoupleMissionWeeklyUI = styled.div`
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
-  padding: 0 1rem;
 `;
 
 const Title = styled.p`
   margin-right: 1.5rem;
+  margin-left: 2.5rem;
 `;
 
 const MissionDots = styled.div`

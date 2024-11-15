@@ -1,7 +1,7 @@
 import ToggleButton from '@components/common/Toogle';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
-import ECharts from 'echarts-for-react';
+import EChartsReact from 'echarts-for-react';
 
 const CoupleReport = () => {
   const option = {
@@ -61,7 +61,7 @@ const CoupleReport = () => {
       <CoupleReportLineChartContainer>
         <CoupleReportDescription>난임 스트레스 예상 점수</CoupleReportDescription>
         <ChartCover>
-          <ECharts option={option} />
+          <EChartsReact option={option} />
         </ChartCover>
       </CoupleReportLineChartContainer>
     </CoupleReportContainer>
