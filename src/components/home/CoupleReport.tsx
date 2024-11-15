@@ -7,13 +7,13 @@ const CoupleReport = () => {
   const option = {
     radar: {
       indicator: [
-        { name: '사회적', min: 0, max: 7000 },
-        { name: '성적', min: 0, max: 16000 },
-        { name: '필요성', min: 0, max: 30000 },
-        { name: '아이가 없는 일상에 대한 거부', min: 0, max: 38000 },
-        { name: '관계적', min: 0, max: 25000 },
+        { name: '사회적' },
+        { name: '성적' },
+        { name: '필요성' },
+        { name: '아이가 없는 일상에 대한 거부' },
+        { name: '관계적' },
       ],
-      splitNumber: 5, // 눈금 개수를 조절하여 가독성 개선
+      splitNumber: 10,
       splitLine: {
         show: true,
         lineStyle: {
@@ -29,19 +29,16 @@ const CoupleReport = () => {
     },
     series: [
       {
-        name: 'Budget vs spending',
         type: 'radar',
         data: [
           {
             value: [4200, 3000, 20000, 35000, 18000],
-            name: 'Allocated Budget',
             itemStyle: {
               color: variables.colors.primary,
             },
           },
           {
             value: [5000, 14000, 28000, 26000, 21000],
-            name: 'Actual Spending',
             itemStyle: {
               color: variables.colors.secondaryStrong,
             },
