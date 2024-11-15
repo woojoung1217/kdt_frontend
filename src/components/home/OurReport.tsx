@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import React, { useState } from 'react';
-import ECharts from 'echarts-for-react';
+import EChartsReact from 'echarts-for-react';
 /* eslint-disable */
 const OurReport = () => {
   const [options, setOptions] = useState({
@@ -34,7 +34,7 @@ const OurReport = () => {
       <OurReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인할 수 있어요</OurReportTitleDes>
       <OurReportLineChartContainer>
         <ChartDescription>스트레스 척도</ChartDescription>
-        <ECharts option={options} style={{ width: '100%', height: '100%' }} />
+        <EChartsReact option={options} style={{ width: '100%', height: '100%' }} />
       </OurReportLineChartContainer>
     </OurReportContainer>
   );

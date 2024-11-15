@@ -5,6 +5,7 @@ import profileImgMan from '@assets/Images/mainManProfile.svg';
 import mainlock from '@assets/Images/mainlock.svg';
 import { useNavigate } from 'react-router-dom';
 import { useCoupleInfo } from '@hooks/useCoupleInfo';
+import CoupleMissionWeekly from './CoupleMissonWeekly';
 
 const CoupleInformation = () => {
   const navigate = useNavigate();
@@ -34,7 +35,12 @@ const CoupleInformation = () => {
         </SpouseCard>
       </CoupleCardsWrapper>
       <CoupleMission>배우자 연동을 하면 미션 등록이 가능해요</CoupleMission>
-      <CoupleMissionWeekly>배우자 연동을 하면 미션 등록이 가능해요</CoupleMissionWeekly>
+      {partnerName ? (
+        //LINK - 컴포넌트임
+        <CoupleMissionWeekly></CoupleMissionWeekly>
+      ) : (
+        <CoupleMission>배우자 연동을 하면 미션 등록이 가능해요</CoupleMission>
+      )}
     </CoupleInformationContainer>
   );
 };
@@ -112,20 +118,6 @@ const EmotionAnalysis = styled.div`
 `;
 
 const CoupleMission = styled.div`
-  width: 100%;
-  height: 6rem;
-  font-size: ${variables.size.medium};
-  font-weight: 700;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: ${variables.BoxShadow};
-  border-radius: calc(${variables.borderRadius} + 0.4rem);
-  color: ${variables.colors.black};
-  margin-bottom: 1.4rem;
-`;
-
-const CoupleMissionWeekly = styled.div`
   width: 100%;
   height: 6rem;
   font-size: ${variables.size.medium};
