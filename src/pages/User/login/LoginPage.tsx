@@ -40,16 +40,17 @@ const LoginPage = () => {
         const MemberId = response.data.result.memberId;
         const userName = response.data.result.username;
         const Gender = response.data.result.gender;
+        const connect = 'false';
         console.log(token);
 
-        // Zustand 상태에 로그인 정보 저장
-
+        // zustand 상태에 로그인 정보 저장
         // 로컬 스토리지에도 로그인 정보 저장
         localStorage.setItem('authToken', token);
         localStorage.setItem('userEmail', Email);
         localStorage.setItem('MemberId', MemberId);
         localStorage.setItem('userName', userName);
         localStorage.setItem('Gender', Gender);
+        localStorage.setItem('connect', connect);
 
         setAuthState(token, Email, MemberId, userName);
 

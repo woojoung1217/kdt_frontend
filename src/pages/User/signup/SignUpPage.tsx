@@ -56,10 +56,11 @@ const SignUpPage = () => {
         // 성공적으로 생성되었을 때
         console.log('Signup successful:', response.data);
         navigate('/users/welcome'); // 성공 시 웰컴 페이지로 이동
+        localStorage.setItem('connect', 'false');
       }
     } catch (error) {
       console.error('Signup failed:', error);
-      alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+      alert('회원가입에 실패했습니다. 다시 시도해주세요.' + `${error}`);
     }
   }, [formData, navigate]);
 
