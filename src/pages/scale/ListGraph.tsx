@@ -5,7 +5,8 @@ import EChartsReact from 'echarts-for-react';
 import { ScaleData } from './ScaleList';
 
 const ListGraph = ({ data }: { data: ScaleData[] }) => {
-  const dataList = data.length > 7 ? data.slice(-6) : data;
+  const dataList = data.length > 6 ? data.slice(0, 6).reverse() : data.reverse();
+
   const typeOption = {
     color: `${variables.colors.primary}`,
     grid: {
