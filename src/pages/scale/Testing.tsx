@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Questions from './Questions';
-import { ScaleData } from './ScaleList';
+import { Scale, ScaleData } from './ScaleList';
 
 interface Data {
   [key: string]: string;
@@ -23,8 +23,8 @@ interface ScaleDataRes {
 const Testing = () => {
   const navigate = useNavigate();
   const steps = ['1', '2', '3', '4', '5'];
-  const [accData, setAccData] = useState<ScaleData>();
-  const [result, setResult] = useState<ScaleData>({
+  const [accData, setAccData] = useState<Scale>();
+  const [result, setResult] = useState<Scale>({
     total: 0,
     social: 0,
     sexual: 0,
@@ -70,30 +70,34 @@ const Testing = () => {
     }
   };
 
+  const isScaleKey = (subject: string): subject is keyof Scale => {
+    return ['social', 'sexual', 'relational', 'refusing', 'essential'].includes(subject);
+  };
+
   const onSubmit = useCallback(
     async (formData: Data) => {
       // setAccData({ ...accData, ...formData });
-      console.log(formData);
       setResult((prev) => {
-        const newResult = prev;
+        const newResult = { ...prev };
         for (const key in formData) {
           const [subject, isReversed] = key.split('-');
           // 역문항 반영 점수 추출
           const value = JSON.parse(isReversed) ? 6 - +formData[key] : +formData[key];
           // 해당 영역에 점수 추가
-          newResult[subject] = +newResult[subject] + value;
-          newResult.total = +newResult.total + value;
+          if (isScaleKey(subject)) newResult[subject] += value;
+          newResult.total += value;
         }
         return newResult;
       });
 
       if (currentStep !== '5') {
         setAccData((prev) => {
-          const newResult = prev;
+          if (!prev) return undefined;
+          const newResult = { ...prev };
           for (const key in formData) {
             const [_, isReversed, title] = key.split('-');
             const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
-            newResult[title] = value;
+            if (isScaleKey(title)) newResult[title] += value;
           }
           return newResult;
         });
