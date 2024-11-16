@@ -1,6 +1,7 @@
 import Button from '@components/common/Button';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
+import { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Fragment } from 'react/jsx-runtime';
 
@@ -114,7 +115,7 @@ const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<Data>; page: nu
     ],
   ];
 
-  const { handleSubmit, register } = useForm<Data>();
+  const { handleSubmit, register, watch } = useForm<Data>();
   const InputBox = styled.div`
     h3 {
       font-size: ${variables.size.big};
@@ -153,6 +154,14 @@ const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<Data>; page: nu
     }
   `;
 
+  const [isButtonEnabled, setIsButtonEnabled] = useState(true);
+  const watchedFields = watch();
+  const isAllSelected = () => setIsButtonEnabled(Object.values(watchedFields).some((v) => v === null));
+
+  useEffect(() => {
+    isAllSelected();
+  }, [watchedFields]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {questions[page - 1].map((question) => (
@@ -177,7 +186,7 @@ const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<Data>; page: nu
           </div>
         </InputBox>
       ))}
-      <Button text={page !== 5 ? '다음' : '제출'} type="submit" size="large" disabled={false} fixed={true} />
+      <Button text={page !== 5 ? '다음' : '제출'} type="submit" size="large" disabled={isButtonEnabled} fixed={true} />
     </form>
   );
 };
