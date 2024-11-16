@@ -3,9 +3,12 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Fragment } from 'react/jsx-runtime';
-import { TestingFormData } from './Testing';
 
-const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<TestingFormData>; page: number }) => {
+interface Data {
+  [key: string]: string;
+}
+
+const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<Data>; page: number }) => {
   const examples = [1, 2, 3, 4, 5];
   const questions = [
     [
@@ -111,7 +114,7 @@ const Questions = ({ onSubmit, page }: { onSubmit: SubmitHandler<TestingFormData
     ],
   ];
 
-  const { handleSubmit, register } = useForm<TestingFormData>();
+  const { handleSubmit, register } = useForm<Data>();
   const InputBox = styled.div`
     h3 {
       font-size: ${variables.size.big};
