@@ -2,21 +2,9 @@
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
+import { ScaleData } from './ScaleList';
 
-interface Data {
-  id: number;
-  total: number;
-  social: number;
-  sexual: number;
-  relational: number;
-  refusing: number;
-  essential: number;
-  belifs: string;
-  created_at: string;
-  member_id: number;
-}
-
-const ListGraph = ({ data }: { data: Data[] }) => {
+const ListGraph = ({ data }: { data: ScaleData[] }) => {
   const dataList = data.length > 7 ? data.slice(-6) : data;
   const typeOption = {
     color: `${variables.colors.primary}`,
@@ -30,7 +18,7 @@ const ListGraph = ({ data }: { data: Data[] }) => {
 
     xAxis: {
       type: 'category',
-      data: dataList.map((scale: Data) => scale.created_at.split('T')[0].slice(5).split('-').join('.')),
+      data: dataList.map((scale: ScaleData) => scale.created_at!.split('T')[0].slice(5).split('-').join('.')),
       offset: 10,
       axisTick: {
         show: false,
