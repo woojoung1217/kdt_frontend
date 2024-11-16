@@ -15,6 +15,7 @@ import ScaleList from '@pages/scale/ScaleList';
 import EmotionMission from '@pages/emotion/mission/EmotionMission';
 import EmotionResult from '@pages/emotion/result/EmotionResult';
 import FollowPage from '@pages/User/follow/FollowPage';
+import InterestPage from '@pages/User/interests/InterestPage';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: 'users/follow',
         element: <FollowPage />,
+      },
+      {
+        path: 'users/interests',
+        element: <InterestPage />,
       },
       {
         path: 'counseling',
