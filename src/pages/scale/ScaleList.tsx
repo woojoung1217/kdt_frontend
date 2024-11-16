@@ -2,127 +2,52 @@
 import Button from '@components/common/Button';
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ListGraph from './ListGraph';
+import axios from 'axios';
+
+export interface Scale {
+  total: number;
+  social: number;
+  sexual: number;
+  relational: number;
+  refusing: number;
+  essential: number;
+}
+export interface ScaleData extends Scale {
+  member_id: number;
+  belifs: string;
+  id?: number;
+  created_at?: string;
+}
 
 const ScaleList = () => {
-  const data = [
-    {
-      id: 1,
-      total: 200,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: 'null',
-      created_at: '2024-10-27T16:28:38.470913+09:00',
-      member_id: 1,
-    },
-    {
-      id: 2,
-      total: 130,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-10-28T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 3,
-      total: 100,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-10-27T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 4,
-      total: 140,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: 'null',
-      created_at: '2024-10-29T16:28:38.470913+09:00',
-      member_id: 1,
-    },
-    {
-      id: 5,
-      total: 130,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-10-29T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 6,
-      total: 100,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-11-08T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 7,
-      total: 130,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-11-09T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 8,
-      total: 100,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-11-10T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-    {
-      id: 9,
-      total: 130,
-      social: 10,
-      sexual: 20,
-      relational: 30,
-      refusing: 40,
-      essential: 40,
-      belifs: '아이를 가져야만 나는 성공적인 결혼 생활을 할 수 있다.',
-      created_at: '2024-11-11T16:31:57.003731+09:00',
-      member_id: 1,
-    },
-  ];
+  const memberId = 1;
+  const [data, setData] = useState<ScaleData[] | null>();
+
+  const fetchScaleList = async (): Promise<ScaleData | null> => {
+    try {
+      const response = await axios.get('/infertility/tests', {
+        params: { memberId },
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+      return response.data.result.totalTests;
+    } catch (err) {
+      console.error('Failed to fetch scaleList: ', err);
+      return null;
+    }
+  };
 
   const navigate = useNavigate();
   const [showModal, setModal] = useState(false);
 
   const isMonthPassed = () => {
-    const lastTestDate = new Date(data[data.length - 1].created_at.split('T')[0]);
+    if (!data) return false;
+    const lastTestDate = new Date(data[data.length - 1].created_at!.split('T')[0]);
     const today = new Date();
     const oneMonthLater = new Date(lastTestDate);
     oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
@@ -130,27 +55,32 @@ const ScaleList = () => {
   };
 
   const toTestBtn = () => {
-    if (isMonthPassed()) navigate('/scale/testing');
+    if (isMonthPassed()) navigate('/scale/testing/');
     else setModal(true);
   };
+
+  useEffect(() => {
+    const data = fetchScaleList();
+    if (!data) setData(data);
+  }, []);
 
   return (
     <div css={ScaleWr}>
       <div css={ScaleChart}>
         <h2>난임 스트레스 검사 기록</h2>
-        <div className="chart">
-          <ListGraph data={data} />
-        </div>
+        <div className="chart">{data && <ListGraph data={data} />}</div>
         <Button onClick={toTestBtn} text="난임 스트레스 검사 하러가기" size="medium" disabled={false} />
       </div>
 
-      <ul css={ScaleLists}>
-        {data.map((item) => (
-          <li key={item.id}>
-            <Link to={`/scale/${item.id}`}>{item.created_at.split('T')[0].split('-').join('.')}</Link>
-          </li>
-        ))}
-      </ul>
+      {data && (
+        <ul css={ScaleLists}>
+          {data.map((item) => (
+            <li key={item.id}>
+              <Link to={`/scale/${item.id}`}>{item.created_at!.split('T')[0].split('-').join('.')}</Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {showModal && (
         <div css={Modal}>
