@@ -1,33 +1,36 @@
 import GenericProgressBar from '@components/common/GenericProgressBar';
 import styled from '@emotion/styled';
 import { useFunnel } from '@hooks/useFunnel';
-import variables from '@styles/Variables';
-import { useCallback, useState } from 'react';
-import Questions from './Questions';
 import fetchGPT from '@hooks/useGPT';
+import variables from '@styles/Variables';
+import axios from 'axios';
+import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Questions from './Questions';
+import { ScaleData } from './ScaleList';
 
 interface Data {
   [key: string]: string;
 }
-export interface TestingFormData extends Data {
-  total: string;
-  social: string;
-  sexual: string;
-  relational: string;
-  refusing: string;
-  essential: string;
+
+interface ScaleDataRes {
+  data: {
+    result: ScaleData;
+    success: boolean;
+  };
 }
 
 const Testing = () => {
+  const navigate = useNavigate();
   const steps = ['1', '2', '3', '4', '5'];
-  const [accData, setAccData] = useState<Data>({});
-  const [result, setResult] = useState<TestingFormData>({
-    total: '0',
-    social: '0',
-    sexual: '0',
-    relational: '0',
-    refusing: '0',
-    essential: '0',
+  const [accData, setAccData] = useState<ScaleData>();
+  const [result, setResult] = useState<ScaleData>({
+    total: 0,
+    social: 0,
+    sexual: 0,
+    relational: 0,
+    refusing: 0,
+    essential: 0,
   });
 
   const { Funnel, Step, setStep, currentStep } = useFunnel(steps[0]);
@@ -37,7 +40,7 @@ const Testing = () => {
   const prompt = `- 난임 스트레스 척도를 통해 핵심 신념을 최대 5개 평가해줘
   - 답은 높을수록 강한 긍정을 의미해.
   - 핵심 신념: 스트레스 상황을 접하여 떠올린 자기, 미래, 세상에 대한 부정적인 자동적 사고를 활성화시키는 기저 신념
-  - 응답 형식: ["핵심신념1"]`;
+  - 응답 형식: "핵심신념1, 핵심신념2`;
 
   // const toNextPage = async (formData: TestingFormData) => {
   //   setAccData((prev) => {
@@ -52,39 +55,54 @@ const Testing = () => {
   //   setStep(`${+currentStep + 1}`);
   // };
 
+  const fetchTestResult = async (body: ScaleData): Promise<ScaleDataRes | null> => {
+    try {
+      const response = await axios.post('/infertility/tests/', body, {
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+      return response;
+    } catch (err) {
+      console.error('Failed to POST scaleList: ', err);
+      return null;
+    }
+  };
+
   const onSubmit = useCallback(
-    async (formData: TestingFormData) => {
+    async (formData: Data) => {
       // setAccData({ ...accData, ...formData });
+      console.log(formData);
       setResult((prev) => {
-        const newResult = { ...prev };
+        const newResult = prev;
         for (const key in formData) {
           const [subject, isReversed] = key.split('-');
-          const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
-          newResult[subject] = `${Number(newResult[subject]) + value}`;
-          newResult.total = `${Number(newResult.total) + value}`;
+          // 역문항 반영 점수 추출
+          const value = JSON.parse(isReversed) ? 6 - +formData[key] : +formData[key];
+          // 해당 영역에 점수 추가
+          newResult[subject] = +newResult[subject] + value;
+          newResult.total = +newResult.total + value;
         }
         return newResult;
       });
 
       if (currentStep !== '5') {
         setAccData((prev) => {
-          const newResult = { ...prev };
+          const newResult = prev;
           for (const key in formData) {
             const [_, isReversed, title] = key.split('-');
-            console.log(_);
             const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
-            newResult[title] = `${value}`;
+            newResult[title] = value;
           }
           return newResult;
         });
         setStep(`${+currentStep + 1}`);
       } else {
-        // 폼 제출
-        // console.log(result);
-
-        const data = await fetchGPT(prompt, JSON.stringify(accData));
-        const dataToObj = JSON.parse(data.choices[0].message.content);
-        console.log(data, dataToObj);
+        const gptData = await fetchGPT(prompt, JSON.stringify(accData));
+        const belifs = gptData.choices[0].message.content;
+        const response = await fetchTestResult({ ...result, member_id: 1, belifs });
+        if (response) navigate(`/scale/${response.data.result.id}`);
       }
       console.log(result, accData);
     },
