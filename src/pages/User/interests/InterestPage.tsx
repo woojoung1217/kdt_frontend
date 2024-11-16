@@ -5,6 +5,9 @@ import variables from '@styles/Variables';
 import { css } from '@emotion/react';
 import InterestItem from './InterestItem';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const INTERESTS_URL = '/emotions/interests/';
 
 const InterestSection = styled.section`
   height: calc(100svh - 2 * ${variables.layoutPadding});
@@ -18,16 +21,51 @@ const InterestSection = styled.section`
 const InterestPage = () => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isDisabled, setDisabled] = useState<boolean>(true);
+  const [memberId, setMemberId] = useState<number | null>();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setMemberId(Number(localStorage.getItem('MemberId')));
+  }, []);
 
   useEffect(() => {
     if (keywords.length > 0) setDisabled(false);
     else setDisabled(true);
   }, [keywords]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const interests = keywords.map((keyword) => `#${keyword}`).join(' ');
 
-    console.log(keywords);
+    const formData = {
+      interests,
+      member_id: memberId,
+    };
+
+    console.log(formData);
+
+    try {
+      const response = await fetch(INTERESTS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+
+      if (response.status === 201) {
+        alert('관심사가 등록되었습니다!');
+        navigate('/');
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (e) {
+      if (e instanceof Error) alert(e.message);
+    }
   };
 
   return (
