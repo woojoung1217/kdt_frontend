@@ -95,7 +95,8 @@ const Testing = () => {
           if (!prev) return undefined;
           const newResult = { ...prev };
           for (const key in formData) {
-            const [_, isReversed, title] = key.split('-');
+            const isReversed = key.split('-')[1];
+            const title = key.split('-')[2];
             const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
             if (isScaleKey(title)) newResult[title] += value;
           }
