@@ -35,7 +35,8 @@ const ScaleList = () => {
           accept: 'application/json',
         },
       });
-      return response.data.result.totalTests;
+      setData(response.data.result.totalTests);
+      return await response.data.result.totalTests;
     } catch (err) {
       console.error('Failed to fetch scaleList: ', err);
       return null;
@@ -60,8 +61,7 @@ const ScaleList = () => {
   };
 
   useEffect(() => {
-    const data = fetchScaleList();
-    if (!data) setData(data);
+    fetchScaleList();
   }, []);
 
   return (
