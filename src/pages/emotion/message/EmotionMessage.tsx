@@ -18,6 +18,8 @@ import fetchGPT from '@hooks/useGPT';
 import useAnalysisStore from '@store/useAnalysisStore';
 import { useNavigate } from 'react-router-dom';
 
+const INTERESTS_URL = '/emotions/interests/';
+
 const EmotionMessage = () => {
   const emotionRecord = useEmotionStore((state) => state.record);
   const updateMessage = useEmotionStore((state) => state.updateMessage);
@@ -28,12 +30,41 @@ const EmotionMessage = () => {
   const [messageToSpouse, setMessageToSpouse] = useState<string>('');
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [keywords, setKeywords] = useState<string[]>([]);
   const navigate = useNavigate();
+
+  const gender = localStorage.getItem('Gender');
+
+  const fetchKeywords = async (memberId: number) => {
+    const response = await fetch(`${INTERESTS_URL}?member_id=${memberId}`);
+    const data = await response.json();
+
+    return data;
+  };
+
+  useEffect(() => {
+    const memberId = Number(localStorage.getItem('MemberId'));
+    const fetchAndLogKeywords = async () => {
+      try {
+        const data = await fetchKeywords(memberId);
+        setKeywords(
+          data.result[0].interests
+            .split(' #')
+            .map((tag: string) => tag.replace('#', ''))
+            .join(', ')
+        );
+      } catch (error) {
+        console.error('Failed to fetch keywords:', error); // 에러 처리
+      }
+    };
+
+    fetchAndLogKeywords(); // 비동기 함수 호출
+  }, []);
 
   // 임시 데이터
   const isInfertility = true;
   /* 키워드 변경할 것 */
-  const keywords = ['운동', '영화', '휴식'].join(',');
+  // const keywords = ['운동', '영화', '휴식'].join(',');
   /* 난임스트레스 척도 검사 결과 */
   const [currentTotalScore, currentSocial, currentSexual, currentRelational, currentRefusing, currentEssential] = [
     153, 34, 33, 31, 26, 29,
@@ -46,7 +77,7 @@ const EmotionMessage = () => {
     predictedRelational,
     predictedRefusing,
     predictedEssential,
-  ] = [143, 30, 35, 32, 28, 28];
+  ] = [145, 24, 28, 32, 30, 31];
 
   // 프롬프트 작성
   const prompt = `
@@ -147,7 +178,7 @@ const EmotionMessage = () => {
           <MessageContainer onSubmit={handleSubmit}>
             <MessageItem>
               <MessageTitle>
-                <ProfileImage gender="female" />
+                <ProfileImage gender={gender === 'W' ? 'female' : 'male'} />
                 <TitleText>
                   <p>오늘의 나에게 한마디</p>
                   <p>사용자님에게 하루동안 보여지는 메시지예요</p>
@@ -165,10 +196,10 @@ const EmotionMessage = () => {
             </MessageItem>
             <MessageItem>
               <MessageTitle second>
-                <ProfileImage gender="male" />
+                <ProfileImage gender={gender === 'W' ? 'male' : 'female'} />
                 <TitleText>
-                  <p>오늘의 남편에게 한마디</p>
-                  <p>남편이 미션을 완료하면 볼 수 있는 메시지예요</p>
+                  <p>오늘의 {gender === 'W' ? '남편' : '아내'}에게 한마디</p>
+                  <p>{gender === 'W' ? '남편이' : '아내가'} 미션을 완료하면 볼 수 있는 메시지예요</p>
                 </TitleText>
               </MessageTitle>
               <MessageArea second>
