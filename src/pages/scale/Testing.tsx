@@ -70,12 +70,16 @@ const Testing = () => {
     }
   };
 
+  const ToScrollTop = () => document.body.scrollTo({ top: 0 });
+
   const isScaleKey = (subject: string): subject is keyof Scale => {
     return ['social', 'sexual', 'relational', 'refusing', 'essential'].includes(subject);
   };
 
   const onSubmit = useCallback(
     async (formData: Data) => {
+      ToScrollTop();
+
       // setAccData({ ...accData, ...formData });
       setResult((prev) => {
         const newResult = { ...prev };
@@ -109,7 +113,6 @@ const Testing = () => {
         const response = await fetchTestResult({ ...result, member_id: 1, belifs });
         if (response) navigate(`/scale/${response.data.result.id}`);
       }
-      console.log(result, accData);
     },
     [currentStep]
   );
