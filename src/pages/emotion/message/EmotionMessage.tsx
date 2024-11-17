@@ -44,7 +44,7 @@ const EmotionMessage = () => {
 
   useEffect(() => {
     const memberId = Number(localStorage.getItem('MemberId'));
-    const fetchAndLogKeywords = async () => {
+    const fetchAndSetKeywords = async () => {
       try {
         const data = await fetchKeywords(memberId);
         setKeywords(
@@ -54,11 +54,11 @@ const EmotionMessage = () => {
             .join(', ')
         );
       } catch (error) {
-        console.error('Failed to fetch keywords:', error); // 에러 처리
+        console.error('키워드를 불러오지 못했습니다!', error);
       }
     };
 
-    fetchAndLogKeywords(); // 비동기 함수 호출
+    fetchAndSetKeywords();
   }, []);
 
   // 임시 데이터
