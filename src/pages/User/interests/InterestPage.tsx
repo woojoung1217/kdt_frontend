@@ -53,9 +53,7 @@ const InterestPage = () => {
         body: JSON.stringify(formData),
       });
 
-      console.log(response);
       const data = await response.json();
-      console.log(data);
 
       if (response.status === 201) {
         alert('관심사가 등록되었습니다!');

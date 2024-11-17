@@ -24,12 +24,10 @@ const FollowPage = () => {
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>('');
   const [memberId, setMemberId] = useState<number | null>();
-  const [token, setToken] = useState<string | null>();
   const navigate = useNavigate();
 
   useEffect(() => {
     setMemberId(Number(localStorage.getItem('MemberId')));
-    setToken(localStorage.getItem('authToken'));
   }, []);
 
   const emailStatus = handleValidation('email', email);
@@ -56,7 +54,6 @@ const FollowPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });

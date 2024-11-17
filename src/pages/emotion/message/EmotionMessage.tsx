@@ -17,8 +17,10 @@ import {
 import fetchGPT from '@hooks/useGPT';
 import useAnalysisStore from '@store/useAnalysisStore';
 import { useNavigate } from 'react-router-dom';
+import { IInterests, ITest } from 'types/types';
 
 const INTERESTS_URL = '/emotions/interests/';
+const INFERTILITY_TESTS_URL = '/infertility/tests/';
 
 const EmotionMessage = () => {
   const emotionRecord = useEmotionStore((state) => state.record);
@@ -30,45 +32,74 @@ const EmotionMessage = () => {
   const [messageToSpouse, setMessageToSpouse] = useState<string>('');
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywords, setKeywords] = useState<string>('');
+  const [tests, setTests] = useState<ITest>();
   const navigate = useNavigate();
 
   const gender = localStorage.getItem('Gender');
 
-  const fetchKeywords = async (memberId: number) => {
-    const response = await fetch(`${INTERESTS_URL}?member_id=${memberId}`);
-    const data = await response.json();
+  const fetchKeywords = async (memberId: number): Promise<IInterests | null> => {
+    try {
+      const response = await fetch(`${INTERESTS_URL}?member_id=${memberId}`);
 
-    return data;
+      if (response.status === 200) {
+        const data = await response.json();
+        return data.result[0];
+      } else {
+        throw new Error('키워드를 불러오지 못했습니다!');
+      }
+    } catch (e) {
+      if (e instanceof Error) alert(e.message);
+    }
+
+    return null;
+  };
+
+  const fetchTests = async (memberId: number): Promise<ITest | null> => {
+    try {
+      const response = await fetch(`${INFERTILITY_TESTS_URL}?memberId=${memberId}`);
+
+      if (response.status === 200) {
+        const data = await response.json();
+        return data.result.totalTests[0];
+      } else {
+        throw new Error('난임스트레스 척도 검사 결과가 존재하지 않습니다!');
+      }
+    } catch (e) {
+      if (e instanceof Error) alert(e.message);
+    }
+
+    return null;
   };
 
   useEffect(() => {
     const memberId = Number(localStorage.getItem('MemberId'));
-    const fetchAndLogKeywords = async () => {
-      try {
-        const data = await fetchKeywords(memberId);
+    const fetchAndSetKeywords = async () => {
+      const data = await fetchKeywords(memberId);
+      if (data) {
         setKeywords(
-          data.result[0].interests
+          data.interests
             .split(' #')
             .map((tag: string) => tag.replace('#', ''))
             .join(', ')
         );
-      } catch (error) {
-        console.error('Failed to fetch keywords:', error); // 에러 처리
       }
     };
 
-    fetchAndLogKeywords(); // 비동기 함수 호출
+    const fetchAndSetTests = async () => {
+      const data = await fetchTests(memberId);
+      if (data) {
+        setTests(data);
+      }
+    };
+
+    fetchAndSetKeywords();
+    fetchAndSetTests();
   }, []);
 
   // 임시 데이터
   const isInfertility = true;
-  /* 키워드 변경할 것 */
-  // const keywords = ['운동', '영화', '휴식'].join(',');
-  /* 난임스트레스 척도 검사 결과 */
-  const [currentTotalScore, currentSocial, currentSexual, currentRelational, currentRefusing, currentEssential] = [
-    153, 34, 33, 31, 26, 29,
-  ];
+
   /* 전일 난임스트레스 척도 예상점수 */
   const [
     predictedTotalScore,
@@ -77,17 +108,17 @@ const EmotionMessage = () => {
     predictedRelational,
     predictedRefusing,
     predictedEssential,
-  ] = [145, 24, 28, 32, 30, 31];
+  ] = [151, 30, 34, 29, 28, 30];
 
   // 프롬프트 작성
   const prompt = `
   - 답변 형식: {"prediction": {"totalScore": "숫자", "social": "숫자", "sexual": "숫자", "relational": "숫자", "refusing": "숫자", "essential": "숫자"}, "emotions": {"joy": "숫자", "sadness": "숫자", "anger": "숫자", "fear": "숫자", "surprise": "숫자", "disgust": "숫자"}, "missions": ["내용", "내용"], "keywords": ["내용", "내용", "내용"]}
 
-  - 사용자의 특성: ${isInfertility ? '난임 부부' : ''} 난임스트레스 척도 ${currentTotalScore}/230점
-  - 사용자의 관심사: ${keywords}
+  - 사용자의 특성: ${isInfertility ? '난임 부부' : ''}
+  - 사용자의 관심사: ${keywords ?? ''}
 
-  - prediction: 
-  
+  - prediction:
+
   우리가 시행하는 난임스트레스 척도 검사는 난임 요인 목록(Fertility Problem Inventory)을 변형하여 사회적 영역(10문제), 관계적 영역(10문제), 성적 영역(8문제), 아이 없는 일상에 대한 거부 영역(8문제), 부모됨의 필요성 영역(10문제) - 5가지 영역 총 46개 문항으로 이루어진 검사야.
 
   사회적 영역의 대표적인 질문으로는 "아이에 관한 질문을 받아도 불편하지 않다.", "가족들은 아이가 없다고 해서 우리를 다르게 대하지 않는다.", "나는 아이가 있는 친구들과도 여전히 공통관심사가 많다." 등이 있어.
@@ -97,9 +128,9 @@ const EmotionMessage = () => {
   부모됨의 필요성 영역의 대표적인 질문으로는 "아이를 갖는 것이 인생의 주요 목적은 아니다.", "내 결혼생활에는 아이는 필수가 아니다.", "나는 지금까지 부모가 되지 않아도 괜찮다고 생각해왔다." 등이 있어.
 
   각 문항별 답변 점수는 매우 그렇다 1점 ~ 전혀 그렇지 않다 5점으로, 총 46점 ~ 230점의 결과가 나오는데 점수는 낮을수록 좋은거야.
-  
-  가장 최근 검사 결과는 총점 ${currentTotalScore}점, 사회적 영역 ${currentSocial}점, 관계적 영역 ${currentRelational}점, 성적 영역 ${currentSexual}점, 아이 없는 일상에 대한 거부 영역 ${currentRefusing}점, 부모됨의 필요성 영역 ${currentEssential}점이야.
-  ${predictedTotalScore > 0 && `어제 감정기록을 통해 얻은 예상 점수는 총점 ${predictedTotalScore}점, 사회적 영역 ${predictedSocial}점, 관계적 영역 ${predictedSexual}점, 성적 영역 ${predictedRelational}점, 아이 없는 일상에 대한 거부 영역 ${predictedRefusing}점, 부모됨의 필요성 영역 ${predictedEssential}점이야.`} 
+
+  가장 최근 검사 결과는 총점 ${tests?.total}점, 사회적 영역 ${tests?.social}점, 관계적 영역 ${tests?.relational}점, 성적 영역 ${tests?.sexual}점, 아이 없는 일상에 대한 거부 영역 ${tests?.refusing}점, 부모됨의 필요성 영역 ${tests?.essential}점이야.
+  ${predictedTotalScore > 0 && `어제 감정기록을 통해 얻은 예상 점수는 총점 ${predictedTotalScore}점, 사회적 영역 ${predictedSocial}점, 관계적 영역 ${predictedSexual}점, 성적 영역 ${predictedRelational}점, 아이 없는 일상에 대한 거부 영역 ${predictedRefusing}점, 부모됨의 필요성 영역 ${predictedEssential}점이야.`}
 
   사용자의 특성을 고려하여 오늘 사용자의 기분 좋았던 일, 안 좋았던 일, 임신을 위해 한 노력, 본인과 배우자에게 해 주고 싶은 말을 토대로 척도 총점수를 예상해줘.
   사회적 영역(10점~50점)은 몇 점일지 예상해서 "social"에 숫자 형태로 저장해주고, 성적 영역(8점~40점)은 몇 점일지 예상해서 "sexual"에 숫자 형태로 저장해줘.
