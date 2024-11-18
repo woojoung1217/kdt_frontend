@@ -41,9 +41,11 @@ const EmotionMessage = () => {
   const fetchKeywords = async (memberId: number): Promise<IInterests | null> => {
     try {
       const response = await fetch(`${INTERESTS_URL}?member_id=${memberId}`);
+      console.log('관심사', response);
 
-      if (response.status === 200) {
+      if (response.ok) {
         const data = await response.json();
+        console.log(data);
         return data.result[0];
       } else {
         throw new Error('키워드를 불러오지 못했습니다!');
@@ -58,9 +60,11 @@ const EmotionMessage = () => {
   const fetchTests = async (memberId: number): Promise<ITest | null> => {
     try {
       const response = await fetch(`${INFERTILITY_TESTS_URL}?memberId=${memberId}`);
+      console.log('난임척도', response);
 
-      if (response.status === 200) {
+      if (response.ok) {
         const data = await response.json();
+        console.log(data);
         return data.result.totalTests[0];
       } else {
         throw new Error('난임스트레스 척도 검사 결과가 존재하지 않습니다!');
@@ -133,7 +137,7 @@ const EmotionMessage = () => {
         "disgust": "숫자"
       },
       "missions": ["내용", "내용"],
-      "keywords": ["내용", "내용", "내용"]
+      "keywords": "#내용 #내용 #내용"
     }
 
     **사용자 특성**: ${isInfertility ? '난임 부부' : '난임은 아니지만 임신을 준비 중인 부부'}
@@ -189,8 +193,7 @@ const EmotionMessage = () => {
     사용자의 오늘 하루 기분 좋았던 일과 관심사를 토대로, 사용자에게 요즘 중요할 것 같은 키워드 3가지를 제안하세요. 
     - 키워드는 명사형, "~하기", "~하는 것" 형태로 작성.
     - 서로 겹치지 않는 범주를 고려.
-    - 직장, 병원, 관계 관련 키워드는 제외.
-    - 추상적인 단어 제외.
+    - 추상적인 명사, 직장, 병원, 부부 관계 관련 키워드는 제외.
   `;
 
   // 보내기 버튼 비활성화
