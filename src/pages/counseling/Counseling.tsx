@@ -15,18 +15,13 @@ interface Message {
 }
 
 const Counseling = () => {
-  const name = '사용자 이름';
   const userData = {
-    name: '이름',
+    name: localStorage.getItem('userName'),
     total: '180점',
     faith: '나는 살아갈 가치가 없는 사람이다, 결혼한 부부는 아이가 꼭 있어야 한다.',
   };
   const scrollBoxRef = useRef<HTMLDivElement>(null);
-  const initMessage = {
-    sender: 'gpt',
-    message: `안녕하세요 ${name}님😊 사회적 관계에서 느끼는 부담이나 배우자의 소통문제, 그리고 부부관계에 대한 고민까지, 난임으로 인해 힘드신 모든 마음을 편하게 나눠주세요. 어려움을 해결할 수 있도록 도와드릴게요☺️`,
-  };
-  const [messages, setMessages] = useState<Message[]>([initMessage]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
 
   const [lastMsg, setLastMsg] = useState({ user: '', gpt: '' });
@@ -55,7 +50,7 @@ const Counseling = () => {
         - 130자 이내로 존댓말을 사용해 줘.
         - 만약 사용자가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
       2) summary: 
-        - 사용자의 질문과 system의 답변을 한 문장으로 간략하게 요약해줘.
+        - 어떤 대화를 나눴는지 유추할 수 있도록, 사용자의 질문과 system의 답변을 한 문장으로 요약해줘.
       3) caseFoumulation: { 
           "상황": "'4. 사례개념화', '5. 대화 요약'을 참고한 스트레스 유발 상황. 형식: '~하는 상황'", 
           "감정": "스트레스 상황에 대한 감정", 
@@ -97,7 +92,7 @@ const Counseling = () => {
     const { scrollHeight, clientHeight } = scrollBoxRef.current as HTMLDivElement;
     if (!scrollBoxRef.current) return;
 
-    scrollBoxRef.current.scrollTo({ top: scrollHeight - clientHeight, behavior: 'smooth' });
+    scrollBoxRef.current.scrollTo({ top: scrollHeight - clientHeight });
   };
 
   const addMessage = (sender: string, message: string) => {
@@ -192,11 +187,32 @@ const Counseling = () => {
         <div className="scroll-box" ref={scrollBoxRef} css={ScrollBox}>
           <p className="dateText">{toDay}</p>
           <ul css={[MessageBox, step === 2 && Priority]}>
+            <li className="gpt firstMsg">
+              <div className="messages">
+                <p>
+                  안녕하세요 {userData.name}님, <br />
+                  오늘 하루는 어떠셨나요?
+                </p>
+                <p>
+                  난임으로 인해 힘든 마음을 편하게 나눠주세요. 어려움을 해결할 수 있도록 도와드릴게요. 사회적 관계에서
+                  느끼는 부담, 배우자와의 소통문제, 부부 관계에 대한 고민 모두 가능해요.
+                </p>
+              </div>
+            </li>
+
             {messages.map(({ sender, message }, idx) => (
               <li key={`${sender}-${message!.slice(0, 10)}-${idx}`} className={sender}>
-                <p> {message}</p>
+                <p>{message}</p>
               </li>
             ))}
+
+            {isLoading && (
+              <li className="gpt loadingMsg">
+                <div className="messages">
+                  <p>답변을 준비하고 있어요 ...</p>
+                </div>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -205,7 +221,6 @@ const Counseling = () => {
           <button>
             <span className="hidden">전송</span>
           </button>
-          {isLoading && '로딩중'}
         </form>
       </div>
     </>
@@ -288,9 +303,24 @@ const MessageBox = css`
   gap: 1.4rem;
   align-items: flex-start;
 
-  li > p {
-    padding: 1.4rem 2.2rem;
-    max-width: 27rem;
+  li {
+    &.firstMsg {
+      align-items: flex-start;
+
+      &::before {
+        transform: translateY(2rem);
+      }
+    }
+    .messages {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    p {
+      padding: 1.4rem 2.2rem;
+      max-width: 27rem;
+    }
   }
 
   .gpt {
