@@ -35,7 +35,7 @@ interface ChartOptions {
     type: string;
   };
   grid: {
-    bottom: number | string;
+    top: number | string;
   };
   series: Array<{
     name: string;
@@ -51,6 +51,7 @@ interface OurReportProps {
 
 const OurReport = ({ coupleData }: OurReportProps) => {
   const [testdone, setTestDone] = useState<boolean>(false);
+
   const [options, setOptions] = useState<ChartOptions>({
     xAxis: {
       type: 'category',
@@ -64,7 +65,7 @@ const OurReport = ({ coupleData }: OurReportProps) => {
     },
     yAxis: { type: 'value' },
     grid: {
-      bottom: '10%',
+      top: '10%',
     },
     series: [],
   });
@@ -103,7 +104,7 @@ const OurReport = ({ coupleData }: OurReportProps) => {
         },
         yAxis: { type: 'value' },
         grid: {
-          bottom: '20%',
+          top: '-23px',
         },
         series: [
           { name: '본인', data: myData, type: 'line', color: variables.colors.primary },
