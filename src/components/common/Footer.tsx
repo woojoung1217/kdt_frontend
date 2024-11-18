@@ -1,8 +1,41 @@
+/** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { IFailure, ITestRecordSuccess } from 'types/types';
+import { css } from '@emotion/react';
+import Button from './Button';
 
 const Footer = () => {
+  const [hasDoneInfTest, setHasDoneInfTest] = useState<boolean>(false);
+  const [showModal, setModal] = useState(false);
+  const navigate = useNavigate();
+
+  const fetchTests = async (memberId: number): Promise<ITestRecordSuccess | IFailure | null> => {
+    const response = await fetch(`/infertility/tests/?memberId=${memberId}`);
+
+    if (response.ok) {
+      const data = await response.json();
+
+      return data;
+    }
+
+    return null;
+  };
+
+  useEffect(() => {
+    const memberId = Number(localStorage.getItem('MemberId'));
+
+    const fetchAndSetTests = async () => {
+      const data = await fetchTests(memberId);
+
+      if (data?.result) setHasDoneInfTest(true);
+    };
+
+    fetchAndSetTests();
+  }, []);
+
   return (
     <FooterContainer>
       <FooterNav>
@@ -12,24 +45,53 @@ const Footer = () => {
           </StyledLink>
         </FooterItem>
         <FooterItem>
-          <StyledLink to="/emotion/record">
-            <FooterIcon src="/img/footer-02.svg" alt="회원가입 아이콘" />
+          <StyledButton
+            onClick={() => {
+              if (hasDoneInfTest) {
+                navigate('/emotion/record');
+              } else {
+                setModal(true);
+              }
+            }}
+          >
+            <FooterIcon src="/img/footer-02.svg" alt="감정기록 아이콘" />
             감정기록
-          </StyledLink>
+          </StyledButton>
         </FooterItem>
         <FooterItem>
-          <StyledLink to="/counseling">
-            <FooterIcon src="/img/footer-03.svg" alt="심리 상담 아이콘" />
+          <StyledButton
+            onClick={() => {
+              if (hasDoneInfTest) {
+                navigate('/counseling');
+              } else {
+                setModal(true);
+              }
+            }}
+          >
+            <FooterIcon src="/img/footer-04.svg" alt="심리 상담 아이콘" />
             AI 심리상담
-          </StyledLink>
+          </StyledButton>
         </FooterItem>
         <FooterItem>
           <StyledLink to="/scale/list">
-            <FooterIcon src="/img/footer-04.svg" alt="감정 기록 아이콘" />
-            스트레스
+            <FooterIcon src="/img/footer-03.svg" alt="척도검사 아이콘" />
+            척도검사
           </StyledLink>
         </FooterItem>
       </FooterNav>
+
+      {showModal && (
+        <div css={Modal}>
+          <div className="inner">
+            <p className="tit">알림</p>
+            <p className="cont">난임스트레스 척도 검사를 미리 진행해주세요!</p>
+            <div className="btn-box">
+              <Button text="뒤로가기" variant="gray" size="medium" disabled={false} onClick={() => setModal(false)} />
+              <Button text="검사하기" size="medium" disabled={false} onClick={() => navigate('/scale/list')} />
+            </div>
+          </div>
+        </div>
+      )}
     </FooterContainer>
   );
 };
@@ -86,9 +148,57 @@ const StyledLink = styled(Link)`
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
+
   &:focus {
     color: ${variables.colors.primaryStrong};
     font-weight: bold;
+  }
+`;
+
+const StyledButton = styled.button`
+  color: ${variables.colors.gray50};
+  font-size: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+
+  &:focus {
+    color: ${variables.colors.primaryStrong};
+    font-weight: bold;
+  }
+`;
+
+const Modal = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(115, 121, 128, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .inner {
+    background: #fff;
+    border-radius: 1.6rem;
+    padding: 3rem;
+    text-align: center;
+    width: calc(100% - calc(${variables.layoutPadding} * 2));
+    max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+    .tit {
+      font-size: ${variables.size.large};
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+    .cont {
+      font-size: ${variables.size.medium};
+      color: ${variables.colors.gray100};
+    }
+    .btn-box {
+      margin-top: 2rem;
+      display: flex;
+      gap: ${variables.size.min};
+    }
   }
 `;
 

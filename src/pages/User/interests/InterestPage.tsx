@@ -18,10 +18,45 @@ const InterestSection = styled.section`
   flex-direction: column;
 `;
 
+const Modal = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(115, 121, 128, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .inner {
+    background: #fff;
+    border-radius: 1.6rem;
+    padding: 3rem;
+    text-align: center;
+    width: calc(100% - calc(${variables.layoutPadding} * 2));
+    max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+    .tit {
+      font-size: ${variables.size.large};
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+    .cont {
+      font-size: ${variables.size.medium};
+      color: ${variables.colors.gray100};
+    }
+    .btn-box {
+      margin-top: 2rem;
+      display: flex;
+      gap: ${variables.size.min};
+    }
+  }
+`;
+
 const InterestPage = () => {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [isDisabled, setDisabled] = useState<boolean>(true);
   const [memberId, setMemberId] = useState<number | null>();
+  const [showModal, setModal] = useState(false);
+  const [showError, setErrorModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -56,13 +91,13 @@ const InterestPage = () => {
       const data = await response.json();
 
       if (response.status === 201) {
-        alert('관심사가 등록되었습니다!');
+        setModal(true);
         navigate('/');
       } else {
         throw new Error(data.error);
       }
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
+      if (e instanceof Error) setErrorModal(true);
     }
   };
 
@@ -149,6 +184,30 @@ const InterestPage = () => {
           <Button type="submit" text="선택완료" size="large" disabled={isDisabled} />
         </div>
       </form>
+
+      {showModal && (
+        <div css={Modal}>
+          <div className="inner">
+            <p className="tit">등록 완료</p>
+            <p className="cont">관심사가 등록되었습니다!</p>
+            <div className="btn-box">
+              <Button text="홈으로" size="medium" disabled={false} onClick={() => navigate('/')} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showError && (
+        <div css={Modal}>
+          <div className="inner">
+            <p className="tit">알림</p>
+            <p className="cont">관심사 등록에 실패했습니다!</p>
+            <div className="btn-box">
+              <Button text="확인" size="medium" disabled={false} onClick={() => setErrorModal(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </InterestSection>
   );
 };
