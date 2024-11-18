@@ -24,23 +24,24 @@ interface CounselData {
 }
 
 const Counseling = () => {
+  const params = useParams();
+  const navigate = useNavigate();
   const member_id = Number(localStorage.getItem('MemberId'));
+  const scrollBoxRef = useRef<HTMLDivElement>(null);
+
   const [scaleData, setScaleData] = useState({ total: 0, belifs: '' });
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [userInput, setUserInput] = useState('');
+  const [lastMsg, setLastMsg] = useState({ user: '', gpt: '' });
+  const [dataForPrompt, setDataForPrompt] = useState({ summary: '', count: 1, caseFoumulation: {} });
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setModal] = useState(false);
+
   const userData = {
     name: localStorage.getItem('userName'),
     total: `${scaleData.total}/230`,
     belifs: scaleData.belifs,
   };
-  const scrollBoxRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [userInput, setUserInput] = useState('');
-
-  const [lastMsg, setLastMsg] = useState({ user: '', gpt: '' });
-  const [dataForPrompt, setDataForPrompt] = useState({ summary: '', count: 1, caseFoumulation: {} });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [showModal, setModal] = useState(false);
-  const navigate = useNavigate();
 
   const prompt = `
     아래 내용을 참고하여 난임스트레스를 낮출 수 있는 심리 상담을 해줘.
@@ -177,7 +178,6 @@ const Counseling = () => {
   //가이드 영역
   const [step, setStep] = useState<number>(1);
   const [guideVisible, setGuideVisible] = useState(false);
-  const params = useParams();
 
   //페이지 진입시 .5초뒤에 가이드 시작
   useEffect(() => {
@@ -271,7 +271,7 @@ const Counseling = () => {
                 상담 목록을 통해 상담을 이어갈 수 있습니다.
               </p>
               <div className="btn-box">
-                <Button text="목록" size="medium" disabled={false} onClick={() => navigate('/counseling/list')} />
+                <Button text="목록 가기" size="medium" disabled={false} onClick={() => navigate('/counseling/list')} />
               </div>
             </div>
           </div>
