@@ -7,14 +7,24 @@ import prevIcon from '/img/icon-page-prev.svg';
 import wishIcon from '/img/icon-wish-profile.svg';
 import sendIcon from '/img/icon-send.svg';
 import CounselingGuide from './CounslingGuide';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
+import Button from '@components/common/Button';
 
 interface Message {
   sender?: string;
   message?: string;
 }
 
+interface CounselData {
+  member_id: number;
+  summary: string;
+  tags: string;
+  count: number;
+}
+
 const Counseling = () => {
+  const member_id = Number(localStorage.getItem('MemberId'));
   const userData = {
     name: localStorage.getItem('userName'),
     total: '180점',
@@ -27,6 +37,10 @@ const Counseling = () => {
   const [lastMsg, setLastMsg] = useState({ user: '', gpt: '' });
   const [dataForPrompt, setDataForPrompt] = useState({ summary: '', count: 1, caseFoumulation: {} });
   const [isLoading, setIsLoading] = useState(false);
+
+  const [showModal, setModal] = useState(false);
+  const navigate = useNavigate();
+
   const prompt = `
     아래 내용을 참고하여 난임스트레스를 낮출 수 있는 심리 상담을 해줘.
     1. 사용자 특성:
@@ -38,19 +52,21 @@ const Counseling = () => {
     4. 사례개념화: ${dataForPrompt.caseFoumulation}
     5. 대화 요약: ${dataForPrompt.summary}
     6. 바로 직전 대화: ${lastMsg}
-    7. 답변 형식: {"answer": "내용", "summary": "요약", "caseFoumulation": "내용"}
+    7. 답변 형식: {"answer": "~합니다. 등의 존댓말", "summary": "~함. 등의 요약", "caseFoumulation": "내용"}
       1) answer:
-        - '5. 대화 요약'과 '6. 바로 직전 대화'를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
+        - '4. 사례개념화', '5. 대화 요약'과 '6. 바로 직전 대화'를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
           1) 사용자에게서 인지적 왜곡이나 부정적인 사고가 관찰된다면, 다양한 관점을 깨달을 수 있도록 소크라테스식 질문을 해줘.
-          2) 사용자가 다른 관점을 생각하지 못한다면, '주고받은 대화'를 참고해서 다른 관점을 제시해줘.
+          2) 사용자가 다른 관점을 생각하지 못한다면, '대화 요약'을 참고해서 다른 관점을 제시해줘.
           3) 사용자가 부적절한 방식으로 반응을 한다면, 상황에 따라 적절한 반응을 깨달을 수 있는 질문을 해줘.
           4) 대화 횟수가 10회 이상이고, 사용자의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
-        - user로 전달되는 텍스트는 무조건 '주고받은 대화'와 이어지는 내용이니까 꼭 참고해서 답변해줘.
+        - user의 메시지는 '대화 요약'을 참고하고, '바로 직전 대화'와 이어지는 내용이니까 꼭! 참고해서 답변해줘.
         - 종종 말 줄임표를 사용하고, 이미 파악된 내용은 다시 물어보지 말아줘.
         - 130자 이내로 존댓말을 사용해 줘.
         - 만약 사용자가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
       2) summary: 
-        - 어떤 대화를 나눴는지 유추할 수 있도록, 사용자의 질문과 system의 답변을 한 문장으로 요약해줘.
+        - 사용자의 답변과 system의 답변을 높임체 없이 '~함' 등 간략한 말투로 요약해줘.
+        - 이후에 summary를 보면 system이 대화 내용을 유추하고 이어서 대화할 수 있도록 구체적인 내용을 포함해줘.
+        - system의 답변은 질문의 내용까지 구체적으로 포함해줘.
       3) caseFoumulation: { 
           "상황": "'4. 사례개념화', '5. 대화 요약'을 참고한 스트레스 유발 상황. 형식: '~하는 상황'", 
           "감정": "스트레스 상황에 대한 감정", 
@@ -59,34 +75,6 @@ const Counseling = () => {
           "행동": "스트레스를 받은 후 행동" 
         }
   `;
-  // const prompt = `
-  //   1. 답변 형식: {"answer": "내용", "summary": {"상황": "스트레스를 받은 상황", "감정": "스트레스 상황에 대한 감정", "자동적사고": "상황을 접하여 떠올린 자기, 미래, 세상에 대한 자동적인 생각. '~한다.' 식으로 요약", "핵심신념": "부정적인 자동적 사고를 활성화시키는 기저 신념. '~한다.' 식으로 요약", "행동": "스트레스를 받은 후 행동"}, "tag": ["이전 태그", "새로운 태그"]}.
-  //   2. 사용자 특성:
-  //     - 이름: ${userData.name}
-  //     - 난임 스트레스 척도 점수: 230점 만점의 ${userData.total}
-  //     - 난임 스트레스 척도로 평가된 핵심 신념: ${userData.faith}
-  //   3. 상담 목표: 난임스트레스가 낮아질 수 있도록 인지적 왜곡 및 부정적 자동적 사고를 탐색하여 핵심 신념 반박
-  //   4. 대화 횟수: ${dataForPrompt.count}
-  //   5. 사례개념화: ${dataForPrompt.summary}
-  //   6. 주고받은 대화: ${lastMsg}
-  //   7. 이전 태그: ${dataForPrompt.tag}
-  //   8. answer:
-  //     - 사레개념화와 주고받은 대화를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
-  //       1) 사용자에게서 인지적 왜곡이나 부정적인 사고가 관찰된다면, 다양한 관점을 깨달을 수 있도록 소크라테스식 질문을 해줘.
-  //       2) 사용자가 다른 관점을 생각하지 못한다면, 주고받은 대화를 참고해서 다른 관점을 제시해줘.
-  //       3) 사용자가 부적절한 방식으로 반응을 한다면, 상황에 따라 적절한 반응을 깨달을 수 있는 질문을 해줘.
-  //       4) 대화 횟수가 10회 이상이고, 사용자의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
-  //     - user로 전달되는 텍스트는 무조건 '6. 주고받은 대화'와 이어지는 내용이야. '주고받은 대화'를 꼭 참고해서 답변해줘.
-  //     - 종종 말 줄임표를 사용하고, 이미 파악된 내용은 다시 물어보지 말아줘.
-  //     - 150자 이내로 한글로 쉬운 용어를 사용하고 존댓말을 사용해 줘.
-  //     - 만약 사용자가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
-  //   - summary:
-  //     - 대화 내용과 '5. 사례개념화'를 반영하여 summary를 업데이트해줘.
-  //     - 만약 새로운 summary가 전달받은 '5. 사례개념화'와 내용이 다르다면, '5. 사례개념화' 내용을 구체화해서 업데이트 해줘.
-  //   - tag:
-  //     - 사용자의 말에서 난임 스트레스를 받게 된 중요한 내용을 '7. 이전 태그' 배열 뒤에 추가해줘.
-  //     - 새로운 태그가 '7. 이전 태그'에 존재하거나, 감정 표현 또는 일상 단어라면 추가하지 말아줘.
-  // `;
 
   const moveScrollDown = () => {
     const { scrollHeight, clientHeight } = scrollBoxRef.current as HTMLDivElement;
@@ -113,17 +101,18 @@ const Counseling = () => {
     setUserInput('');
     setIsLoading(true);
 
-    const data = await fetchGPT(prompt, userInput);
-    const dataToObj = JSON.parse(data.choices[0].message.content);
-    addMessage('gpt', dataToObj.answer);
-    setLastMsg({ user: userMsg, gpt: dataToObj.answer });
+    const response = await fetchGPT(prompt, userInput);
+    const { answer, summary, caseFoumulation } = JSON.parse(response.choices[0].message.content);
+    addMessage('gpt', answer);
+    setLastMsg({ user: userMsg, gpt: answer });
     setDataForPrompt({
-      summary: `${dataForPrompt.summary}, ${dataToObj.summary}`,
+      summary: dataForPrompt.summary ? `${dataForPrompt.summary}, ${summary}` : summary,
       count: dataForPrompt.count + 1,
-      caseFoumulation: dataToObj.caseFoumulation,
+      caseFoumulation,
     });
     setIsLoading(false);
-    console.log(dataForPrompt.summary, dataForPrompt);
+
+    console.log(dataForPrompt.summary);
   };
 
   //상담 시작 날짜 가져오는 함수
@@ -138,6 +127,35 @@ const Counseling = () => {
   }
   const now = new Date();
   const toDay = formatDate(now);
+
+  const fetchCounselResult = async (body: CounselData) => {
+    try {
+      const response = await axios.post('/counsels/records/', body, {
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+      return response;
+    } catch (err) {
+      console.error('Failed to POST scaleList: ', err);
+      return null;
+    }
+  };
+
+  const handleConsultationEnd = async () => {
+    const prompt = `답변 형식: {"summary": "내용", "tags": "#태그1#태그2#태그3"}
+      1. 이후에 gpt에게 전달하면 이어서 대화할 수 있을 정도로 구체적인 한 문장 요약
+      2. 사용자의 답변에서 다른 대화와 구분될 수 있는 유니크한 단어로 만든 태그 최대 3개
+        - 태그는 상담과 관련 단어, 이름, 감정 표현은 제외해줘.
+        - 사용자가 언급한 단어 위주로 태그를 나열해줘.
+    `;
+    const response = await fetchGPT(prompt, dataForPrompt.summary);
+    const { summary, tags } = JSON.parse(response.choices[0].message.content);
+    const fetchRes = await fetchCounselResult({ member_id, summary, tags, count: 1 });
+    console.log(fetchRes);
+    if (fetchRes && fetchRes.status === 201) setModal(true);
+  };
 
   //가이드 영역
   const [step, setStep] = useState<number>(1);
@@ -179,7 +197,7 @@ const Counseling = () => {
             <span className="hidden">뒤로가기</span>
           </button>
           <h2>심리상담사 위시</h2>
-          <button css={step === 3 && Priority} className="end" type="button">
+          <button css={step === 3 && Priority} className="end" type="button" onClick={() => handleConsultationEnd()}>
             종료
           </button>
         </div>
@@ -209,7 +227,7 @@ const Counseling = () => {
             {isLoading && (
               <li className="gpt loadingMsg">
                 <div className="messages">
-                  <p>답변을 준비하고 있어요 ...</p>
+                  <p>답변을 준비하고 있어요.</p>
                 </div>
               </li>
             )}
@@ -222,6 +240,21 @@ const Counseling = () => {
             <span className="hidden">전송</span>
           </button>
         </form>
+
+        {showModal && (
+          <div css={Modal}>
+            <div className="inner">
+              <p className="tit">상담이 종료됐어요</p>
+              <p className="cont">
+                위시와의 상담은 어떠셨나요? <br />
+                상담 목록을 통해 상담을 이어갈 수 있습니다.
+              </p>
+              <div className="btn-box">
+                <Button text="목록" size="medium" disabled={false} onClick={() => navigate('/counseling/list')} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -381,5 +414,38 @@ const InputBox = css`
     background-image: url(${sendIcon});
     background-repeat: no-repeat;
     background-position: center;
+  }
+`;
+
+const Modal = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(115, 121, 128, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .inner {
+    background: #fff;
+    border-radius: 1.6rem;
+    padding: 3rem;
+    text-align: center;
+    width: calc(100% - calc(${variables.layoutPadding} * 2));
+    max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+    .tit {
+      font-size: ${variables.size.large};
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+    .cont {
+      font-size: ${variables.size.medium};
+      color: ${variables.colors.gray100};
+    }
+    .btn-box {
+      margin-top: 2rem;
+      display: flex;
+      gap: ${variables.size.min};
+    }
   }
 `;
