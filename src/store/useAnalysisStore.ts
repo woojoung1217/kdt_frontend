@@ -11,7 +11,7 @@ interface IAnalysis {
   };
   emotions: { joy: number; sadness: number; anger: number; fear: number; surprise: number; disgust: number };
   missions: string[];
-  keywords: string[];
+  keywords: string;
 }
 
 interface IState {
@@ -32,7 +32,7 @@ const initialState: IState = {
     },
     emotions: { joy: 0, sadness: 0, anger: 0, fear: 0, surprise: 0, disgust: 0 },
     missions: [],
-    keywords: [],
+    keywords: '',
   },
 };
 
