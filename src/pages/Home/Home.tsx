@@ -15,8 +15,8 @@ const Home = () => {
   const { data: coupleData, isLoading, error } = useGetCoupleData(token);
 
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
-  if (isLoading) return <div>......</div>; // 로딩 중 표시
-  if (error || !coupleData) return <div>{error?.message}</div>; // 에러 핸들링
+  // if (isLoading) return <div>......</div>; // 로딩 중 표시
+  // if (error || !coupleData) return <div>{error?.message}</div>; // 에러 핸들링
 
   return (
     <HomepageContainer>
@@ -27,7 +27,7 @@ const Home = () => {
         <OurKeyword coupleData={coupleData} />
         <CoupleReport coupleData={coupleData} />
       </ContentWrapper>
-      <Footer />
+      <Footer coupleData={coupleData} />
     </HomepageContainer>
   );
 };
