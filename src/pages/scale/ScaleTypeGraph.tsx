@@ -2,10 +2,11 @@
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
+import { ScaleData } from './ScaleList';
 
 const data = [{ essential: '26', refusing: '22', relational: '24', sexual: '24', social: '24', total: '120' }];
 
-const ScaleTypeGraph = () => {
+const ScaleTypeGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => {
   const typeOption = {
     tooltip: {
       trigger: 'axis',
@@ -33,49 +34,14 @@ const ScaleTypeGraph = () => {
         show: false,
       },
       interval: 5,
-      splitLine: {
-        show: true,
-        lineStyle: {
-          color: '#e0e0e0',
-          type: 'solid',
-        },
-      },
     },
     yAxis: {
+      show: false,
       type: 'category',
       data: ['사회적', '관계적', '성적', '아이가 없는\n일상에 대한 거부', '부모됨의 필요성'],
       inverse: true,
-      axisTick: {
-        show: true,
-        length: 800,
-        lineStyle: {
-          color: `${variables.colors.gray50}`,
-          width: 1,
-        },
-      },
-      splitLine: {
-        show: true,
-        lineStyle: {
-          color: `${variables.colors.gray50}`,
-          type: 'solid',
-          width: 1,
-        },
-      },
       axisLabel: {
-        align: 'left',
-        padding: [0, 0, 0, -100],
-        color: '#474747',
-        fontWeight: 'bold',
-        fontSize: 14,
-        lineHeight: 20,
-        margin: 40,
-      },
-      axisLine: {
-        show: true,
-        lineStyle: {
-          color: `${variables.colors.gray50}`,
-          width: 1,
-        },
+        show: false,
       },
     },
     series: [
@@ -113,7 +79,13 @@ const ScaleTypeGraph = () => {
             color: `${variables.colors.primaryStrong}`,
           },
         },
-        data: [23, 33, 20, 17, 10],
+        data: [
+          `${scaleData?.social}`,
+          `${scaleData?.relational}`,
+          `${scaleData?.sexual}`,
+          `${scaleData?.refusing}`,
+          `${scaleData?.essential}`,
+        ],
       },
     ],
   };
@@ -121,7 +93,19 @@ const ScaleTypeGraph = () => {
   return (
     <div css={TypeSection}>
       <div css={TypeGraph}>
-        <EChartsReact option={typeOption} opts={{ renderer: 'svg' }} style={{ height: '100%', width: '100%' }} />
+        <div className="graphTit">
+          <p>사회적</p>
+          <p>관계적</p>
+          <p>성적</p>
+          <p>
+            아이가 없는 <br />
+            일상에 대한 거부
+          </p>
+          <p>부모됨의 필요성</p>
+        </div>
+        <div className="graph">
+          <EChartsReact option={typeOption} opts={{ renderer: 'svg' }} style={{ height: '100%', width: '100%' }} />
+        </div>
       </div>
       <div css={TypeText}>
         <p className="lastDay">최근 검사 결과</p>
@@ -146,10 +130,35 @@ const TypeSection = css`
 `;
 
 const TypeGraph = css`
-  width: 100%;
-  height: 30rem;
-  border-right: 0.1rem solid ${variables.colors.gray50};
-  border-bottom: 0.1rem solid ${variables.colors.gray50};
+  display: flex;
+  border: 0.1rem solid ${variables.colors.gray50};
+  border-left: none;
+  .graphTit {
+    display: flex;
+    flex-direction: column;
+
+    & button {
+      padding: 0 1rem;
+      border-bottom: 0.1rem solid ${variables.colors.gray50};
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      width: 13rem;
+      height: 20%;
+
+      & span {
+        flex-shrink: 0;
+      }
+    }
+
+    & button:last-child {
+      border-bottom: none;
+    }
+  }
+  .graph {
+    width: 100%;
+    height: 30rem;
+  }
 `;
 
 const TypeText = css`

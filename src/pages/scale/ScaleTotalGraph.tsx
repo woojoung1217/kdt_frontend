@@ -2,10 +2,9 @@
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
+import { ScaleData } from './ScaleList';
 
-const data = [{ essential: '26', refusing: '22', relational: '24', sexual: '24', social: '24', total: '120' }];
-
-const ScaleTotalGraph = () => {
+const ScaleTotalGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => {
   const toTalOption = {
     angleAxis: {
       max: 230,
@@ -38,7 +37,8 @@ const ScaleTotalGraph = () => {
       {
         name: 'Scale',
         type: 'bar',
-        data: [`180`, `${data[0].total}`],
+        //[최근결과 , 오늘의 결과]
+        data: [`180`, `${scaleData?.total}`],
         coordinateSystem: 'polar',
         colorBy: 'data',
         roundCap: true,
@@ -58,7 +58,7 @@ const ScaleTotalGraph = () => {
         <div className="toDayResult">
           <p>
             오늘의 결과
-            <span>{data[0].total}점</span>
+            <span>{scaleData?.total}점</span>
           </p>
         </div>
         <div className="latestResults">

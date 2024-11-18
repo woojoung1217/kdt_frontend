@@ -55,17 +55,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: false, // https일 경우 필요할 수 있음
       },
-      '/emotions': {
+      '/counsels': {
         target: 'https://www.wishkr.site',
         changeOrigin: true,
         secure: false, // https일 경우 필요할 수 있음
       },
       '/infertility': {
-        target: 'https://www.wishkr.site',
-        changeOrigin: true,
-        secure: false, // https일 경우 필요할 수 있음
-      },
-      '/counsels': {
         target: 'https://www.wishkr.site',
         changeOrigin: true,
         secure: false, // https일 경우 필요할 수 있음

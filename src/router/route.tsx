@@ -55,10 +55,6 @@ const router = createBrowserRouter([
         element: <Counseling />,
       },
       {
-        path: '/scale/list',
-        element: <ScaleList />,
-      },
-      {
         path: 'counseling/:id',
         element: <Counseling />,
       },
@@ -71,7 +67,15 @@ const router = createBrowserRouter([
         element: <Testing />,
       },
       {
-        path: '/scale/result',
+        path: '/scale/:id',
+        element: <ScaleResult />,
+      },
+      {
+        path: '/scale/list',
+        element: <ScaleList />,
+      },
+      {
+        path: '/scale/list/:id',
         element: <ScaleResult />,
       },
       {
