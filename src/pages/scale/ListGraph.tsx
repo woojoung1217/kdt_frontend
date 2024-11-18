@@ -49,7 +49,7 @@ const ListGraph = ({ data }: { data: ScaleData[] }) => {
       {
         name: 'total',
         type: 'bar',
-        barWidth: '40%',
+        barWidth: 16,
         cursor: 'default',
         itemStyle: {
           borderRadius: [5, 5, 0, 0],

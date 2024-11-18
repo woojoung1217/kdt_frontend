@@ -2,10 +2,11 @@
 import Button from '@components/common/Button';
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ListGraph from './ListGraph';
-import axios from 'axios';
+import noRecord from '/img/no-counseling-record.svg';
 
 export interface Scale {
   total: number;
@@ -28,15 +29,20 @@ const ScaleList = () => {
 
   const fetchScaleList = async (): Promise<ScaleData | null> => {
     try {
-      const response = await axios.get('/infertility/tests', {
+      const { data } = await axios.get('/infertility/tests', {
         params: { memberId },
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',
         },
       });
-      setData(response.data.result.totalTests);
-      return await response.data.result.totalTests;
+      if (data) {
+        setData(data.result.totalTests);
+        return data.result.totalTests;
+      } else {
+        setData(null);
+        return null;
+      }
     } catch (err) {
       console.error('Failed to fetch scaleList: ', err);
       return null;
@@ -47,7 +53,7 @@ const ScaleList = () => {
   const [showModal, setModal] = useState(false);
 
   const isMonthPassed = () => {
-    if (!data) return false;
+    if (!data) return;
     const lastTestDate = new Date(data[data.length - 1].created_at!.split('T')[0]);
     const today = new Date();
     const oneMonthLater = new Date(lastTestDate);
@@ -66,36 +72,57 @@ const ScaleList = () => {
 
   return (
     <div css={ScaleWr}>
-      <div css={ScaleChart}>
+      <div css={TitleWr}>
         <h2>난임 스트레스 검사 기록</h2>
-        <div className="chart">{data && <ListGraph data={data} />}</div>
-        <Button onClick={toTestBtn} text="난임 스트레스 검사 하러가기" size="medium" disabled={false} />
       </div>
-
-      {data && (
-        <ul css={ScaleLists}>
-          {data.map((item) => (
-            <li key={item.id}>
-              <Link to={`/scale/list/${item.id}`}>{item.created_at!.split('T')[0].split('-').join('.')}</Link>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {showModal && (
-        <div css={Modal}>
-          <div className="inner">
-            <p className="tit">한 달에 한 번 검사를 권장해요</p>
-            <p className="cont">
-              아직 최근 검사 일자에서 한달이 지나지 않았어요 <br />
-              그래도 검사를 진행 하실건가요?
-            </p>
-            <div className="btn-box">
-              <Button text="취소하기" variant="gray" size="medium" disabled={false} onClick={() => setModal(false)} />
-              <Button text="검사하기" size="medium" disabled={false} onClick={() => navigate('/scale/testing')} />
-            </div>
-          </div>
+      {data === null ? (
+        <div css={NoDataWr} className="noDatawr">
+          <img src={noRecord} alt="검사 목록이 없습니다." />
+          <Button
+            onClick={() => navigate('/scale/testing/')}
+            text="난임 스트레스 검사 하러가기"
+            size="medium"
+            disabled={false}
+          />
         </div>
+      ) : (
+        <>
+          <div css={ScaleChart} className="scaleChart">
+            <div className="chart">{data && <ListGraph data={data} />}</div>
+            <Button onClick={toTestBtn} text="난임 스트레스 검사 하러가기" size="medium" disabled={false} />
+          </div>
+
+          <ul css={ScaleLists}>
+            {data &&
+              data.map((item) => (
+                <li key={item.id}>
+                  <Link to={`/scale/list/${item.id}`}>{item.created_at!.split('T')[0].split('-').join('.')}</Link>
+                </li>
+              ))}
+          </ul>
+
+          {showModal && (
+            <div css={Modal}>
+              <div className="inner">
+                <p className="tit">한 달에 한 번 검사를 권장해요</p>
+                <p className="cont">
+                  아직 최근 검사 일자에서 한달이 지나지 않았어요 <br />
+                  그래도 검사를 진행 하실건가요?
+                </p>
+                <div className="btn-box">
+                  <Button
+                    text="취소하기"
+                    variant="gray"
+                    size="medium"
+                    disabled={false}
+                    onClick={() => setModal(false)}
+                  />
+                  <Button text="검사하기" size="medium" disabled={false} onClick={() => navigate('/scale/testing')} />
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -103,21 +130,46 @@ const ScaleList = () => {
 
 export default ScaleList;
 
-const ScaleWr = css`
-  margin: -2rem calc(${variables.layoutPadding}*-1);
-  background-color: ${variables.colors.gray5};
-  min-height: 100vh;
-`;
-const ScaleChart = css`
-  text-align: center;
-  background-color: ${variables.colors.white};
-  padding: 2rem ${variables.layoutPadding} 2.5rem;
-  box-shadow: 0 0 1.25rem rgba(217, 217, 217, 0.5);
+const TitleWr = css`
+  background: #fff;
+  position: relative;
+  padding: ${variables.layoutPadding} 0 0;
   h2 {
     font-size: ${variables.size.large};
     font-weight: 500;
     text-align: center;
   }
+`;
+const ScaleWr = css`
+  margin: -2rem calc(${variables.layoutPadding}*-1);
+  background-color: ${variables.colors.gray5};
+  min-height: 100vh;
+
+  .scaleChart button,
+  .noDatawr button {
+    display: block;
+    margin-top: 3rem;
+    background-color: ${variables.colors.primaryStrong};
+    color: ${variables.colors.white};
+    height: 4.6rem;
+    line-height: 4.4rem;
+    border-radius: 0.8rem;
+    font-size: ${variables.size.big};
+    box-shadow: 0 0.4rem 0.4rem ${variables.colors.primarySoft};
+    transition: all ${variables.TransitionDuration};
+    padding: 0;
+    &:hover {
+      background-color: ${variables.colors.primary};
+    }
+  }
+`;
+
+const ScaleChart = css`
+  text-align: center;
+  background-color: ${variables.colors.white};
+  padding: 2rem ${variables.layoutPadding} 2.5rem;
+  box-shadow: 0 0 1.25rem rgba(217, 217, 217, 0.5);
+
   .chart {
     margin-top: 4rem;
     .desc {
@@ -138,23 +190,8 @@ const ScaleChart = css`
       }
     }
   }
-  button {
-    display: block;
-    margin-top: 3rem;
-    background-color: ${variables.colors.primaryStrong};
-    color: ${variables.colors.white};
-    height: 4.6rem;
-    line-height: 4.4rem;
-    border-radius: 0.8rem;
-    font-size: ${variables.size.big};
-    box-shadow: 0 0.4rem 0.4rem ${variables.colors.primarySoft};
-    transition: all ${variables.TransitionDuration};
-    padding: 0;
-    &:hover {
-      background-color: ${variables.colors.primary};
-    }
-  }
 `;
+
 const ScaleLists = css`
   padding: 2.6rem ${variables.layoutPadding};
   display: flex;
@@ -186,6 +223,7 @@ const ScaleLists = css`
     }
   }
 `;
+
 const Modal = css`
   position: fixed;
   inset: 0;
@@ -217,4 +255,9 @@ const Modal = css`
       gap: ${variables.size.min};
     }
   }
+`;
+
+const NoDataWr = css`
+  padding: 10rem ${variables.layoutPadding} 3rem;
+  background: #fff;
 `;
