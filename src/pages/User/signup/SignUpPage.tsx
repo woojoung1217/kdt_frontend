@@ -50,7 +50,7 @@ const SignUpPage = () => {
 
   const submitSignup = useCallback(async () => {
     try {
-      const response = await axios.post('/accounts/signup/', formData);
+      const response = await axios.post('https://www.wishkr.site/accounts/signup/', formData);
 
       if (response.status === 201) {
         // 성공적으로 생성되었을 때

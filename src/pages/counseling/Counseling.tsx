@@ -130,7 +130,7 @@ const Counseling = () => {
 
   const fetchCounselResult = async (body: CounselData) => {
     try {
-      const response = await axios.post('/counsels/records/', body, {
+      const response = await axios.post('https://www.wishkr.site/counsels/records/', body, {
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',

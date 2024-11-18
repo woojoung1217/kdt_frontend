@@ -21,8 +21,8 @@ import { IInterests, ITest } from 'types/types';
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
 
-const INTERESTS_URL = '/emotions/interests/';
-const INFERTILITY_TESTS_URL = '/infertility/tests/';
+const INTERESTS_URL = 'https://www.wishkr.site/emotions/interests/';
+const INFERTILITY_TESTS_URL = 'https://www.wishkr.site/infertility/tests/';
 
 const Modal = css`
   position: fixed;

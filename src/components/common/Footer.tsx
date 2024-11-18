@@ -13,7 +13,7 @@ const Footer = () => {
   const navigate = useNavigate();
 
   const fetchTests = async (memberId: number): Promise<ITestRecordSuccess | IFailure | null> => {
-    const response = await fetch(`/infertility/tests/?memberId=${memberId}`);
+    const response = await fetch(`https://www.wishkr.site/infertility/tests/?memberId=${memberId}`);
 
     if (response.ok) {
       const data = await response.json();

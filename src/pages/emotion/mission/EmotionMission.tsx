@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import useAnalysisStore from '@store/useAnalysisStore';
 import useEmotionStore from '@store/useEmotionStore';
 
-const EMOTIONS_RESULT_URL = '/emotions/results/';
+const EMOTIONS_RESULT_URL = 'https://www.wishkr.site/emotions/results/';
 
 const EmotionMission = () => {
   const [, setClickButton] = useState('/src/assets/Images/invaildGray.svg');

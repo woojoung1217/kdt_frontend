@@ -29,7 +29,7 @@ const ScaleList = () => {
 
   const fetchScaleList = async (): Promise<ScaleData | null> => {
     try {
-      const { data } = await axios.get('/infertility/tests', {
+      const { data } = await axios.get('https://www.wishkr.site/infertility/tests', {
         params: { memberId },
         headers: {
           'content-type': 'application/json',

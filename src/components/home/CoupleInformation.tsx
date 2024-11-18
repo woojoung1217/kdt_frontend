@@ -53,7 +53,7 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
           is_complement: true,
         };
 
-        const response = await axios.put(`/emotions/results/${result_id}/`, requestData, {
+        const response = await axios.put(`https://www.wishkr.site/emotions/results/${result_id}/`, requestData, {
           headers: {
             'Content-Type': 'application/json',
           },
