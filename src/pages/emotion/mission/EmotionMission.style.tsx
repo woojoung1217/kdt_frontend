@@ -10,6 +10,10 @@ export const MissionSection = styled.section`
   background-color: ${variables.colors.gray5};
   display: flex;
   flex-direction: column;
+
+  & > .resultButton {
+    flex-shrink: 0;
+  }
 `;
 
 export const MissionTitleBox = styled.div`
@@ -52,7 +56,8 @@ export const WishImage = styled.img`
 `;
 
 export const ButtonContainer = styled.div`
-  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
 
   & > button {
     display: flex;
