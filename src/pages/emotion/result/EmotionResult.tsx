@@ -70,12 +70,14 @@ const EmotionResult = () => {
     ],
   };
 
+  const name = localStorage.getItem('userName');
+
   return (
     <>
       <ResultSection>
         <ResultTitleBox>
           <ResultTextBox>
-            <h2>오늘 희선님의 예상감정</h2>
+            <h2>오늘 {name}님의 예상감정</h2>
             <pre>위시와 대화한 내용으로 분석되었어요</pre>
           </ResultTextBox>
           <WishImage src="/src/assets/Images/emotionResultSad.svg" alt="감정분석가 위시" />
@@ -94,9 +96,6 @@ const EmotionResult = () => {
           </div>
         </EmotionGraphContainer>
 
-        <ResultTextBox>
-          <pre>난임 스트레스 예상점수</pre>
-        </ResultTextBox>
         <EmotionGraphContainer>
           <ChartCover>
             <ECharts option={option} />
@@ -152,6 +151,7 @@ export const WishImage = styled.img`
 
 export const EmotionGraphContainer = styled.div`
   width: 100%;
+  margin-bottom: 1rem;
 
   & > div {
     border-radius: 1rem;
