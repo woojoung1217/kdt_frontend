@@ -30,7 +30,7 @@ export const StressText = styled.div`
 
 const EmotionStress = () => {
   const analysisResult = useAnalysisStore((state) => state.analysis);
-  console.log(analysisResult.prediction.totalScore);
+  console.log(analysisResult);
 
   const data: StressData[] = [
     {
