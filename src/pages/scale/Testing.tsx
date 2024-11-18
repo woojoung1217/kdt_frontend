@@ -23,7 +23,6 @@ interface ScaleDataRes {
 const Testing = () => {
   const navigate = useNavigate();
   const steps = ['1', '2', '3', '4', '5'];
-  const [accData, setAccData] = useState<Scale>();
   const [result, setResult] = useState<Scale>({
     total: 0,
     social: 0,
@@ -37,8 +36,10 @@ const Testing = () => {
   const totalSteps = steps.length;
   const currentStepIndex = steps.indexOf(currentStep);
   const progressPercentage = ((currentStepIndex + 1) / totalSteps) * 100;
-  const prompt = `- 난임 스트레스 척도를 통해 핵심 신념을 최대 5개 평가해줘
+  const prompt = `- 난임 스트레스 척도 응답 결과를 통해 핵심 신념을 최대 5개 평가해줘
   - 답은 높을수록 강한 긍정을 의미해.
+  - 예시) 'essential-true-임신과 출산은 결혼생활에서 가장 중요한 두 가지이다' 키가 이렇게 주어진다면, 
+    '-' 기호가 두 번째로 등장한 이후의 텍스트만 확인해. 앞부분('essential-true')은 무시해줘.
   - 핵심 신념: 스트레스 상황을 접하여 떠올린 자기, 미래, 세상에 대한 부정적인 자동적 사고를 활성화시키는 기저 신념
   - 응답 형식: "핵심신념1, 핵심신념2`;
 
@@ -95,20 +96,9 @@ const Testing = () => {
       });
 
       if (currentStep !== '5') {
-        setAccData((prev) => {
-          if (!prev) return undefined;
-          const newResult = { ...prev };
-          for (const key in formData) {
-            const isReversed = key.split('-')[1];
-            const title = key.split('-')[2];
-            const value = JSON.parse(isReversed) ? 6 - Number(formData[key]) : Number(formData[key]);
-            if (isScaleKey(title)) newResult[title] += value;
-          }
-          return newResult;
-        });
         setStep(`${+currentStep + 1}`);
       } else {
-        const gptData = await fetchGPT(prompt, JSON.stringify(accData));
+        const gptData = await fetchGPT(prompt, JSON.stringify(formData));
         const belifs = gptData.choices[0].message.content;
         const response = await fetchTestResult({ ...result, member_id: 1, belifs });
         if (response) navigate(`/scale/${response.data.result.id}`);
