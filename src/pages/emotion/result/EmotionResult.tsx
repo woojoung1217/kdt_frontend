@@ -5,9 +5,28 @@ import EmotionGraph from './EmotionGraph';
 import EmotionStress from './EmotionStress';
 import ECharts from 'echarts-for-react';
 import Footer from '@components/common/Footer';
+import { useEffect, useState } from 'react';
 
 const EmotionResult = () => {
-  const analysisResult = useAnalysisStore((state) => state.analysis);
+  const [data, setData] = useState(null);
+  const result_pk = 1;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/emotions/results/${result_pk}`);
+        const result = await res.json();
+        setData(result);
+      } catch (error) {
+        console.error('fetching error:', error);
+      }
+    };
+    fetchData();
+  }, [result_pk]);
+
+  const analysisResult = useAnalysisStore((state) => state.analysis) || { keywords: [] };
+
+  if (!data) return <div>로딩중.. 데이터가 없음</div>;
 
   console.log(analysisResult.keywords);
 
