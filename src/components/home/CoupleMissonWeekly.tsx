@@ -3,6 +3,30 @@ import variables from '@styles/Variables';
 
 type DotStatus = 'completed' | 'current' | 'locked';
 
+const CoupleMissionWeekly = () => {
+  // 각 날짜의 상태를 정의
+  const dotStatuses: DotStatus[] = [
+    'completed', // 월요일 - 완료
+    'completed', // 화요일 - 완료
+    'completed', // 수요일 - 완료
+    'current', // 목요일 - 현재
+    'locked', // 금요일 - 잠김
+    'locked', // 토요일 - 잠김
+    'locked', // 일요일 - 잠김
+  ];
+
+  return (
+    <CoupleMissionWeeklyUI>
+      <Title>이번주 미션</Title>
+      <MissionDots>
+        {dotStatuses.map((status, index) => (
+          <Dot key={index} status={status} />
+        ))}
+      </MissionDots>
+    </CoupleMissionWeeklyUI>
+  );
+};
+
 const CoupleMissionWeeklyUI = styled.div`
   width: 100%;
   height: 6rem;
@@ -10,7 +34,7 @@ const CoupleMissionWeeklyUI = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
-  box-shadow: ${variables.BoxShadow};
+  box-shadow: inset ${variables.BoxShadow};
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
@@ -45,29 +69,5 @@ const Dot = styled.div<{ status: DotStatus }>`
   border-radius: 50%;
   transition: background-color 0.3s ease;
 `;
-
-const CoupleMissionWeekly = () => {
-  // 각 날짜의 상태를 정의
-  const dotStatuses: DotStatus[] = [
-    'completed', // 월요일 - 완료
-    'completed', // 화요일 - 완료
-    'completed', // 수요일 - 완료
-    'current', // 목요일 - 현재
-    'locked', // 금요일 - 잠김
-    'locked', // 토요일 - 잠김
-    'locked', // 일요일 - 잠김
-  ];
-
-  return (
-    <CoupleMissionWeeklyUI>
-      <Title>이번주 미션</Title>
-      <MissionDots>
-        {dotStatuses.map((status, index) => (
-          <Dot key={index} status={status} />
-        ))}
-      </MissionDots>
-    </CoupleMissionWeeklyUI>
-  );
-};
 
 export default CoupleMissionWeekly;
