@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import EChartsReact from 'echarts-for-react';
 /* eslint-disable */
 const OurReport = () => {
+  const [testdone, setTestDone] = useState(false);
   const [options, setOptions] = useState({
     xAxis: {
       type: 'category',
@@ -32,10 +33,14 @@ const OurReport = () => {
     <OurReportContainer>
       <OurReportTitle>우리의 리포트</OurReportTitle>
       <OurReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인할 수 있어요</OurReportTitleDes>
-      <OurReportLineChartContainer>
-        <ChartDescription>스트레스 척도</ChartDescription>
-        <EChartsReact option={options} style={{ width: '100%', height: '100%' }} />
-      </OurReportLineChartContainer>
+      {testdone ? (
+        <OurReportLineChartContainer>
+          <ChartDescription>스트레스 척도</ChartDescription>
+          <EChartsReact option={options} style={{ width: '100%', height: '100%' }} />
+        </OurReportLineChartContainer>
+      ) : (
+        <div>검사 이후 확인 가능</div>
+      )}
     </OurReportContainer>
   );
 };

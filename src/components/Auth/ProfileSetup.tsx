@@ -20,7 +20,7 @@ export interface ProfileSetupInterface {
     identification: string;
     email: string;
     password: string;
-    subfertility: string;
+    is_infertility: string;
   };
   submitSignup?: () => void;
   updateFormData: (field: string, value: string) => void;
@@ -72,8 +72,8 @@ const ProfileSetup = ({
       <Step name="난임여부">
         <SetupSubfertility
           onNext={() => nextClickHandler(steps[5])}
-          value={formData.subfertility}
-          onChange={(value) => updateFormData('subfertility', value)}
+          value={formData.is_infertility}
+          onChange={(value) => updateFormData('is_infertility', value)}
         />
       </Step>
 

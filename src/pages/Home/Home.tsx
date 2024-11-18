@@ -6,14 +6,16 @@ import CoupleInformation from '@components/home/CoupleInformation';
 import OurKeyword from '@components/home/OurKeyword';
 import CoupleReport from '@components/home/CoupleReport';
 import OurReport from '@components/home/OurReport';
-import useAuthStore from '@store/useAuthStore';
 import useAuthRedirect from '@hooks/useAuthRedirect';
+import { useGetCoupleData } from '@hooks/useGetCoupleData';
 
 const Home = () => {
-  const { authToken, userEmail, memberId } = useAuthStore();
-  console.log(authToken, userEmail, memberId);
+  const token = localStorage.getItem('authToken');
+  const redirect = useAuthRedirect(); // 인가 확인 훅
+  const { data: coupleData } = useGetCoupleData(token!);
 
-  const redirect = useAuthRedirect();
+  console.log('Cdata', coupleData);
+
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
 
   return (

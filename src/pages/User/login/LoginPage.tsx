@@ -40,6 +40,8 @@ const LoginPage = () => {
         const MemberId = response.data.result.memberId;
         const userName = response.data.result.username;
         const Gender = response.data.result.gender;
+        const is_infertility = response.data.result.is_infertility;
+
         const connect = 'false';
         console.log(token);
 
@@ -51,6 +53,7 @@ const LoginPage = () => {
         localStorage.setItem('userName', userName);
         localStorage.setItem('Gender', Gender);
         localStorage.setItem('connect', connect);
+        localStorage.setItem('is_infertility', is_infertility);
 
         setAuthState(token, Email, MemberId, userName);
 
