@@ -1,5 +1,5 @@
 // 진욱
-
+/** @jsxImportSource @emotion/react */
 import Button from '@components/common/Button';
 import useEmotionStore from '@store/useEmotionStore';
 import { useEffect, useState } from 'react';
@@ -18,9 +18,44 @@ import fetchGPT from '@hooks/useGPT';
 import useAnalysisStore from '@store/useAnalysisStore';
 import { useNavigate } from 'react-router-dom';
 import { IInterests, ITest } from 'types/types';
+import { css } from '@emotion/react';
+import variables from '@styles/Variables';
 
 const INTERESTS_URL = '/emotions/interests/';
 const INFERTILITY_TESTS_URL = '/infertility/tests/';
+
+const Modal = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(115, 121, 128, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .inner {
+    background: #fff;
+    border-radius: 1.6rem;
+    padding: 3rem;
+    text-align: center;
+    width: calc(100% - calc(${variables.layoutPadding} * 2));
+    max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+    .tit {
+      font-size: ${variables.size.large};
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+    .cont {
+      font-size: ${variables.size.medium};
+      color: ${variables.colors.gray100};
+    }
+    .btn-box {
+      margin-top: 2rem;
+      display: flex;
+      gap: ${variables.size.min};
+    }
+  }
+`;
 
 const EmotionMessage = () => {
   const emotionRecord = useEmotionStore((state) => state.record);
@@ -34,24 +69,24 @@ const EmotionMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [keywords, setKeywords] = useState<string>('');
   const [tests, setTests] = useState<ITest>();
+  const [showError, setErrorModal] = useState(false);
   const navigate = useNavigate();
 
   const gender = localStorage.getItem('Gender');
+  const isInfertility = localStorage.getItem('is_infertility') === 'true' ? true : false;
 
   const fetchKeywords = async (memberId: number): Promise<IInterests | null> => {
     try {
       const response = await fetch(`${INTERESTS_URL}?member_id=${memberId}`);
-      console.log('관심사', response);
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         return data.result[0];
       } else {
         throw new Error('키워드를 불러오지 못했습니다!');
       }
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
+      if (e instanceof Error) setErrorModal(true);
     }
 
     return null;
@@ -60,11 +95,9 @@ const EmotionMessage = () => {
   const fetchTests = async (memberId: number): Promise<ITest | null> => {
     try {
       const response = await fetch(`${INFERTILITY_TESTS_URL}?memberId=${memberId}`);
-      console.log('난임척도', response);
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         return data.result.totalTests[0];
       } else {
         throw new Error('난임스트레스 척도 검사 결과가 존재하지 않습니다!');
@@ -100,9 +133,6 @@ const EmotionMessage = () => {
     fetchAndSetKeywords();
     fetchAndSetTests();
   }, []);
-
-  // 임시 데이터
-  const isInfertility = true;
 
   /* 전일 난임스트레스 척도 예상점수 */
   const [
@@ -179,7 +209,6 @@ const EmotionMessage = () => {
     - fear(두려움)
     - surprise(놀람)
     - disgust(혐오)
-
     6가지 감정 비율의 합이 100%가 되어야 합니다.
 
     ### 미션 제안 (missions)
@@ -188,6 +217,7 @@ const EmotionMessage = () => {
     2. 내향성과 외향성이 50:50인 사람에게 적합.
     3. 배우자와 함께할 수 있는 미션 1개 포함.
     4. 장소가 있다면 장소와 행동이 조화로워야 함.
+    5. 공백 포함 20자 이내여야 함.
 
     ### 키워드 생성 (keywords)
     사용자의 오늘 하루 기분 좋았던 일과 관심사를 토대로, 사용자에게 요즘 중요할 것 같은 키워드 3가지를 제안하세요. 
@@ -240,7 +270,6 @@ const EmotionMessage = () => {
     setIsLoading(true);
     const data = await fetchGPT(prompt, userInput, 'record');
     const dataToObj = JSON.parse(data.choices[0].message.content);
-    console.log(dataToObj);
 
     updateAnalysis(dataToObj);
     updateStep(currentStep + 1);
@@ -297,6 +326,18 @@ const EmotionMessage = () => {
             <pre>{`응원이 될 수 있는 한마디가 중요해요!\n가끔은 위시 한마디를 통해 농담을 보내봐도 좋아요`}</pre>
             <Button text="보내기" disabled={isDisabled} type="submit" size="medium" />
           </MessageContainer>
+
+          {showError && (
+            <div css={Modal}>
+              <div className="inner">
+                <p className="tit">알림</p>
+                <p className="cont">관심사를 불러올 수 없습니다!</p>
+                <div className="btn-box">
+                  <Button text="확인" size="medium" disabled={false} onClick={() => setErrorModal(false)} />
+                </div>
+              </div>
+            </div>
+          )}
         </MessageSection>
       )}
     </>

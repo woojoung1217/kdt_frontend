@@ -20,10 +20,45 @@ const FollowSection = styled.section`
   flex-direction: column;
 `;
 
+const Modal = css`
+  position: fixed;
+  inset: 0;
+  background: rgba(115, 121, 128, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .inner {
+    background: #fff;
+    border-radius: 1.6rem;
+    padding: 3rem;
+    text-align: center;
+    width: calc(100% - calc(${variables.layoutPadding} * 2));
+    max-width: calc(${variables.maxLayout} - calc(${variables.layoutPadding} * 2));
+
+    .tit {
+      font-size: ${variables.size.large};
+      font-weight: 600;
+      margin-bottom: 1.6rem;
+    }
+    .cont {
+      font-size: ${variables.size.medium};
+      color: ${variables.colors.gray100};
+    }
+    .btn-box {
+      margin-top: 2rem;
+      display: flex;
+      gap: ${variables.size.min};
+    }
+  }
+`;
+
 const FollowPage = () => {
   const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string | null>('');
   const [memberId, setMemberId] = useState<number | null>();
+  const [showModal, setModal] = useState(false);
+  const [showError, setErrorModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,7 +98,7 @@ const FollowPage = () => {
 
       if (response.status === 201) {
         console.log(data);
-        alert('부부 연동에 성공하였습니다!');
+        setModal(true);
         localStorage.setItem('connect', 'true');
         navigate('/');
       } else {
@@ -71,7 +106,7 @@ const FollowPage = () => {
         throw new Error(data.error);
       }
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
+      if (e instanceof Error) setErrorModal(true);
     }
   };
 
@@ -137,6 +172,34 @@ const FollowPage = () => {
           <Button type="submit" text="연동하기" size="large" disabled={!isValid} />
         </div>
       </form>
+
+      {showModal && (
+        <div css={Modal}>
+          <div className="inner">
+            <p className="tit">부부 연동 완료</p>
+            <p className="cont">부부 연동에 성공했습니다!</p>
+            <div className="btn-box">
+              <Button text="홈으로" size="medium" disabled={false} onClick={() => navigate('/')} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showError && (
+        <div css={Modal}>
+          <div className="inner">
+            <p className="tit">알림</p>
+            <p className="cont">
+              부부 연동에 실패하였습니다.
+              <br />
+              이메일을 다시 확인해주세요!
+            </p>
+            <div className="btn-box">
+              <Button text="확인" size="medium" disabled={false} onClick={() => setErrorModal(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </FollowSection>
   );
 };
