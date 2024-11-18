@@ -13,30 +13,65 @@ import {
 import Button from '@components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import useAnalysisStore from '@store/useAnalysisStore';
+import useEmotionStore from '@store/useEmotionStore';
+
+const EMOTIONS_RESULT_URL = '/emotions/results/';
 
 const EmotionMission = () => {
   const [clickButton, setClickButton] = useState('/src/assets/Images/invaildGray.svg');
-  const [, setIsClicked] = useState(false);
+  const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const navigate = useNavigate();
+
   const analysisResult = useAnalysisStore((state) => state.analysis);
-  const currentStep = useAnalysisStore((state) => state.step);
 
-  const handleHover = () => {
+  const message = useEmotionStore((state) => state.message);
+
+  console.log(message);
+
+  console.log(analysisResult);
+  console.log(message);
+
+  const handleHover = (mission: string) => {
     setClickButton('/src/assets/Images/valid.svg');
-    console.log('클릭');
-    console.log(currentStep);
-    console.log(analysisResult);
+    setSelectedMission(mission);
+    console.log(`${mission}`);
   };
 
-  const handleMouseLeave = () => {
-    setClickButton('/src/assets/Images/invaildGray.svg');
-    console.log('클릭해제');
-  };
+  const handleClick = async () => {
+    const my_emotion = {
+      member_id: 34,
+      mission_content: selectedMission,
+      is_complement: false,
+      interest_keyword: analysisResult.keywords,
+      self_message: message.toMe,
+      export_message: message.toSpouse,
+      joy: analysisResult.emotions.joy,
+      sadness: analysisResult.emotions.sadness,
+      anger: analysisResult.emotions.anger,
+      fear: analysisResult.emotions.fear,
+      surprise: analysisResult.emotions.surprise,
+      disgust: analysisResult.emotions.disgust,
+      total: analysisResult.prediction.totalScore,
+      social: analysisResult.prediction.social,
+      sexual: analysisResult.prediction.sexual,
+      relational: analysisResult.prediction.relational,
+      refusing: analysisResult.prediction.refusing,
+      essential: analysisResult.prediction.essential,
+    };
 
-  const handleClick = () => {
-    setIsClicked(true);
-    navigate('/emotion/result');
-    console.log('다음으로');
+    try {
+      const response = await fetch(EMOTIONS_RESULT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(my_emotion),
+      });
+      console.log('Mission submitted:', selectedMission);
+      navigate('/emotion/result');
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('전송 에러:', error);
+    }
   };
 
   return (
@@ -44,7 +79,7 @@ const EmotionMission = () => {
       <MissionSection>
         <MissionTitleBox>
           <ImageContainer>
-            <WishImage src="/img-wish-mission.svg" alt="감정분석가 위시" />
+            <WishImage src="/img/img-wish-mission.svg" alt="감정분석가 위시" />
           </ImageContainer>
 
           <MissionTextBox>
@@ -54,17 +89,19 @@ const EmotionMission = () => {
         </MissionTitleBox>
 
         <ButtonContainer>
-          <button onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-            남편과 함께 밤산책 하기
-            <img src={clickButton} alt="선택" />
-          </button>
-        </ButtonContainer>
-
-        <ButtonContainer>
-          <button onMouseEnter={handleHover} onMouseLeave={handleMouseLeave}>
-            카페에서 따뜻한 차 마시며 대화하기
-            <img src={clickButton} alt="선택" />
-          </button>
+          {analysisResult.missions.map((mission, index) => (
+            <button
+              key={index}
+              onMouseEnter={() => handleHover(mission)}
+              onClick={() => {
+                setSelectedMission(mission);
+                console.log(`: ${mission}`);
+              }}
+            >
+              {mission}
+              <img src={clickButton} alt="선택" />
+            </button>
+          ))}
         </ButtonContainer>
 
         <MissionExplanation>
