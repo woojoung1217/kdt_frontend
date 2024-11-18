@@ -17,7 +17,7 @@ const SignUpPage = () => {
     email: '',
     password: '',
     gender: '',
-    subfertility: '',
+    is_infertility: '',
     keywords: '',
   });
 

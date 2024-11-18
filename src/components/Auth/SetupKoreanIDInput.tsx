@@ -20,9 +20,8 @@ interface IdNumber {
 const SetupKoreanIDInput = ({ onNext, value, onChange }: SetupKoreanIDInputProps) => {
   const [idNumber, setIdNumber] = useState<IdNumber>({ firstPart: '', secondPart: '' });
   const [isValid, setIsValid] = useState(false);
-  const [error, setError] = useState<string | null>(null); // 오류 메시지 상태 추가
+  const [error, setError] = useState<string | null>(null);
 
-  // value prop이 변경될 때 local state를 업데이트
   useEffect(() => {
     const parts = value.split('-');
     setIdNumber({
@@ -35,14 +34,34 @@ const SetupKoreanIDInput = ({ onNext, value, onChange }: SetupKoreanIDInputProps
     validateIdNumber();
   }, [idNumber]);
 
-  /** 주민등록번호 검증  */
+  /** 생년월일 유효성 검사 */
+  const isDateValid = (dateString: string): boolean => {
+    if (dateString.length !== 6) return false;
+
+    const year = parseInt(dateString.substring(0, 2), 10);
+    const month = parseInt(dateString.substring(2, 4), 10);
+    const day = parseInt(dateString.substring(4, 6), 10);
+
+    // 임시로 1900~2099년 범위 적용
+    const fullYear = year >= 0 && year <= 99 ? (year < 30 ? 2000 + year : 1900 + year) : year;
+    const date = new Date(fullYear, month - 1, day);
+
+    // 날짜 유효성 확인
+    return date.getFullYear() === fullYear && date.getMonth() === month - 1 && date.getDate() === day;
+  };
+
+  /** 주민등록번호 검증 */
   const validateIdNumber = () => {
-    const isFirstPartValid = idNumber.firstPart.length === 6 && /^\d+$/.test(idNumber.firstPart); // 6자리 숫자
-    const isSecondPartValid = ['1', '2', '3', '4'].includes(idNumber.secondPart); // 1,2,3,4만 허용
+    const isFirstPartValid =
+      idNumber.firstPart.length === 6 && /^\d+$/.test(idNumber.firstPart) && isDateValid(idNumber.firstPart);
+    const isSecondPartValid = ['1', '2', '3', '4'].includes(idNumber.secondPart);
+
     setIsValid(isFirstPartValid && isSecondPartValid);
 
     // 오류 메시지 설정
-    if (!isSecondPartValid && idNumber.secondPart !== '') {
+    if (!isFirstPartValid && idNumber.firstPart !== '') {
+      setError('유효한 생년월일을 입력해주세요 (YYMMDD 형식)');
+    } else if (!isSecondPartValid && idNumber.secondPart !== '') {
       setError('주민등록번호 뒷자리를 확인 해 주세요');
     } else {
       setError(null); // 오류 없으면 메시지 초기화
