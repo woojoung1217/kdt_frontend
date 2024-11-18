@@ -56,10 +56,10 @@ export const WishImage = styled.img`
 `;
 
 export const ButtonContainer = styled.div`
-  min-width: 100%;
-  max-width: 100%;
+  width: 100%;
 
   & > button {
+    width: calc(100% - 6rem);
     display: flex;
     justify-content: space-between;
     flex-grow: 1;
