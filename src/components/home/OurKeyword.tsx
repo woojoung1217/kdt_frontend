@@ -2,7 +2,38 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
 
-const OurKeyword = () => {
+interface EmotionData {
+  interest_keyword: string;
+}
+
+interface CoupleData {
+  result?: {
+    my_emotion?: EmotionData;
+    spouse_emotion?: EmotionData;
+  };
+}
+
+interface OurKeywordProps {
+  coupleData?: CoupleData | undefined;
+}
+
+const OurKeyword = ({ coupleData }: OurKeywordProps) => {
+  const myKeyword = coupleData?.result?.my_emotion?.interest_keyword ?? '';
+  const spouseKeyword = coupleData?.result?.spouse_emotion?.interest_keyword ?? '';
+
+  console.log(coupleData);
+
+  // 키워드를 쉼표로 분리하여 배열로 변환
+  const myKeywordArray = myKeyword.split(',').map((keyword) => keyword.trim());
+  const spouseKeywordArray = spouseKeyword.split(',').map((keyword) => keyword.trim());
+
+  // 키워드 데이터 준비
+  const keywordData = [...myKeywordArray, ...spouseKeywordArray].map((keyword, index) => ({
+    value: 100,
+    name: `${keyword}`,
+    color: index === 0 ? variables.colors.primaryLight : variables.colors.secondary,
+  }));
+
   const option = {
     tooltip: {
       trigger: 'item',
@@ -21,14 +52,6 @@ const OurKeyword = () => {
         itemStyle: {
           borderRadius: 10,
         },
-        color: [
-          variables.colors.primarySoft,
-          variables.colors.primaryStrong,
-          variables.colors.secondary,
-          variables.colors.secondarySoft,
-          variables.colors.tertiarySoft,
-          variables.colors.secondaryStrong,
-        ],
         label: {
           show: false,
           position: 'center',
@@ -40,14 +63,12 @@ const OurKeyword = () => {
             fontWeight: 'bold',
           },
         },
-        data: [
-          { value: 100, name: '관심1', Colors: variables.colors.primaryLight },
-          { value: 100, name: '관심2' },
-          { value: 100, name: '관심3' },
-          { value: 100, name: '관심4' },
-          { value: 100, name: '관심5' },
-          { value: 100, name: '관심6' },
-        ],
+        data: keywordData.map((item, index) => ({
+          ...item,
+          itemStyle: {
+            color: index === 0 ? variables.colors.primaryLight : variables.colors.secondary, // 첫 번째 항목은 primaryLight, 나머지는 secondary 색상
+          },
+        })),
       },
     ],
   };

@@ -10,22 +10,22 @@ import useAuthRedirect from '@hooks/useAuthRedirect';
 import { useGetCoupleData } from '@hooks/useGetCoupleData';
 
 const Home = () => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('authToken') || '';
   const redirect = useAuthRedirect(); // 인가 확인 훅
-  const { data: coupleData } = useGetCoupleData(token!);
-
-  console.log('Cdata', coupleData);
+  const { data: coupleData, isLoading, error } = useGetCoupleData(token);
 
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
+  if (isLoading) return <div>......</div>; // 로딩 중 표시
+  if (error || !coupleData) return <div>{error?.message}</div>; // 에러 핸들링
 
   return (
     <HomepageContainer>
       <ContentWrapper>
         <HomePageTitle />
-        <CoupleInformation />
-        <OurReport />
-        <OurKeyword />
-        <CoupleReport />
+        <CoupleInformation coupleData={coupleData} />
+        <OurReport coupleData={coupleData} />
+        <OurKeyword coupleData={coupleData} />
+        <CoupleReport coupleData={coupleData} />
       </ContentWrapper>
       <Footer />
     </HomepageContainer>

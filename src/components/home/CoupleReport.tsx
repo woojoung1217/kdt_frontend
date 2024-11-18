@@ -1,9 +1,52 @@
-import ToggleButton from '@components/common/Toogle';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
 
-const CoupleReport = () => {
+type EmotionData = {
+  essential?: number;
+  refusing?: number;
+  relational?: number;
+  sexual?: number;
+  social?: number;
+} | null;
+
+interface CoupleResult {
+  my_emotion: EmotionData;
+  spouse_emotion: EmotionData;
+}
+
+interface CoupleData {
+  result?: CoupleResult;
+}
+
+interface CoupleReportProps {
+  coupleData?: CoupleData;
+}
+
+interface ToggleOptionProps {
+  isSelected: boolean;
+}
+
+const CoupleReport = ({ coupleData }: CoupleReportProps) => {
+  const [selected, setSelected] = useState<'self' | 'partner'>('self');
+
+  const {
+    essential: myEssential = 0,
+    refusing: myRefusing = 0,
+    relational: myRelational = 0,
+    sexual: mySexual = 0,
+    social: mySocial = 0,
+  } = coupleData?.result?.my_emotion || {};
+
+  const {
+    essential: spouseEssential = 0,
+    refusing: spouseRefusing = 0,
+    relational: spouseRelational = 0,
+    sexual: spouseSexual = 0,
+    social: spouseSocial = 0,
+  } = coupleData?.result?.spouse_emotion || {};
+
   const option = {
     radar: {
       indicator: [
@@ -32,16 +75,20 @@ const CoupleReport = () => {
         type: 'radar',
         data: [
           {
-            value: [4200, 3000, 20000, 35000, 18000],
+            value: [mySocial, mySexual, myEssential, myRefusing, myRelational],
             itemStyle: {
               color: variables.colors.primary,
             },
+            name: '나',
+            show: selected === 'self',
           },
           {
-            value: [5000, 14000, 28000, 26000, 21000],
+            value: [spouseSocial, spouseSexual, spouseEssential, spouseRefusing, spouseRelational],
             itemStyle: {
               color: variables.colors.secondaryStrong,
             },
+            name: '배우자',
+            show: selected === 'partner',
           },
         ],
       },
@@ -52,7 +99,14 @@ const CoupleReport = () => {
     <CoupleReportContainer>
       <CoupleReportTitle>
         배우자와 나의 리포트
-        <ToggleButton />
+        <ToggleContainer>
+          <ToggleOption isSelected={selected === 'self'} onClick={() => setSelected('self')}>
+            본인
+          </ToggleOption>
+          <ToggleOption isSelected={selected === 'partner'} onClick={() => setSelected('partner')}>
+            남편
+          </ToggleOption>
+        </ToggleContainer>
       </CoupleReportTitle>
       <CoupleReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인</CoupleReportTitleDes>
       <CoupleReportLineChartContainer>
@@ -66,6 +120,34 @@ const CoupleReport = () => {
 };
 
 export default CoupleReport;
+
+const ToggleContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #d3d3d3;
+  width: 9rem;
+  height: 3rem;
+  border-radius: 2rem;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-size: 1.4rem;
+`;
+
+const ToggleOption = styled.div<ToggleOptionProps>`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 1.4rem;
+  color: ${({ isSelected }) => (isSelected ? '#B691FF' : '#6e6e6e')};
+  background-color: ${({ isSelected }) => (isSelected ? '#efe6fa' : 'transparent')};
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+  cursor: pointer;
+`;
 
 const CoupleReportContainer = styled.div`
   display: flex;
