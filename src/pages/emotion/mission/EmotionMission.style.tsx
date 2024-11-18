@@ -52,11 +52,6 @@ export const WishImage = styled.img`
 `;
 
 export const ButtonContainer = styled.div`
-  margin-bottom: 1.2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
   width: 100%;
 
   & > button {
@@ -71,6 +66,7 @@ export const ButtonContainer = styled.div`
     color: ${variables.colors.gray100};
     font-weight: 500;
     transition: all ${variables.TransitionDuration};
+    margin-bottom: 2rem;
 
     &:hover,
     &:focus {
