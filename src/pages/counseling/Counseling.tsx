@@ -25,10 +25,11 @@ interface CounselData {
 
 const Counseling = () => {
   const member_id = Number(localStorage.getItem('MemberId'));
+  const [scaleData, setScaleData] = useState({ total: 0, belifs: '' });
   const userData = {
     name: localStorage.getItem('userName'),
-    total: '180점',
-    faith: '나는 살아갈 가치가 없는 사람이다, 결혼한 부부는 아이가 꼭 있어야 한다.',
+    total: `${scaleData.total}/230`,
+    belifs: scaleData.belifs,
   };
   const scrollBoxRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -46,7 +47,7 @@ const Counseling = () => {
     1. 사용자 특성:
       - 이름: ${userData.name}
       - 난임 스트레스 척도 점수: 230점 만점의 ${userData.total}
-      - 난임 스트레스 척도로 평가된 핵심 신념: ${userData.faith}
+      - 난임 스트레스 척도로 평가된 핵심 신념: ${userData.belifs}
     2. 상담 목표: 인지적 왜곡 및 부정적 자동적 사고를 탐색하여 핵심 신념 반박
     3. 대화 횟수: ${dataForPrompt.count}
     4. 사례개념화: ${dataForPrompt.caseFoumulation}
@@ -87,7 +88,7 @@ const Counseling = () => {
     setMessages((prev) => [...prev, { sender, message }]);
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleChat = async (e: FormEvent) => {
     e.preventDefault();
 
     // 사용자 입력란이 공백일 경우 함수 실행 X
@@ -128,6 +129,23 @@ const Counseling = () => {
   const now = new Date();
   const toDay = formatDate(now);
 
+  const fetchScaleData = async () => {
+    try {
+      const { data } = await axios.get('/infertility/tests/', {
+        params: { memberId: member_id },
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+      setScaleData({ total: data.result.totalTests[0].total, belifs: data.result.totalTests[0].belifs });
+      return data.result.totalTests[0];
+    } catch (err) {
+      console.error('Failed to POST scaleList: ', err);
+      return null;
+    }
+  };
+
   const fetchCounselResult = async (body: CounselData) => {
     try {
       const response = await axios.post('/counsels/records/', body, {
@@ -153,7 +171,6 @@ const Counseling = () => {
     const response = await fetchGPT(prompt, dataForPrompt.summary);
     const { summary, tags } = JSON.parse(response.choices[0].message.content);
     const fetchRes = await fetchCounselResult({ member_id, summary, tags, count: 1 });
-    console.log(fetchRes);
     if (fetchRes && fetchRes.status === 201) setModal(true);
   };
 
@@ -186,6 +203,10 @@ const Counseling = () => {
   useEffect(() => {
     moveScrollDown();
   }, [messages]);
+
+  useEffect(() => {
+    fetchScaleData();
+  }, []);
 
   return (
     <>
@@ -234,7 +255,7 @@ const Counseling = () => {
           </ul>
         </div>
 
-        <form css={[InputBox, step === 1 && Priority]} onSubmit={(e) => handleSubmit(e)}>
+        <form css={[InputBox, step === 1 && Priority]} onSubmit={(e) => handleChat(e)}>
           <input type="text" name="" id="" value={userInput} onChange={(e) => setUserInput(e.target.value)} />
           <button>
             <span className="hidden">전송</span>
