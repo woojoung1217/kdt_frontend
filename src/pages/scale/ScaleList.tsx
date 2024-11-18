@@ -23,7 +23,7 @@ export interface ScaleData extends Scale {
 }
 
 const ScaleList = () => {
-  const memberId = 1;
+  const memberId = Number(localStorage.getItem('MemberId'));
   const [data, setData] = useState<ScaleData[] | null>();
 
   const fetchScaleList = async (): Promise<ScaleData | null> => {
