@@ -76,7 +76,7 @@ const ScaleList = () => {
         <ul css={ScaleLists}>
           {data.map((item) => (
             <li key={item.id}>
-              <Link to={`/scale/${item.id}`}>{item.created_at!.split('T')[0].split('-').join('.')}</Link>
+              <Link to={`/scale/list/${item.id}`}>{item.created_at!.split('T')[0].split('-').join('.')}</Link>
             </li>
           ))}
         </ul>
