@@ -18,18 +18,18 @@ import useEmotionStore from '@store/useEmotionStore';
 const EMOTIONS_RESULT_URL = '/emotions/results/';
 
 const EmotionMission = () => {
-  const [clickButton, setClickButton] = useState('/src/assets/Images/invaildGray.svg');
+  const [, setClickButton] = useState('/src/assets/Images/invaildGray.svg');
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const analysisResult = useAnalysisStore((state) => state.analysis);
-
   const message = useEmotionStore((state) => state.message);
 
-  console.log(message);
+  // console.log(message);
 
-  console.log(analysisResult);
-  console.log(message);
+  // console.log(analysisResult);
+  // console.log(message);
+  // console.log(localStorage.getItem('MemberId'));
 
   const handleHover = (mission: string) => {
     setClickButton('/src/assets/Images/valid.svg');
@@ -39,7 +39,7 @@ const EmotionMission = () => {
 
   const handleClick = async () => {
     const my_emotion = {
-      member_id: 34,
+      member_id: localStorage.getItem('MemberId'),
       mission_content: selectedMission,
       is_complement: false,
       interest_keyword: analysisResult.keywords,
@@ -66,9 +66,9 @@ const EmotionMission = () => {
         body: JSON.stringify(my_emotion),
       });
       console.log('Mission submitted:', selectedMission);
-      navigate('/emotion/result');
       const data = await response.json();
       console.log(data);
+      navigate('/emotion/result');
     } catch (error) {
       console.error('전송 에러:', error);
     }
@@ -99,7 +99,12 @@ const EmotionMission = () => {
               }}
             >
               {mission}
-              <img src={clickButton} alt="선택" />
+              <img
+                src={
+                  selectedMission === mission ? '/src/assets/Images/valid.svg' : '/src/assets/Images/invaildGray.svg'
+                }
+                alt="선택"
+              />
             </button>
           ))}
         </ButtonContainer>
@@ -109,7 +114,9 @@ const EmotionMission = () => {
           <br />
           배우자가 나에게 작성한 한마디를 확인 할 수 있어요
         </MissionExplanation>
-        <Button onClick={handleClick} type="submit" size="medium" text="분석 결과 보기" disabled={false} />
+        <div className="resultButton">
+          <Button onClick={handleClick} type="submit" size="medium" text="분석 결과 보기" disabled={false} />
+        </div>
       </MissionSection>
     </>
   );
