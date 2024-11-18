@@ -20,7 +20,6 @@ const EmotionGraph: React.FC = () => {
     { value: analysisResult.emotions.sadness, name: '슬픔', color: `${variables.colors.secondary}` },
     { value: analysisResult.emotions.surprise, name: '놀람', color: `${variables.colors.secondarySoft}` },
   ];
-  console.log(data.map((v) => v.color));
 
   const [options] = useState({
     tooltip: {
