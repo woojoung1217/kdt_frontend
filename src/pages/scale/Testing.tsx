@@ -21,6 +21,7 @@ interface ScaleDataRes {
 }
 
 const Testing = () => {
+  const member_id = Number(localStorage.getItem('MemberId'));
   const navigate = useNavigate();
   const steps = ['1', '2', '3', '4', '5'];
   const [result, setResult] = useState<Scale>({
@@ -100,7 +101,7 @@ const Testing = () => {
       } else {
         const gptData = await fetchGPT(prompt, JSON.stringify(formData));
         const belifs = gptData.choices[0].message.content;
-        const response = await fetchTestResult({ ...result, member_id: 1, belifs });
+        const response = await fetchTestResult({ ...result, member_id, belifs });
         if (response) navigate(`/scale/${response.data.result.id}`);
       }
     },
