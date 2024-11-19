@@ -34,15 +34,15 @@ const CoupleMissionWeeklyUI = styled.div`
   font-weight: 700;
   display: flex;
   align-items: center;
-  box-shadow: inset ${variables.BoxShadow};
+  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
+  padding: 1.4rem 2.5rem;
 `;
 
 const Title = styled.p`
   margin-right: 1.5rem;
-  margin-left: 2.5rem;
 `;
 
 const MissionDots = styled.div`
@@ -50,7 +50,6 @@ const MissionDots = styled.div`
   gap: 0.8rem;
 `;
 
-// status prop을 받아서 색상을 결정하는 Dot 컴포넌트
 const Dot = styled.div<{ status: DotStatus }>`
   width: 2.4rem;
   height: 2.4rem;

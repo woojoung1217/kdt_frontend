@@ -149,7 +149,7 @@ const CoupleCardsWrapper = styled.div`
 `;
 
 const PersonalCard = styled.div`
-  border-radius: ${variables.borderRadius}+0.8rem;
+  border-radius: 1.6rem;
   width: 50%;
   height: 21rem;
   display: flex;
@@ -157,11 +157,11 @@ const PersonalCard = styled.div`
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  box-shadow: inset ${variables.BoxShadow};
+  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
 `;
 
 const SpouseCard = styled.div`
-  border-radius: ${variables.borderRadius}+0.8rem;
+  border-radius: 1.6rem;
   width: 50%;
   height: 21rem;
   display: flex;
@@ -169,7 +169,7 @@ const SpouseCard = styled.div`
   justify-content: center;
   align-items: center;
   padding: 1rem;
-  box-shadow: inset ${variables.BoxShadow};
+  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
 `;
 
 const CardImage = styled.img`
@@ -213,21 +213,24 @@ const CoupleMissionToChoose = styled.div<{ isMissionDone: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: inset ${variables.BoxShadow};
+  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
-  padding: 0 1rem;
+  padding: 1.4rem 2.5rem;
   border: ${({ isMissionDone }) => (isMissionDone ? `1px solid ${variables.colors.primary}` : 'transparent')};
   border-color: ${({ isMissionDone }) => (isMissionDone ? variables.colors.primary : 'transparent')};
 `;
 
 const MissionTitle = styled.p`
   font-weight: 500;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 `;
 
 const IsMissionDone = styled.input`
+  margin-right: -0.5rem;
+  background-color: red;
   width: 2.4rem;
   height: 2.4rem;
+  flex-grow: 0;
 `;

@@ -12,11 +12,14 @@ import { useGetCoupleData } from '@hooks/useGetCoupleData';
 const Home = () => {
   const token = localStorage.getItem('authToken') || '';
   const redirect = useAuthRedirect(); // 인가 확인 훅
-  const { data: coupleData, isLoading, error } = useGetCoupleData(token);
+  const { data: coupleData } = useGetCoupleData(token);
 
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
-  // if (isLoading) return <div>......</div>; // 로딩 중 표시
-  // if (error || !coupleData) return <div>{error?.message}</div>; // 에러 핸들링
+
+
+  console.log('home에서 데이터 호출 ', coupleData);
+
+
 
   return (
     <HomepageContainer>
@@ -37,7 +40,6 @@ const HomepageContainer = styled.div`
   flex-direction: column;
   height: 100vh;
   margin-top: 9rem;
-  height: 300rem;
 `;
 
 const ContentWrapper = styled.div`
