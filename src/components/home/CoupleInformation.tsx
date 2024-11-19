@@ -5,10 +5,11 @@ import profileImgMan from '@assets/Images/mainManProfile.svg';
 import mainlock from '@assets/Images/mainlock.svg';
 import { useNavigate } from 'react-router-dom';
 import { useCoupleInfo } from '@hooks/useCoupleInfo';
-import CoupleMissionWeekly from './CoupleMissionWeekly';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import CoupleMissionWeekly from './CoupleMissionWeekly';
 
+// TODO : 미션 등록 이번주 미션 해야함
 interface InfTest {
   essential: number;
   refusing: number;
@@ -19,8 +20,8 @@ interface InfTest {
   self_message?: string;
   id: number;
   mission_content?: string;
-  export_message?: string;
   is_complement?: boolean;
+  export_message?: string;
 }
 
 interface CoupleData {
@@ -29,7 +30,7 @@ interface CoupleData {
     spouse_inf_tests?: InfTest[];
     my_emotion?: InfTest;
     spouse_emotion?: InfTest;
-    is_complement?: InfTest;
+    export_message?: string;
   };
 }
 
@@ -41,37 +42,43 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
   const navigate = useNavigate();
   const [selfMessage, setSelfMessage] = useState('');
   const [mission, setMission] = useState('');
-  const [isMissionDone, setIsMissionDone] = useState(false);
+  const [isMissionDone, setIsMissionDone] = useState(false); // 체크박스 상태
   const { partnerName, myName, gender, isConnected } = useCoupleInfo();
-  const exportMessage = coupleData?.result?.spouse_emotion?.export_message;
-
   const myMissionCompleted = coupleData?.result?.my_emotion?.is_complement || false;
   const spouseMissionCompleted = coupleData?.result?.spouse_emotion?.is_complement || false;
+  const spouseExportMessage = coupleData?.result?.spouse_emotion?.export_message || '';
+
+  const getMissionStatusMessage = () => {
+    if (myMissionCompleted && spouseMissionCompleted) {
+      return spouseExportMessage;
+    } else if (myMissionCompleted) {
+      return '배우자 미션 수행 대기중';
+    } else {
+      return '미션을 수행하면 배우자의 한마디를 볼 수 있어요';
+    }
+  };
 
   /** 미션 수행 등록 함수 {PUT} */
   const handleMissionToggle = async () => {
     try {
-      const newMissionStatus = !isMissionDone;
-      setIsMissionDone(newMissionStatus);
-
+      setIsMissionDone(!isMissionDone);
       if (coupleData?.result?.my_emotion) {
         const result_id = coupleData.result.my_emotion.id;
-        const response = await axios.put(
-          `/emotions/results/${result_id}/`,
-          { is_complement: newMissionStatus },
-          {
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
 
         const requestData = {
           is_complement: true,
         };
 
+        const response = await axios.put(`https://www.wishkr.site/emotions/results/${result_id}/`, requestData, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        console.log('요청 성공:', response.data);
       }
     } catch (error) {
       console.error('에러:', error);
-      setIsMissionDone(isMissionDone); // 실패시 원래 상태로 복구
+      setIsMissionDone(isMissionDone);
     }
   };
 
@@ -79,21 +86,7 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
     const emotion = coupleData?.result?.my_emotion;
     setSelfMessage(emotion?.self_message || '');
     setMission(emotion?.mission_content || '');
-    setIsMissionDone(emotion?.is_complement || false);
   }, [coupleData]);
-
-  // 미션 메시지 결정 함수
-  const getMissionMessage = () => {
-    if (myMissionCompleted && !spouseMissionCompleted) {
-      return '배우자의 미션 수행을 기다리고 있어요';
-    } else if (!myMissionCompleted && spouseMissionCompleted) {
-      return '배우자가 미션을 완료했어요! 나도 미션을 수행해볼까요?';
-    } else if (myMissionCompleted && spouseMissionCompleted) {
-      return exportMessage || '두 분 모두 미션을 완료했어요!';
-    } else {
-      return mission;
-    }
-  };
 
   return (
     <CoupleInformationContainer>
@@ -118,16 +111,18 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
         </SpouseCard>
       </CoupleCardsWrapper>
       <>
-        {mission ? (
-          <CoupleMissionToChoose isMissionDone={isMissionDone}>
-            <MissionTitle>{getMissionMessage()}</MissionTitle>
-            <IsMissionDone type="checkbox" checked={isMissionDone} onChange={handleMissionToggle} />
-          </CoupleMissionToChoose>
-        ) : (
-          <CoupleMission>
-            {partnerName ? '미션을 수행하면 배우자의 한마디를 볼 수 있어요' : '배우자 연동을 하면 미션 등록이 가능해요'}
-          </CoupleMission>
-        )}
+        <>
+          {mission ? (
+            <CoupleMissionToChoose isMissionDone={isMissionDone}>
+              <MissionTitle>{mission}</MissionTitle>
+              <IsMissionDone type="checkbox" checked={isMissionDone} onChange={handleMissionToggle} />
+            </CoupleMissionToChoose>
+          ) : (
+            <CoupleMission>
+              {partnerName ? getMissionStatusMessage() : '배우자 연동을 하면 미션 등록이 가능해요'}
+            </CoupleMission>
+          )}
+        </>
       </>
       {partnerName ? (
         <CoupleMissionWeekly></CoupleMissionWeekly>
@@ -217,7 +212,7 @@ const CoupleMission = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
+  box-shadow: inset ${variables.BoxShadow};
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
@@ -246,7 +241,6 @@ const MissionTitle = styled.p`
 
 const IsMissionDone = styled.input`
   margin-right: -0.5rem;
-  background-color: red;
   width: 2.4rem;
   height: 2.4rem;
   flex-grow: 0;
