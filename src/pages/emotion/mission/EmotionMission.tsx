@@ -84,7 +84,7 @@ const EmotionMission = () => {
 
           <MissionTextBox>
             <MissonTitle>오늘의 AI위시 추천 미션</MissonTitle>
-            <MissonTitleSub>희선님의 일일 미션을 한가지 선택해주세요</MissonTitleSub>
+            <MissonTitleSub>{localStorage.getItem('userName')}님의 일일 미션을 한가지 선택해주세요</MissonTitleSub>
           </MissionTextBox>
         </MissionTitleBox>
 

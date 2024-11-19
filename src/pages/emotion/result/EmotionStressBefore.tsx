@@ -4,42 +4,24 @@ import ECharts from 'echarts-for-react';
 import useAnalysisStore from '@store/useAnalysisStore';
 import styled from '@emotion/styled';
 
-// interface StressData {
-//   value: number | string;
-//   color: string;
-// }
+interface EmotionStressBeforeProps {
+  record: {
+    essential: number;
+    refusing: number;
+    relational: number;
+    sexual: number;
+    social: number;
+    total: number;
+  };
+}
 
-export const StressText = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .stress-box {
-    width: 100%;
-    height: 18rem;
-  }
-
-  .stress-sub-text {
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: ${variables.colors.gray100};
-    margin: 4em 0 6rem 0;
-  }
-`;
-
-const EmotionStress = () => {
+const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
   const analysisResult = useAnalysisStore((state) => state.analysis);
-  console.log(analysisResult);
-  const dataValue = analysisResult.prediction.totalScore * 0.5;
-  console.log(dataValue);
+  const value = record.record.total * 0.5;
 
-  // const data: StressData[] = [
-  //   {
-  //     value: `${analysisResult.prediction.totalScore}`,
-  //     color: `${variables.colors.primary}`,
-  //   },
-  // ];
+  console.log(analysisResult);
+  console.log(record.record.total);
+  console.log(record);
 
   const [options] = useState({
     tooltip: {
@@ -54,7 +36,7 @@ const EmotionStress = () => {
         type: 'gauge',
         startAngle: 90,
         endAngle: -270,
-        color: `${variables.colors.primaryStrong}`,
+        color: `${variables.colors.secondaryStrong}`,
 
         pointer: {
           show: false,
@@ -66,7 +48,7 @@ const EmotionStress = () => {
           clip: false,
           itemStyle: {
             borderWidth: 1,
-            borderColor: `${variables.colors.primaryStrong}`,
+            borderColor: `${variables.colors.secondaryStrong}`,
           },
         },
         axisLine: {
@@ -88,12 +70,12 @@ const EmotionStress = () => {
         },
         data: [
           {
-            value: dataValue,
+            value: value,
           },
         ],
         detail: {
           fontSize: 22,
-          color: `${variables.colors.primary}`,
+          color: `${variables.colors.secondaryStrong}`,
           formatter: '{value}',
           offsetCenter: ['0', '0%'],
         },
@@ -101,8 +83,6 @@ const EmotionStress = () => {
         clockwise: false,
       },
     ],
-
-    max: 10,
   });
 
   return (
@@ -110,9 +90,28 @@ const EmotionStress = () => {
       <div className="stress-box">
         <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
       </div>
-      <p className="stress-sub-text">현재 예상 점수</p>
+      <p className="stress-sub-text">기존 점수</p>
     </StressText>
   );
 };
 
-export default EmotionStress;
+export const StressText = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .stress-box {
+    width: 100%;
+    height: 18rem;
+  }
+
+  .stress-sub-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: ${variables.colors.gray100};
+    margin: 4em 0 6rem 0;
+  }
+`;
+
+export default EmotionStressBefore;
