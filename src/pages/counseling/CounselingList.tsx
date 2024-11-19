@@ -1,76 +1,63 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '@components/common/Button';
 import noRecord from '/img/no-counseling-record.svg';
 import CounselingListItem from './CounselingListItem';
+import axios from 'axios';
 
 export interface CounselingListData {
-  counsel_id: number;
-  member_id: number;
-  count: number;
+  id: number;
   summary: string;
-  tags: string[];
+  tags: string;
+  count: number;
   created_at: string;
   updated_at: string;
+  member_id: number;
 }
 
-const CounselingData = [
-  {
-    counsel_id: 1,
-    member_id: 1,
-    count: 3,
-    summary: '1번 상담 요약내용',
-    tags: ['남편', '병원', '리시안셔스'],
-    created_at: '2024.04.09 08:13:00',
-    updated_at: '2024.04.09 08:13:00',
-  },
-  {
-    counsel_id: 2,
-    member_id: 1,
-    count: 4,
-    summary: '2번 상담 요약내용',
-    tags: ['부모님', '병원', '아이'],
-    created_at: '2024.04.09 08:13:00',
-    updated_at: '2024.04.09 08:13:00',
-  },
-  {
-    counsel_id: 3,
-    member_id: 1,
-    count: 3,
-    summary: '3번 상담 요약내용',
-    tags: ['회사', '상사', '일'],
-    created_at: '2024.04.09 08:13:00',
-    updated_at: '2024.04.09 08:13:00',
-  },
-  {
-    counsel_id: 4,
-    member_id: 1,
-    count: 3,
-    summary: '3번 상담 요약내용',
-    tags: ['친구', '지인', '부부'],
-    created_at: '2024.04.09 08:13:00',
-    updated_at: '2024.04.09 08:13:00',
-  },
-];
+const COUNSELINGLIST_URL = '/counsels/records/';
 
 const CounselingList = () => {
-  const [record, setRecord] = useState(true);
-  const [data, setData] = useState<CounselingListData[]>(CounselingData);
+  const [counselingRecord, setCounselingRecord] = useState<CounselingListData[]>([]);
+  const id = localStorage.getItem('MemberId');
   const navigate = useNavigate();
 
-  const counselingRecordItem = data?.map((item) => (
-    <CounselingListItem key={item.counsel_id} item={item} setData={setData} />
+  const fetchCounselingData = async (): Promise<CounselingListData | undefined> => {
+    try {
+      const res = await axios.get(`${COUNSELINGLIST_URL}?member_id=${id}`, {
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+
+      console.log(res.data.result);
+      if (res.status === 200) setCounselingRecord(res.data.result);
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };
+
+  useEffect(() => {
+    fetchCounselingData();
+  }, []);
+
+  console.log(counselingRecord);
+
+  const counselingRecordItem = counselingRecord?.map((item) => (
+    <CounselingListItem key={item.id} item={item} setCounselingRecord={setCounselingRecord} />
   ));
 
   return (
-    <div css={background}>
+    <div>
       <div css={Header} className="header">
         <h2>위시 상담 목록</h2>
       </div>
-      {record ? (
+      {counselingRecord && counselingRecord.length > 0 ? (
         <div css={RecordList}>{counselingRecordItem}</div>
       ) : (
         <div css={NoRecordCover}>
@@ -92,16 +79,9 @@ const CounselingList = () => {
 
 export default CounselingList;
 
-const background = css`
-  height: 100svh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
 const NoRecordCover = css`
   width: 100%;
-  margin: auto;
+  min-height: calc(100vh - ${variables.headerHeight});
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,6 +91,7 @@ const NoRecordCover = css`
 `;
 
 const Header = css`
+  background-color: ${variables.colors.white};
   position: fixed;
   left: 50%;
   top: 0;
@@ -130,8 +111,10 @@ const Header = css`
 
 const RecordList = css`
   width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  margin-top: 7rem;
+  margin-top: calc(${variables.headerHeight} + 1rem);
+  margin-bottom: 8rem;
 `;

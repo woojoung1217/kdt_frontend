@@ -1,40 +1,41 @@
 /** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { IFailure, ITestRecordSuccess } from 'types/types';
-import { css } from '@emotion/react';
 import Button from './Button';
 
-const Footer = () => {
+interface InfTest {
+  essential: number;
+  refusing: number;
+  relational: number;
+  sexual: number;
+  social: number;
+  total: number;
+}
+
+interface CoupleData {
+  result?: {
+    my_inf_tests?: InfTest[];
+    spouse_inf_tests?: InfTest[];
+  };
+}
+
+interface OurReportProps {
+  coupleData: CoupleData;
+}
+
+const Footer = ({ coupleData }: OurReportProps) => {
   const [hasDoneInfTest, setHasDoneInfTest] = useState<boolean>(false);
   const [showModal, setModal] = useState(false);
   const navigate = useNavigate();
 
-  const fetchTests = async (memberId: number): Promise<ITestRecordSuccess | IFailure | null> => {
-    const response = await fetch(`/infertility/tests/?memberId=${memberId}`);
-
-    if (response.ok) {
-      const data = await response.json();
-
-      return data;
-    }
-
-    return null;
-  };
-
   useEffect(() => {
-    const memberId = Number(localStorage.getItem('MemberId'));
-
-    const fetchAndSetTests = async () => {
-      const data = await fetchTests(memberId);
-
-      if (data?.result) setHasDoneInfTest(true);
-    };
-
-    fetchAndSetTests();
-  }, []);
+    if (coupleData?.result?.my_inf_tests?.[0]) {
+      setHasDoneInfTest(true);
+    }
+  }, [coupleData]);
 
   return (
     <FooterContainer>

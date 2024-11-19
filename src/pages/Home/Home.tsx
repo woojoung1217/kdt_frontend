@@ -16,7 +16,10 @@ const Home = () => {
 
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
 
+
   console.log('home에서 데이터 호출 ', coupleData);
+
+
 
   return (
     <HomepageContainer>
@@ -27,7 +30,7 @@ const Home = () => {
         <OurKeyword coupleData={coupleData} />
         <CoupleReport coupleData={coupleData} />
       </ContentWrapper>
-      <Footer />
+      <Footer coupleData={coupleData} />
     </HomepageContainer>
   );
 };
