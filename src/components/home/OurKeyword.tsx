@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
+import { useEffect, useState } from 'react';
+import notInftest from '@assets/Images/notInftest.svg';
 
 interface EmotionData {
   interest_keyword: string;
@@ -15,28 +17,76 @@ interface CoupleData {
 interface OurKeywordProps {
   coupleData?: CoupleData | undefined;
 }
-
 const OurKeyword = ({ coupleData }: OurKeywordProps) => {
   const myKeyword = coupleData?.result?.my_emotion?.interest_keyword ?? '';
   const spouseKeyword = coupleData?.result?.spouse_emotion?.interest_keyword ?? '';
+  const [testDone, setTestDone] = useState(false);
 
-  // 키워드를 쉼표로 분리하여 배열로 변환
-  const myKeywordArray = myKeyword.split(',').map((keyword) => keyword.trim());
-  const spouseKeywordArray = spouseKeyword.split(',').map((keyword) => keyword.trim());
+  useEffect(() => {
+    setTestDone(!!myKeyword);
+  }, [myKeyword]);
+
+  const myKeywordArray = myKeyword.split('#').filter((keyword) => keyword.trim() !== '');
+  const spouseKeywordArray = spouseKeyword.split('#').filter((keyword) => keyword.trim() !== '');
 
   return (
     <OurKeywordContainer>
       <OurKeywordTitle>우리의 관심사</OurKeywordTitle>
       <OurKeywordTitleDes>나의 통계와 배우자의 통계를 한눈에 확인할 수 있어요</OurKeywordTitleDes>
-      <OurKeywordLineChartContainer>
-        <OurKeywordDescription>우리의 관심사</OurKeywordDescription>
-        {myKeywordArray}, {spouseKeywordArray}
-      </OurKeywordLineChartContainer>
+      {testDone ? (
+        <OurKeywordLineChartContainer>
+          <OurKeywordDescription>우리의 관심사</OurKeywordDescription>
+          <KeywordContainer>
+            {[...myKeywordArray, ...spouseKeywordArray].map((keyword, index) => (
+              <KeywordBox key={index}>#{keyword.trim()}</KeywordBox>
+            ))}
+          </KeywordContainer>
+        </OurKeywordLineChartContainer>
+      ) : (
+        <>
+          <NoResult src={notInftest} alt="No test result" />
+          <Notification>난임 스트레스 척도 검사를 완료해주세요</Notification>
+        </>
+      )}
     </OurKeywordContainer>
   );
 };
-
 export default OurKeyword;
+
+const NoResult = styled.img`
+  width: 100%;
+  margin-top: 6rem;
+  height: 26rem;
+  margin-bottom: 1.8rem;
+`;
+
+const Notification = styled.div`
+  width: 100%;
+  height: 4rem;
+  border-radius: ${variables.borderRadius};
+  background-color: ${variables.colors.gray10};
+  display: flex;
+  justify-content: center;
+  color: ${variables.colors.gray100};
+  font-size: ${variables.size.medium};
+  align-items: center;
+`;
+
+const KeywordContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 3.5rem;
+`;
+
+const KeywordBox = styled.div`
+  padding: 0.8rem 1.6rem;
+  background-color: ${variables.colors.secondaryStrong};
+  border-radius: 2rem;
+  font-size: ${variables.size.small};
+  color: ${variables.colors.tertiarySoft};
+`;
 
 const OurKeywordContainer = styled.div`
   display: flex;

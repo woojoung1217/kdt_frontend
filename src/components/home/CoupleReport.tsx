@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
@@ -14,10 +15,8 @@ interface CoupleResult {
   my_emotion: EmotionData;
   spouse_emotion: EmotionData;
   my_inf_tests: EmotionData[];
-  spouse_inf_tests: EmotionData[]; // 새로운 필드 추가
+  spouse_inf_tests: EmotionData[];
 }
-
-// ... 기존 코드 ...
 
 interface CoupleData {
   result?: CoupleResult;
@@ -64,9 +63,6 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     social: spouseInfSocial = 0,
   } = coupleData?.result?.spouse_inf_tests[0] || {};
 
-  console.log(spouseEssential, spouseRefusing, spouseRelational, spouseSexual, spouseSocial);
-  console.log(spouseInfEssential, spouseInfRefusing, spouseInfRelational, spouseInfSexual, spouseInfSocial);
-
   const option = {
     radar: {
       indicator: [
@@ -95,20 +91,24 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
         type: 'radar',
         data: [
           {
-            value: [mySocial, mySexual, myEssential, myRefusing, myRelational],
+            value:
+              selected === 'self'
+                ? [mySocial, mySexual, myEssential, myRefusing, myRelational]
+                : [spouseSocial, spouseSexual, spouseEssential, spouseRefusing, spouseRelational],
             itemStyle: {
               color: variables.colors.primary,
             },
-            name: '나',
-            show: selected === 'self',
+            name: selected === 'self' ? '나' : '배우자',
           },
           {
-            value: [myInfSocial, myInfSexual, myInfEssential, myInfRefusing, myInfRelational],
+            value:
+              selected === 'self'
+                ? [myInfSocial, myInfSexual, myInfEssential, myInfRefusing, myInfRelational]
+                : [spouseInfSocial, spouseInfSexual, spouseInfEssential, spouseInfRefusing, spouseInfRelational],
             itemStyle: {
               color: variables.colors.secondaryStrong,
             },
-            name: '배우자',
-            show: selected === 'partner',
+            name: '예상 점수',
           },
         ],
       },
@@ -124,11 +124,11 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
             본인
           </ToggleOption>
           <ToggleOption isSelected={selected === 'partner'} onClick={() => setSelected('partner')}>
-            남편
+            배우자
           </ToggleOption>
         </ToggleContainer>
       </CoupleReportTitle>
-      <CoupleReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인</CoupleReportTitleDes>
+      <CoupleReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인해요</CoupleReportTitleDes>
       <CoupleReportLineChartContainer>
         <CoupleReportDescription>난임 스트레스 예상 점수</CoupleReportDescription>
         <ChartCover>

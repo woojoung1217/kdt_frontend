@@ -6,7 +6,6 @@ const fetchCoupleInfo = async (memberId: string) => {
   const response = await axios.get('https://www.wishkr.site/accounts/couple', {
     params: { memberId },
   });
-  console.log(response.data.result);
   return response.data.result;
 };
 
