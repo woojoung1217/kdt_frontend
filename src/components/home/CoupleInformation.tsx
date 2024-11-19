@@ -228,8 +228,9 @@ const MissionTitle = styled.p`
 `;
 
 const IsMissionDone = styled.input`
-  margin-right: unset;
+  margin-right: -0.5rem;
+  background-color: red;
   width: 2.4rem;
   height: 2.4rem;
-  flex-shrink: 0;
+  flex-grow: 0;
 `;

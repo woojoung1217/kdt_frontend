@@ -10,11 +10,14 @@ type EmotionData = {
   sexual?: number;
   social?: number;
 } | null;
-
 interface CoupleResult {
   my_emotion: EmotionData;
   spouse_emotion: EmotionData;
+  my_inf_tests: EmotionData[];
+  spouse_inf_tests: EmotionData[]; // 새로운 필드 추가
 }
+
+// ... 기존 코드 ...
 
 interface CoupleData {
   result?: CoupleResult;
@@ -38,6 +41,13 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     sexual: mySexual = 0,
     social: mySocial = 0,
   } = coupleData?.result?.my_emotion || {};
+  const {
+    essential: myInfEssential = 0,
+    refusing: myInfRefusing = 0,
+    relational: myInfRelational = 0,
+    sexual: myInfSexual = 0,
+    social: myInfSocial = 0,
+  } = coupleData?.result?.my_inf_tests[0] || {};
 
   const {
     essential: spouseEssential = 0,
@@ -46,6 +56,16 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     sexual: spouseSexual = 0,
     social: spouseSocial = 0,
   } = coupleData?.result?.spouse_emotion || {};
+  const {
+    essential: spouseInfEssential = 0,
+    refusing: spouseInfRefusing = 0,
+    relational: spouseInfRelational = 0,
+    sexual: spouseInfSexual = 0,
+    social: spouseInfSocial = 0,
+  } = coupleData?.result?.spouse_inf_tests[0] || {};
+
+  console.log(spouseEssential, spouseRefusing, spouseRelational, spouseSexual, spouseSocial);
+  console.log(spouseInfEssential, spouseInfRefusing, spouseInfRelational, spouseInfSexual, spouseInfSocial);
 
   const option = {
     radar: {
@@ -83,7 +103,7 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
             show: selected === 'self',
           },
           {
-            value: [spouseSocial, spouseSexual, spouseEssential, spouseRefusing, spouseRelational],
+            value: [myInfSocial, myInfSexual, myInfEssential, myInfRefusing, myInfRelational],
             itemStyle: {
               color: variables.colors.secondaryStrong,
             },

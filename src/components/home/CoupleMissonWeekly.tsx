@@ -50,7 +50,6 @@ const MissionDots = styled.div`
   gap: 0.8rem;
 `;
 
-// status prop을 받아서 색상을 결정하는 Dot 컴포넌트
 const Dot = styled.div<{ status: DotStatus }>`
   width: 2.4rem;
   height: 2.4rem;
