@@ -8,10 +8,19 @@ import ECharts from 'echarts-for-react';
 // import { useEffect, useState } from 'react';
 import Button from '@components/common/Button';
 import { useNavigate } from 'react-router-dom';
+import usePrevRecordStore from '@store/usePrevRecordStore';
+import useEmotionStore from '@store/useEmotionStore';
 
 const EmotionResult = () => {
-  const analysisResult = useAnalysisStore((state) => state.analysis) || { keywords: [] };
+  const analysisResult = useAnalysisStore((state) => state.analysis);
+  const prevRecord = usePrevRecordStore((state) => state.record);
+  const resetEmotion = useEmotionStore((state) => state.reset);
+  const resetAnalysisResult = useAnalysisStore((state) => state.reset);
+  const resetPrevRecord = useAnalysisStore((state) => state.reset);
   const navigate = useNavigate();
+
+  console.log(prevRecord);
+  console.log(analysisResult);
   // const [data, setData] = useState(null);
   // const result_pk = 1;
 
@@ -31,6 +40,9 @@ const EmotionResult = () => {
   // if (!data) return <div>로딩중.. 데이터가 없음</div>;
 
   const handleClick = () => {
+    resetEmotion();
+    resetAnalysisResult();
+    resetPrevRecord();
     navigate('/');
   };
 
