@@ -25,7 +25,7 @@ export const useGetCoupleData = (token: string) => {
     queryKey: ['coupleData', token],
     queryFn: () => fetchCoupleData(),
     enabled: !!token,
-    staleTime: 1000 * 60 * 10, // 10분 동안 신선하게 유지
+    staleTime: 1000 * 60 * 1, // 1분 동안 신선하게 유지
     refetchOnWindowFocus: false, // 창 포커스 시 새로고침 방지
     retry: 1, // 실패 시 재시도 횟수 제한
   });
