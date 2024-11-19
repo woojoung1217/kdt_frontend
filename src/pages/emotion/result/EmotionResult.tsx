@@ -4,29 +4,35 @@ import variables from '@styles/Variables';
 import EmotionGraph from './EmotionGraph';
 import EmotionStress from './EmotionStress';
 import ECharts from 'echarts-for-react';
-import Footer from '@components/common/Footer';
-import { useEffect, useState } from 'react';
+// import Footer from '@components/common/Footer';
+// import { useEffect, useState } from 'react';
+import Button from '@components/common/Button';
+import { useNavigate } from 'react-router-dom';
 
 const EmotionResult = () => {
-  const [data, setData] = useState(null);
-  const result_pk = 1;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
-        const result = await res.json();
-        setData(result);
-      } catch (error) {
-        console.error('fetching error:', error);
-      }
-    };
-    fetchData();
-  }, [result_pk]);
-
   const analysisResult = useAnalysisStore((state) => state.analysis) || { keywords: [] };
+  const navigate = useNavigate();
+  // const [data, setData] = useState(null);
+  // const result_pk = 1;
 
-  if (!data) return <div>로딩중.. 데이터가 없음</div>;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
+  //       const result = await res.json();
+  //       setData(result);
+  //     } catch (error) {
+  //       console.error('fetching error:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [result_pk]);
+
+  // if (!data) return <div>로딩중.. 데이터가 없음</div>;
+
+  const handleClick = () => {
+    navigate('/');
+  };
 
   console.log(analysisResult.keywords);
 
@@ -89,6 +95,7 @@ const EmotionResult = () => {
         <ResultTextBox>
           <pre>난임 스트레스 예상점수</pre>
         </ResultTextBox>
+
         <EmotionGraphContainer>
           <div className="flex-box">
             <EmotionStress />
@@ -103,7 +110,14 @@ const EmotionResult = () => {
         </EmotionGraphContainer>
       </ResultSection>
 
-      <Footer />
+      <Button
+        onClick={handleClick}
+        fixed={true}
+        disabled={false}
+        type="submit"
+        size="medium"
+        text="메인화면으로 이동"
+      />
     </>
   );
 };
