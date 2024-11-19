@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 
 export const EmotionLayout = styled.section`
-  height: calc(100dvh - 1 * ${variables.layoutPadding});
+  height: 100svh;
   padding-top: calc(7.2rem - ${variables.layoutPadding});
   margin-bottom: -4rem;
   box-sizing: border-box;
@@ -206,6 +206,7 @@ export const InputArea = styled.div`
         padding-right: 2.6rem;
         scrollbar-width: thin;
         scrollbar-color: ${variables.colors.gray50} transparent;
+        font-size: 1.7rem;
 
         &::-webkit-scrollbar {
           width: 1px;

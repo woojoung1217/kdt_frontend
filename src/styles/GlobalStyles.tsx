@@ -24,9 +24,9 @@ const GlobalStyles = css`
     color: ${variables.colors.black};
     font-family: 'Pretendard', sans-serif; /* Pretendard 폰트 적용 */
     font-size: ${variables.size.medium};
-    padding: 2rem 1.8rem;
+    padding: 0 1.8rem;
     background: #fff;
-    height: 100vh;
+    height: 100svh;
     overflow: auto;
     scrollbar-width: none;
     position: relative;
