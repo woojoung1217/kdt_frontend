@@ -24,12 +24,24 @@ interface CounselData {
 }
 
 const Counseling = () => {
+  // 이전 대화가 있다면 필요한거
+  /*
+    "summary": "우울해함",
+		"tags": "#배고파#나도#치킨먹자",
+		"count": 1,
+
+    0. 10번 상세 fetch
+    1. 프롬프팅에 요약 내용 전달하기 -> dataForPrompt.summary
+    2. count +=1
+    3. tag를 유지할까 말까
+   */
   const params = useParams();
   const navigate = useNavigate();
   const member_id = Number(localStorage.getItem('MemberId'));
   const scrollBoxRef = useRef<HTMLDivElement>(null);
 
   const [scaleData, setScaleData] = useState({ total: 0, belifs: '' });
+  const [previousCounsel, setPreviousCounsel] = useState({ summary: '', tags: '', count: 1 });
   const [messages, setMessages] = useState<Message[]>([]);
   const [userInput, setUserInput] = useState('');
   const [lastMsg, setLastMsg] = useState({ user: '', gpt: '' });
@@ -45,7 +57,7 @@ const Counseling = () => {
 
   const prompt = `
     아래 내용을 참고하여 난임스트레스를 낮출 수 있는 심리 상담을 해줘.
-    1. 사용자 특성:
+    1. user 특성:
       - 이름: ${userData.name}
       - 난임 스트레스 척도 점수: 230점 만점의 ${userData.total}
       - 난임 스트레스 척도로 평가된 핵심 신념: ${userData.belifs}
@@ -56,24 +68,24 @@ const Counseling = () => {
     6. 바로 직전 대화: ${lastMsg}
     7. 답변 형식: {"answer": "~합니다. 등의 존댓말", "summary": "~함. 등의 요약", "caseFoumulation": "내용"}
       1) answer:
-        - '4. 사례개념화', '5. 대화 요약'과 '6. 바로 직전 대화'를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
-          1) 사용자에게서 인지적 왜곡이나 부정적인 사고가 관찰된다면, 다양한 관점을 깨달을 수 있도록 소크라테스식 질문을 해줘.
-          2) 사용자가 다른 관점을 생각하지 못한다면, '대화 요약'을 참고해서 다른 관점을 제시해줘.
-          3) 사용자가 부적절한 방식으로 반응을 한다면, 상황에 따라 적절한 반응을 깨달을 수 있는 질문을 해줘.
-          4) 대화 횟수가 10회 이상이고, 사용자의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
+        - '5. 대화 요약', '6. 바로 직전 대화'를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
+          1) user에게서 인지적 왜곡이나 부정적인 사고가 관찰된다면, 다양한 관점을 깨달을 수 있도록 소크라테스식 질문을 해줘.
+          2) user가 다른 관점을 생각하지 못한다면, '대화 요약'을 참고해서 다른 관점을 제시해줘.
+          3) user가 부적절한 방식으로 반응을 한다면, 상황에 따라 적절한 반응을 깨달을 수 있는 질문을 해줘.
+          4) 대화 횟수가 10회 이상이고, user의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
         - user의 메시지는 '대화 요약'을 참고하고, '바로 직전 대화'와 이어지는 내용이니까 꼭! 참고해서 답변해줘.
         - 종종 말 줄임표를 사용하고, 이미 파악된 내용은 다시 물어보지 말아줘.
         - 130자 이내로 존댓말을 사용해 줘.
-        - 만약 사용자가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
+        - 만약 user가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
       2) summary: 
-        - 사용자의 답변과 system의 답변을 높임체 없이 '~함' 등 간략한 말투로 요약해줘.
+        - user의 답변과 system의 답변을 높임체 없이 '~함' 등 간략한 말투로 요약해줘.
         - 이후에 summary를 보면 system이 대화 내용을 유추하고 이어서 대화할 수 있도록 구체적인 내용을 포함해줘.
         - system의 답변은 질문의 내용까지 구체적으로 포함해줘.
       3) caseFoumulation: { 
           "상황": "'4. 사례개념화', '5. 대화 요약'을 참고한 스트레스 유발 상황. 형식: '~하는 상황'", 
           "감정": "스트레스 상황에 대한 감정", 
           "자동적사고": "상황을 접하여 떠올린 자기, 미래, 세상에 대한 자동적인 생각. 형식: '~한다.'", 
-          "핵심신념": "'1. 사용자 특성' 중 '핵심 신념'을 참고하여 부정적인 자동적 사고를 활성화시키는 기저 신념. 형식: '~한다.'",
+          "핵심신념": "'1. user 특성' 중 '핵심 신념'을 참고하여 부정적인 자동적 사고를 활성화시키는 기저 신념. 형식: '~한다.'",
           "행동": "스트레스를 받은 후 행동" 
         }
   `;
@@ -91,11 +103,10 @@ const Counseling = () => {
 
   const handleChat = async (e: FormEvent) => {
     e.preventDefault();
-
     // 사용자 입력란이 공백일 경우 함수 실행 X
     if (!userInput.trim()) {
       setUserInput('');
-      return null;
+      return;
     }
 
     addMessage('user', userInput);
@@ -108,13 +119,15 @@ const Counseling = () => {
     addMessage('gpt', answer);
     setLastMsg({ user: userMsg, gpt: answer });
     setDataForPrompt({
-      summary: dataForPrompt.summary ? `${dataForPrompt.summary}, ${summary}` : summary,
+      summary: dataForPrompt.summary
+        ? `${dataForPrompt.summary}, ${summary}`
+        : `${previousCounsel.summary}, ${summary}`,
       count: dataForPrompt.count + 1,
       caseFoumulation,
     });
     setIsLoading(false);
 
-    console.log(dataForPrompt.summary);
+    console.log(dataForPrompt.summary, lastMsg);
   };
 
   //상담 시작 날짜 가져오는 함수
@@ -129,6 +142,22 @@ const Counseling = () => {
   }
   const now = new Date();
   const toDay = formatDate(now);
+
+  const fetchPreviousCounsel = async (id: string) => {
+    try {
+      const { data } = await axios.get(`/counsels/records/${id}`, {
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
+      setPreviousCounsel({ summary: data.result.summary, tags: data.result.tags, count: data.result.count + 1 });
+      return data.result;
+    } catch (err) {
+      console.error('Failed to POST scaleList: ', err);
+      return null;
+    }
+  };
 
   const fetchScaleData = async () => {
     try {
@@ -171,7 +200,7 @@ const Counseling = () => {
     `;
     const response = await fetchGPT(prompt, dataForPrompt.summary);
     const { summary, tags } = JSON.parse(response.choices[0].message.content);
-    const fetchRes = await fetchCounselResult({ member_id, summary, tags, count: 1 });
+    const fetchRes = await fetchCounselResult({ member_id, summary, tags, count: previousCounsel.count || 1 });
     if (fetchRes && fetchRes.status === 201) setModal(true);
   };
 
@@ -205,6 +234,7 @@ const Counseling = () => {
   }, [messages]);
 
   useEffect(() => {
+    if (params.id) fetchPreviousCounsel(params.id);
     fetchScaleData();
   }, []);
 
@@ -236,6 +266,12 @@ const Counseling = () => {
                   난임으로 인해 힘든 마음을 편하게 나눠주세요. 어려움을 해결할 수 있도록 도와드릴게요. 사회적 관계에서
                   느끼는 부담, 배우자와의 소통문제, 부부 관계에 대한 고민 모두 가능해요.
                 </p>
+                {previousCounsel.tags && (
+                  <p>
+                    이전 상담 내용은 다음과 같아요. <br />
+                    {previousCounsel.tags.split('#').join(' #')}
+                  </p>
+                )}
               </div>
             </li>
 
