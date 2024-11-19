@@ -142,7 +142,8 @@ const FadeOutAni = css`
 
 const GuideDim = css`
   position: absolute;
-  width: 50rem;
+  max-width: 50rem;
+  width: 100%;
   left: 50%;
   top: 0;
   bottom: 0;
@@ -176,7 +177,8 @@ const GuideDim = css`
 
 const StepLayer = css`
   position: absolute;
-  width: 50rem;
+  max-width: 50rem;
+  width: 100%;
   left: 50%;
   top: 0;
   bottom: 0;
