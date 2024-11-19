@@ -31,7 +31,7 @@ const LoginPage = () => {
 
     // 로그인 API 호출
     try {
-      const response = await axios.post('/accounts/login/', { email, password });
+      const response = await axios.post('https://www.wishkr.site/accounts/login/', { email, password });
 
       if (response.status === 200) {
         console.log('Login successful:', response.data);

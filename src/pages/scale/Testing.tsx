@@ -59,7 +59,7 @@ const Testing = () => {
 
   const fetchTestResult = async (body: ScaleData): Promise<ScaleDataRes | null> => {
     try {
-      const response = await axios.post('/infertility/tests/', body, {
+      const response = await axios.post('https://www.wishkr.site/infertility/tests/', body, {
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',

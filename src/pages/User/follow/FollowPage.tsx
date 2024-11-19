@@ -9,7 +9,7 @@ import { handleValidation } from '@utils/validation/handleValidation';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const FOLLOW_URL = '/accounts/couple/';
+const FOLLOW_URL = 'https://www.wishkr.site/accounts/couple/';
 
 const FollowSection = styled.section`
   height: calc(100svh - 2 * ${variables.layoutPadding});

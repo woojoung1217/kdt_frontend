@@ -1,12 +1,12 @@
 /** @jsxImportSource @emotion/react */
+import Button from '@components/common/Button';
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '@components/common/Button';
-import noRecord from '/img/no-counseling-record.svg';
 import CounselingListItem from './CounselingListItem';
-import axios from 'axios';
+import noRecord from '/img/no-counseling-record.svg';
 
 export interface CounselingListData {
   id: number;
@@ -18,7 +18,7 @@ export interface CounselingListData {
   member_id: number;
 }
 
-const COUNSELINGLIST_URL = '/counsels/records/';
+const COUNSELINGLIST_URL = 'https://www.wishkr.site/counsels/records/';
 
 const CounselingList = () => {
   const [counselingRecord, setCounselingRecord] = useState<CounselingListData[]>([]);

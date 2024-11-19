@@ -14,7 +14,7 @@ const EmotionResult = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/emotions/results/${result_pk}`);
+        const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
         const result = await res.json();
         setData(result);
       } catch (error) {

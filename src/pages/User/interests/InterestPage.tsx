@@ -7,7 +7,7 @@ import InterestItem from './InterestItem';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const INTERESTS_URL = '/emotions/interests/';
+const INTERESTS_URL = 'https://www.wishkr.site/emotions/interests/';
 
 const InterestSection = styled.section`
   height: calc(100svh - 2 * ${variables.layoutPadding});
