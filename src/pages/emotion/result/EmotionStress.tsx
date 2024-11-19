@@ -4,10 +4,10 @@ import ECharts from 'echarts-for-react';
 import useAnalysisStore from '@store/useAnalysisStore';
 import styled from '@emotion/styled';
 
-interface StressData {
-  value: number | string;
-  color: string;
-}
+// interface StressData {
+//   value: number | string;
+//   color: string;
+// }
 
 export const StressText = styled.div`
   width: 100%;
@@ -31,13 +31,15 @@ export const StressText = styled.div`
 const EmotionStress = () => {
   const analysisResult = useAnalysisStore((state) => state.analysis);
   console.log(analysisResult);
+  const dataValue = analysisResult.prediction.totalScore * 0.5;
+  console.log(dataValue);
 
-  const data: StressData[] = [
-    {
-      value: `${analysisResult.prediction.totalScore}`,
-      color: `${variables.colors.primary}`,
-    },
-  ];
+  // const data: StressData[] = [
+  //   {
+  //     value: `${analysisResult.prediction.totalScore}`,
+  //     color: `${variables.colors.primary}`,
+  //   },
+  // ];
 
   const [options] = useState({
     tooltip: {
@@ -84,7 +86,11 @@ const EmotionStress = () => {
           show: false,
           distance: 50,
         },
-        data: data,
+        data: [
+          {
+            value: dataValue,
+          },
+        ],
         detail: {
           fontSize: 22,
           color: `${variables.colors.primary}`,
@@ -95,6 +101,8 @@ const EmotionStress = () => {
         clockwise: false,
       },
     ],
+
+    max: 10,
   });
 
   return (
@@ -102,7 +110,7 @@ const EmotionStress = () => {
       <div className="stress-box">
         <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
       </div>
-      <p className="stress-sub-text">기존 점수</p>
+      <p className="stress-sub-text">현재 예상 점수</p>
     </StressText>
   );
 };
