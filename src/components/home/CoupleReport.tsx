@@ -64,9 +64,6 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     social: spouseInfSocial = 0,
   } = coupleData?.result?.spouse_inf_tests[0] || {};
 
-  console.log(spouseEssential, spouseRefusing, spouseRelational, spouseSexual, spouseSocial);
-  console.log(spouseInfEssential, spouseInfRefusing, spouseInfRelational, spouseInfSexual, spouseInfSocial);
-
   const option = {
     radar: {
       indicator: [
@@ -95,20 +92,24 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
         type: 'radar',
         data: [
           {
-            value: [mySocial, mySexual, myEssential, myRefusing, myRelational],
+            value:
+              selected === 'self'
+                ? [mySocial, mySexual, myEssential, myRefusing, myRelational]
+                : [spouseSocial, spouseSexual, spouseEssential, spouseRefusing, spouseRelational],
             itemStyle: {
               color: variables.colors.primary,
             },
-            name: '나',
-            show: selected === 'self',
+            name: selected === 'self' ? '나' : '배우자',
           },
           {
-            value: [myInfSocial, myInfSexual, myInfEssential, myInfRefusing, myInfRelational],
+            value:
+              selected === 'self'
+                ? [myInfSocial, myInfSexual, myInfEssential, myInfRefusing, myInfRelational]
+                : [spouseInfSocial, spouseInfSexual, spouseInfEssential, spouseInfRefusing, spouseInfRelational],
             itemStyle: {
               color: variables.colors.secondaryStrong,
             },
-            name: '배우자',
-            show: selected === 'partner',
+            name: '예상 점수',
           },
         ],
       },
@@ -124,7 +125,7 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
             본인
           </ToggleOption>
           <ToggleOption isSelected={selected === 'partner'} onClick={() => setSelected('partner')}>
-            남편
+            배우자
           </ToggleOption>
         </ToggleContainer>
       </CoupleReportTitle>
