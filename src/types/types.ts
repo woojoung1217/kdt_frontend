@@ -105,3 +105,28 @@ export interface FetchCoupleDataError {
   message: string;
   status?: number;
 }
+
+// 감정기록 response
+export interface IRecords {
+  id: number;
+  mission_content: string;
+  is_complement: boolean;
+  interest_keyword: string;
+  self_message: string;
+  export_message: string;
+  joy: number;
+  sadness: number;
+  anger: number;
+  fear: number;
+  surprise: number;
+  disgust: number;
+  total: number;
+  social: number;
+  sexual: number;
+  relational: number;
+  refusing: number;
+  essential: number;
+  created_at: string;
+  updated_at: string;
+  member_id: number;
+}
