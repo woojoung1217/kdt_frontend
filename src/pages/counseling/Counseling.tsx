@@ -1,15 +1,15 @@
 /** @jsxImportSource @emotion/react */
+import Button from '@components/common/Button';
 import { css } from '@emotion/react';
 import variables from '@styles/Variables';
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import fetchGPT from '../../hooks/useGPT';
-import prevIcon from '/img/icon-page-prev.svg';
-import wishIcon from '/img/icon-wish-profile.svg';
-import sendIcon from '/img/icon-send.svg';
-import CounselingGuide from './CounslingGuide';
-import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Button from '@components/common/Button';
+import { FormEvent, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import fetchGPT from '../../hooks/useGPT';
+import CounselingGuide from './CounslingGuide';
+import prevIcon from '/img/icon-page-prev.svg';
+import sendIcon from '/img/icon-send.svg';
+import wishIcon from '/img/icon-wish-profile.svg';
 
 interface Message {
   sender?: string;
@@ -145,7 +145,7 @@ const Counseling = () => {
 
   const fetchPreviousCounsel = async (id: string) => {
     try {
-      const { data } = await axios.get(`/counsels/records/${id}`, {
+      const { data } = await axios.get(`https://www.wishkr.site/counsels/records/${id}`, {
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',
@@ -161,7 +161,7 @@ const Counseling = () => {
 
   const fetchScaleData = async () => {
     try {
-      const { data } = await axios.get('/infertility/tests/', {
+      const { data } = await axios.get('https://www.wishkr.site/infertility/tests/', {
         params: { memberId: member_id },
         headers: {
           'content-type': 'application/json',
@@ -178,7 +178,7 @@ const Counseling = () => {
 
   const fetchCounselResult = async (body: CounselData) => {
     try {
-      const response = await axios.post('/counsels/records/', body, {
+      const response = await axios.post('https://www.wishkr.site/counsels/records/', body, {
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',
@@ -231,6 +231,7 @@ const Counseling = () => {
 
   useEffect(() => {
     moveScrollDown();
+    document.documentElement.scrollTo({ top: 0 });
   }, [messages]);
 
   useEffect(() => {
@@ -240,7 +241,7 @@ const Counseling = () => {
 
   return (
     <>
-      {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />}
+      {/* {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />} */}
 
       <div css={BackGroundColor}>
         <div css={Header}>

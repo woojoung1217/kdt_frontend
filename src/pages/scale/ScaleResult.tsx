@@ -11,7 +11,7 @@ import ScaleTotalGraph from './ScaleTotalGraph';
 import ScaleTypeGraph from './ScaleTypeGraph';
 import prevIcon from '/img/icon-page-prev.svg';
 
-const SCALEDATA_URL = '/infertility/tests/';
+const SCALEDATA_URL = 'https://www.wishkr.site/infertility/tests/';
 
 const ScaleResult = () => {
   const [scaleData, setScaleData] = useState<ScaleData>();

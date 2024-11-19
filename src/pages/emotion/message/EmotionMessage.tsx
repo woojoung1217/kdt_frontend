@@ -1,8 +1,15 @@
 // 진욱
 /** @jsxImportSource @emotion/react */
 import Button from '@components/common/Button';
+import { css } from '@emotion/react';
+import fetchGPT from '@hooks/useGPT';
+import useAnalysisStore from '@store/useAnalysisStore';
 import useEmotionStore from '@store/useEmotionStore';
+import usePrevRecordStore, { IPrevRecord } from '@store/usePrevRecordStore';
+import variables from '@styles/Variables';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IInterests, IRecords, ITest } from 'types/types';
 import {
   DashedLine,
   MessageArea,
@@ -14,15 +21,10 @@ import {
   ProgressBar,
   TitleText,
 } from './EmotionMessage.style';
-import fetchGPT from '@hooks/useGPT';
-import useAnalysisStore from '@store/useAnalysisStore';
-import { useNavigate } from 'react-router-dom';
-import { IInterests, ITest } from 'types/types';
-import { css } from '@emotion/react';
-import variables from '@styles/Variables';
 
-const INTERESTS_URL = '/emotions/interests/';
-const INFERTILITY_TESTS_URL = '/infertility/tests/';
+const INTERESTS_URL = 'https://www.wishkr.site/emotions/interests/';
+const INFERTILITY_TESTS_URL = 'https://www.wishkr.site/infertility/tests/';
+const EMOTION_RECORD_URL = 'https://www.wishkr.site/emotions/results/';
 
 const Modal = css`
   position: fixed;
@@ -58,6 +60,7 @@ const Modal = css`
 `;
 
 const EmotionMessage = () => {
+  const updatePrevRecord = usePrevRecordStore((state) => state.updateRecord);
   const emotionRecord = useEmotionStore((state) => state.record);
   const updateMessage = useEmotionStore((state) => state.updateMessage);
   const currentStep = useAnalysisStore((state) => state.step);
@@ -69,6 +72,14 @@ const EmotionMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [keywords, setKeywords] = useState<string>('');
   const [tests, setTests] = useState<ITest>();
+  const [records, setRecords] = useState<IPrevRecord>({
+    total: 0,
+    social: 0,
+    sexual: 0,
+    relational: 0,
+    refusing: 0,
+    essential: 0,
+  });
   const [showError, setErrorModal] = useState(false);
   const navigate = useNavigate();
 
@@ -103,7 +114,24 @@ const EmotionMessage = () => {
         throw new Error('난임스트레스 척도 검사 결과가 존재하지 않습니다!');
       }
     } catch (e) {
-      if (e instanceof Error) alert(e.message);
+      if (e instanceof Error) setErrorModal(true);
+    }
+
+    return null;
+  };
+
+  const fetchRecords = async (memberId: number): Promise<IRecords | null> => {
+    try {
+      const response = await fetch(`${EMOTION_RECORD_URL}?member_id=${memberId}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.result.totalRecords;
+      } else {
+        throw new Error('감정기록 조회 실패');
+      }
+    } catch (e) {
+      if (e instanceof Error) setErrorModal(true);
     }
 
     return null;
@@ -130,19 +158,32 @@ const EmotionMessage = () => {
       }
     };
 
+    const fetchAndSetRecords = async () => {
+      const data = await fetchRecords(memberId);
+      if (data) {
+        updatePrevRecord({
+          total: data.total,
+          social: data.social,
+          sexual: data.sexual,
+          relational: data.relational,
+          refusing: data.refusing,
+          essential: data.essential,
+        });
+        setRecords({
+          total: data.total,
+          social: data.social,
+          sexual: data.sexual,
+          relational: data.relational,
+          refusing: data.refusing,
+          essential: data.essential,
+        });
+      }
+    };
+
     fetchAndSetKeywords();
     fetchAndSetTests();
+    fetchAndSetRecords();
   }, []);
-
-  /* 전일 난임스트레스 척도 예상점수 */
-  const [
-    predictedTotalScore,
-    predictedSocial,
-    predictedSexual,
-    predictedRelational,
-    predictedRefusing,
-    predictedEssential,
-  ] = [151, 30, 34, 29, 28, 30];
 
   // 프롬프트 작성
   const prompt = `
@@ -151,20 +192,20 @@ const EmotionMessage = () => {
     **응답 형식**:
     {
       "prediction": {
-        "totalScore": "숫자",
-        "social": "숫자",
-        "sexual": "숫자",
-        "relational": "숫자",
-        "refusing": "숫자",
-        "essential": "숫자"
+        "totalScore": 숫자,
+        "social": 숫자,
+        "sexual": 숫자,
+        "relational": 숫자,
+        "refusing": 숫자,
+        "essential": 숫자
       },
       "emotions": {
-        "joy": "숫자",
-        "sadness": "숫자",
-        "anger": "숫자",
-        "fear": "숫자",
-        "surprise": "숫자",
-        "disgust": "숫자"
+        "joy": 숫자,
+        "sadness": 숫자,
+        "anger": 숫자,
+        "fear": 숫자,
+        "surprise": 숫자,
+        "disgust": 숫자
       },
       "missions": ["내용", "내용"],
       "keywords": "#내용 #내용 #내용"
@@ -196,7 +237,7 @@ const EmotionMessage = () => {
     ${tests ? `총점 ${tests.total}점, 사회적 영역 ${tests.social}점, 관계적 영역 ${tests.relational}점, 성적 영역 ${tests.sexual}점, 아이 없는 일상에 대한 거부 영역 ${tests.refusing}점, 부모됨의 필요성 영역 ${tests.essential}점` : '최근 난임스트레스 척도 검사 결과 없음'}
 
     전일 예측 점수:
-    총점 ${predictedTotalScore}점, 사회적 영역 ${predictedSocial}점, 관계적 영역 ${predictedRelational}점, 성적 영역 ${predictedSexual}점, 아이 없는 일상에 대한 거부 영역 ${predictedRefusing}점, 부모됨의 필요성 영역 ${predictedEssential}점.
+    총점 ${records.total}점, 사회적 영역 ${records.social}점, 관계적 영역 ${records.relational}점, 성적 영역 ${records.sexual}점, 아이 없는 일상에 대한 거부 영역 ${records.refusing}점, 부모됨의 필요성 영역 ${records.essential}점.
 
     오늘 사용자의 감정 기록과 행동, 최근 난임스트레스 척도 검사 결과, 전일 예측 점수를 바탕으로 위 영역별 점수와 총점을 예상해주세요.
     오늘 하루 임신을 위해 노력했거나 즐거운 일이 있을 경우 예측 점수가 낮아질 수 있습니다.
@@ -331,7 +372,11 @@ const EmotionMessage = () => {
             <div css={Modal}>
               <div className="inner">
                 <p className="tit">알림</p>
-                <p className="cont">관심사를 불러올 수 없습니다!</p>
+                <p className="cont">
+                  사용자의 관심사 및 검사결과를 불러오지 못했습니다!
+                  <br />
+                  오늘의 감정 기록으로 분석을 시작합니다.
+                </p>
                 <div className="btn-box">
                   <Button text="확인" size="medium" disabled={false} onClick={() => setErrorModal(false)} />
                 </div>

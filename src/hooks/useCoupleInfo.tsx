@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // API 호출 함수 분리
 const fetchCoupleInfo = async (memberId: string) => {
-  const response = await axios.get('/accounts/couple', {
+  const response = await axios.get('https://www.wishkr.site/accounts/couple', {
     params: { memberId },
   });
   return response.data.result;

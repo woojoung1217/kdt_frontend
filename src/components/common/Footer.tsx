@@ -23,7 +23,7 @@ interface CoupleData {
 }
 
 interface OurReportProps {
-  coupleData: CoupleData;
+  coupleData?: CoupleData;
 }
 
 const Footer = ({ coupleData }: OurReportProps) => {

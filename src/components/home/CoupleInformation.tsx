@@ -63,7 +63,11 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
             headers: { 'Content-Type': 'application/json' },
           }
         );
-        console.log('요청 성공:', response.data);
+
+        const requestData = {
+          is_complement: true,
+        };
+
       }
     } catch (error) {
       console.error('에러:', error);

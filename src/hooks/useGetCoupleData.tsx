@@ -3,7 +3,7 @@ import { FetchCoupleDataError } from 'types/types';
 
 const fetchCoupleData = async () => {
   const token = localStorage.getItem('authToken');
-  const response = await fetch('/accounts/couple/data/', {
+  const response = await fetch('https://www.wishkr.site/accounts/couple/data/', {
     method: 'GET',
     headers: {
       Authorization: `Token ${token}`,
