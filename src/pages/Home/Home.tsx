@@ -16,10 +16,7 @@ const Home = () => {
 
   if (redirect) return redirect; // 인증되지 않으면 리디렉션을 반환
 
-
   console.log('home에서 데이터 호출 ', coupleData);
-
-
 
   return (
     <HomepageContainer>
@@ -39,7 +36,6 @@ const HomepageContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
-  margin-top: 9rem;
 `;
 
 const ContentWrapper = styled.div`

@@ -4,29 +4,47 @@ import variables from '@styles/Variables';
 import EmotionGraph from './EmotionGraph';
 import EmotionStress from './EmotionStress';
 import ECharts from 'echarts-for-react';
-import Footer from '@components/common/Footer';
-import { useEffect, useState } from 'react';
+// import Footer from '@components/common/Footer';
+// import { useEffect, useState } from 'react';
+import Button from '@components/common/Button';
+import { useNavigate } from 'react-router-dom';
+import usePrevRecordStore from '@store/usePrevRecordStore';
+import useEmotionStore from '@store/useEmotionStore';
 
 const EmotionResult = () => {
-  const [data, setData] = useState(null);
-  const result_pk = 1;
+  const analysisResult = useAnalysisStore((state) => state.analysis);
+  const prevRecord = usePrevRecordStore((state) => state.record);
+  const resetEmotion = useEmotionStore((state) => state.reset);
+  const resetAnalysisResult = useAnalysisStore((state) => state.reset);
+  const resetPrevRecord = useAnalysisStore((state) => state.reset);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
-        const result = await res.json();
-        setData(result);
-      } catch (error) {
-        console.error('fetching error:', error);
-      }
-    };
-    fetchData();
-  }, [result_pk]);
+  console.log(prevRecord);
+  console.log(analysisResult);
+  // const [data, setData] = useState(null);
+  // const result_pk = 1;
 
-  const analysisResult = useAnalysisStore((state) => state.analysis) || { keywords: [] };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
+  //       const result = await res.json();
+  //       setData(result);
+  //     } catch (error) {
+  //       console.error('fetching error:', error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, [result_pk]);
 
-  if (!data) return <div>로딩중.. 데이터가 없음</div>;
+  // if (!data) return <div>로딩중.. 데이터가 없음</div>;
+
+  const handleClick = () => {
+    resetEmotion();
+    resetAnalysisResult();
+    resetPrevRecord();
+    navigate('/');
+  };
 
   console.log(analysisResult.keywords);
 
@@ -89,6 +107,7 @@ const EmotionResult = () => {
         <ResultTextBox>
           <pre>난임 스트레스 예상점수</pre>
         </ResultTextBox>
+
         <EmotionGraphContainer>
           <div className="flex-box">
             <EmotionStress />
@@ -103,7 +122,14 @@ const EmotionResult = () => {
         </EmotionGraphContainer>
       </ResultSection>
 
-      <Footer />
+      <Button
+        onClick={handleClick}
+        fixed={true}
+        disabled={false}
+        type="submit"
+        size="medium"
+        text="메인화면으로 이동"
+      />
     </>
   );
 };
