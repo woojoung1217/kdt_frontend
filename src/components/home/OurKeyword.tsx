@@ -15,14 +15,12 @@ interface CoupleData {
 interface OurKeywordProps {
   coupleData?: CoupleData | undefined;
 }
-
 const OurKeyword = ({ coupleData }: OurKeywordProps) => {
   const myKeyword = coupleData?.result?.my_emotion?.interest_keyword ?? '';
   const spouseKeyword = coupleData?.result?.spouse_emotion?.interest_keyword ?? '';
 
-  // 키워드를 쉼표로 분리하여 배열로 변환
-  const myKeywordArray = myKeyword.split(',').map((keyword) => keyword.trim());
-  const spouseKeywordArray = spouseKeyword.split(',').map((keyword) => keyword.trim());
+  const myKeywordArray = myKeyword.split('#').filter((keyword) => keyword.trim() !== '');
+  const spouseKeywordArray = spouseKeyword.split('#').filter((keyword) => keyword.trim() !== '');
 
   return (
     <OurKeywordContainer>
@@ -30,13 +28,32 @@ const OurKeyword = ({ coupleData }: OurKeywordProps) => {
       <OurKeywordTitleDes>나의 통계와 배우자의 통계를 한눈에 확인할 수 있어요</OurKeywordTitleDes>
       <OurKeywordLineChartContainer>
         <OurKeywordDescription>우리의 관심사</OurKeywordDescription>
-        {myKeywordArray}, {spouseKeywordArray}
+        <KeywordContainer>
+          {[...myKeywordArray, ...spouseKeywordArray].map((keyword, index) => (
+            <KeywordBox key={index}>#{keyword.trim()}</KeywordBox>
+          ))}
+        </KeywordContainer>
       </OurKeywordLineChartContainer>
     </OurKeywordContainer>
   );
 };
-
 export default OurKeyword;
+
+const KeywordContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 3.5rem;
+`;
+
+const KeywordBox = styled.div`
+  padding: 0.8rem 1.6rem;
+  background-color: ${variables.colors.secondaryStrong};
+  border-radius: 2rem;
+  font-size: ${variables.size.small};
+  color: ${variables.colors.gray10};
+`;
 
 const OurKeywordContainer = styled.div`
   display: flex;

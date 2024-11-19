@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
@@ -14,10 +15,8 @@ interface CoupleResult {
   my_emotion: EmotionData;
   spouse_emotion: EmotionData;
   my_inf_tests: EmotionData[];
-  spouse_inf_tests: EmotionData[]; // 새로운 필드 추가
+  spouse_inf_tests: EmotionData[];
 }
-
-// ... 기존 코드 ...
 
 interface CoupleData {
   result?: CoupleResult;
@@ -129,7 +128,7 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
           </ToggleOption>
         </ToggleContainer>
       </CoupleReportTitle>
-      <CoupleReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인</CoupleReportTitleDes>
+      <CoupleReportTitleDes>나의 통계와 배우자의 통계를 한눈에 확인해요</CoupleReportTitleDes>
       <CoupleReportLineChartContainer>
         <CoupleReportDescription>난임 스트레스 예상 점수</CoupleReportDescription>
         <ChartCover>

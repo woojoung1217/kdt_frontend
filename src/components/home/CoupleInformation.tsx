@@ -200,7 +200,7 @@ const CoupleMission = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset ${variables.BoxShadow};
+  box-shadow: inset 0 0 0.3rem rgba(0, 0, 0, 0.1);
   border-radius: calc(${variables.borderRadius} + 0.4rem);
   color: ${variables.colors.black};
   margin-bottom: 1.4rem;
