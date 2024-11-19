@@ -83,7 +83,7 @@ const KeywordContainer = styled.div`
 const KeywordBox = styled.div`
   padding: 0.8rem 1.6rem;
   background-color: ${variables.colors.secondaryStrong};
-  border-radius: 2rem;
+  border-radius: 0.5rem;
   font-size: ${variables.size.small};
   color: ${variables.colors.tertiarySoft};
 `;

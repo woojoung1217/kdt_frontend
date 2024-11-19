@@ -48,9 +48,6 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
   const spouseMissionCompleted = coupleData?.result?.spouse_emotion?.is_complement || false;
   const spouseExportMessage = coupleData?.result?.spouse_emotion?.export_message || '';
 
-  console.log(myMissionCompleted, spouseMissionCompleted);
-  console.log(spouseExportMessage);
-
   const getMissionStatusMessage = () => {
     if (myMissionCompleted && spouseMissionCompleted) {
       return spouseExportMessage;
@@ -244,7 +241,6 @@ const MissionTitle = styled.p`
 
 const IsMissionDone = styled.input`
   margin-right: -0.5rem;
-  background-color: red;
   width: 2.4rem;
   height: 2.4rem;
   flex-grow: 0;

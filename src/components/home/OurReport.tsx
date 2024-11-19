@@ -21,6 +21,11 @@ interface CoupleData {
 }
 
 interface ChartOptions {
+  legend: {
+    show: boolean; // legend 표시 여부
+    top: string;
+    // left: 'center',  // 좌우 위치 설정 (선택사항)
+  };
   xAxis: {
     type: string;
     data: string[];
@@ -53,6 +58,11 @@ const OurReport = ({ coupleData }: OurReportProps) => {
   const [testdone, setTestDone] = useState<boolean>(false);
 
   const [options, setOptions] = useState<ChartOptions>({
+    legend: {
+      show: true, // legend 표시 여부
+      top: 'top', // legend의 위치 (top, bottom, middle 등)
+      // left: 'center',  // 좌우 위치 설정 (선택사항)
+    },
     xAxis: {
       type: 'category',
       data: [],
@@ -92,6 +102,11 @@ const OurReport = ({ coupleData }: OurReportProps) => {
 
       setTestDone(true);
       setOptions({
+        legend: {
+          show: true, // legend 표시 여부
+          top: 'top', // legend의 위치 (top, bottom, middle 등)
+          // left: 'center',  // 좌우 위치 설정 (선택사항)
+        },
         xAxis: {
           type: 'category',
           data: categories,
