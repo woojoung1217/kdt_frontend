@@ -231,6 +231,7 @@ const Counseling = () => {
 
   useEffect(() => {
     moveScrollDown();
+    document.documentElement.scrollTo({ top: 0 });
   }, [messages]);
 
   useEffect(() => {
@@ -240,7 +241,7 @@ const Counseling = () => {
 
   return (
     <>
-      {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />}
+      {/* {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />} */}
 
       <div css={BackGroundColor}>
         <div css={Header}>
