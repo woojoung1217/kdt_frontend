@@ -192,20 +192,20 @@ const EmotionMessage = () => {
     **응답 형식**:
     {
       "prediction": {
-        "totalScore": "숫자",
-        "social": "숫자",
-        "sexual": "숫자",
-        "relational": "숫자",
-        "refusing": "숫자",
-        "essential": "숫자"
+        "totalScore": 숫자,
+        "social": 숫자,
+        "sexual": 숫자,
+        "relational": 숫자,
+        "refusing": 숫자,
+        "essential": 숫자
       },
       "emotions": {
-        "joy": "숫자",
-        "sadness": "숫자",
-        "anger": "숫자",
-        "fear": "숫자",
-        "surprise": "숫자",
-        "disgust": "숫자"
+        "joy": 숫자,
+        "sadness": 숫자,
+        "anger": 숫자,
+        "fear": 숫자,
+        "surprise": 숫자,
+        "disgust": 숫자
       },
       "missions": ["내용", "내용"],
       "keywords": "#내용 #내용 #내용"
