@@ -8,28 +8,30 @@ import { CounselingListData } from './CounselingList';
 
 const CounselingListItem = ({
   item,
-  setData,
+  setCounselingRecord,
 }: {
   item: CounselingListData;
-  setData: React.Dispatch<React.SetStateAction<CounselingListData[]>>;
+  setCounselingRecord: React.Dispatch<React.SetStateAction<CounselingListData[]>>;
 }) => {
   const navigate = useNavigate();
+
+  const tags = item.tags.split('#').filter((tag) => tag !== '');
 
   const handleDelete = (e: MouseEvent, id: number) => {
     e.stopPropagation();
     //삭제 통신으로 교체 예정
-    setData((data) => data.filter((dataItem) => dataItem.counsel_id !== id));
+    setCounselingRecord((data) => data.filter((dataItem) => dataItem.id !== id));
   };
 
   return (
-    <div css={RecordItem} onClick={() => navigate(`/counseling/${item.counsel_id}`)}>
+    <div css={RecordItem} onClick={() => navigate(`/counseling/${item.id}`)}>
       <div css={ItemLeft} className="left">
         <p>
           최근 상담 <span className="upDate">{item.updated_at.split(' ')[0]}</span>
         </p>
 
         <div className="tags">
-          {item.tags.map((tag, i) => (
+          {tags.map((tag, i) => (
             <span key={i}>{tag}</span>
           ))}
         </div>
@@ -37,7 +39,7 @@ const CounselingListItem = ({
 
       <div css={ItemRight} className="right">
         <p>{item.count}회</p>
-        <button type="button" onClick={(e) => handleDelete(e, item.counsel_id)}>
+        <button type="button" onClick={(e) => handleDelete(e, item.id)}>
           <span className="hidden">삭제</span>
         </button>
       </div>
