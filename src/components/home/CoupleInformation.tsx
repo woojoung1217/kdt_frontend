@@ -5,11 +5,10 @@ import profileImgMan from '@assets/Images/mainManProfile.svg';
 import mainlock from '@assets/Images/mainlock.svg';
 import { useNavigate } from 'react-router-dom';
 import { useCoupleInfo } from '@hooks/useCoupleInfo';
-import CoupleMissionWeekly from './CoupleMissonWeekly';
+import CoupleMissionWeekly from './CoupleMissionWeekly';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// TODO : 미션 등록 이번주 미션 해야함
 interface InfTest {
   essential: number;
   refusing: number;
@@ -20,6 +19,8 @@ interface InfTest {
   self_message?: string;
   id: number;
   mission_content?: string;
+  export_message?: string;
+  is_complement?: boolean;
 }
 
 interface CoupleData {
@@ -27,6 +28,8 @@ interface CoupleData {
     my_inf_tests?: InfTest[];
     spouse_inf_tests?: InfTest[];
     my_emotion?: InfTest;
+    spouse_emotion?: InfTest;
+    is_complement?: InfTest;
   };
 }
 
@@ -38,31 +41,33 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
   const navigate = useNavigate();
   const [selfMessage, setSelfMessage] = useState('');
   const [mission, setMission] = useState('');
-  const [isMissionDone, setIsMissionDone] = useState(false); // 체크박스 상태
+  const [isMissionDone, setIsMissionDone] = useState(false);
   const { partnerName, myName, gender, isConnected } = useCoupleInfo();
+  const exportMessage = coupleData?.result?.spouse_emotion?.export_message;
+
+  const myMissionCompleted = coupleData?.result?.my_emotion?.is_complement || false;
+  const spouseMissionCompleted = coupleData?.result?.spouse_emotion?.is_complement || false;
 
   /** 미션 수행 등록 함수 {PUT} */
   const handleMissionToggle = async () => {
     try {
-      setIsMissionDone(!isMissionDone);
+      const newMissionStatus = !isMissionDone;
+      setIsMissionDone(newMissionStatus);
 
       if (coupleData?.result?.my_emotion) {
         const result_id = coupleData.result.my_emotion.id;
-
-        const requestData = {
-          is_complement: true,
-        };
-
-        const response = await axios.put(`/emotions/results/${result_id}/`, requestData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await axios.put(
+          `/emotions/results/${result_id}/`,
+          { is_complement: newMissionStatus },
+          {
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
         console.log('요청 성공:', response.data);
       }
     } catch (error) {
       console.error('에러:', error);
-      setIsMissionDone(isMissionDone);
+      setIsMissionDone(isMissionDone); // 실패시 원래 상태로 복구
     }
   };
 
@@ -70,7 +75,21 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
     const emotion = coupleData?.result?.my_emotion;
     setSelfMessage(emotion?.self_message || '');
     setMission(emotion?.mission_content || '');
+    setIsMissionDone(emotion?.is_complement || false);
   }, [coupleData]);
+
+  // 미션 메시지 결정 함수
+  const getMissionMessage = () => {
+    if (myMissionCompleted && !spouseMissionCompleted) {
+      return '배우자의 미션 수행을 기다리고 있어요';
+    } else if (!myMissionCompleted && spouseMissionCompleted) {
+      return '배우자가 미션을 완료했어요! 나도 미션을 수행해볼까요?';
+    } else if (myMissionCompleted && spouseMissionCompleted) {
+      return exportMessage || '두 분 모두 미션을 완료했어요!';
+    } else {
+      return mission;
+    }
+  };
 
   return (
     <CoupleInformationContainer>
@@ -96,15 +115,9 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
       </CoupleCardsWrapper>
       <>
         {mission ? (
-          <CoupleMissionToChoose
-            isMissionDone={isMissionDone} // 체크박스 상태에 따라 스타일 적용
-          >
-            <MissionTitle>{mission}</MissionTitle>
-            <IsMissionDone
-              type="checkbox"
-              checked={isMissionDone} // 체크박스 상태 관리
-              onChange={handleMissionToggle}
-            />
+          <CoupleMissionToChoose isMissionDone={isMissionDone}>
+            <MissionTitle>{getMissionMessage()}</MissionTitle>
+            <IsMissionDone type="checkbox" checked={isMissionDone} onChange={handleMissionToggle} />
           </CoupleMissionToChoose>
         ) : (
           <CoupleMission>
