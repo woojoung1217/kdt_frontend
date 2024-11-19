@@ -24,17 +24,6 @@ interface CounselData {
 }
 
 const Counseling = () => {
-  // 이전 대화가 있다면 필요한거
-  /*
-    "summary": "우울해함",
-		"tags": "#배고파#나도#치킨먹자",
-		"count": 1,
-
-    0. 10번 상세 fetch
-    1. 프롬프팅에 요약 내용 전달하기 -> dataForPrompt.summary
-    2. count +=1
-    3. tag를 유지할까 말까
-   */
   const params = useParams();
   const navigate = useNavigate();
   const member_id = Number(localStorage.getItem('MemberId'));
@@ -231,7 +220,6 @@ const Counseling = () => {
 
   useEffect(() => {
     moveScrollDown();
-    document.documentElement.scrollTo({ top: 0 });
   }, [messages]);
 
   useEffect(() => {
@@ -241,7 +229,7 @@ const Counseling = () => {
 
   return (
     <>
-      {/* {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />} */}
+      {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />}
 
       <div css={BackGroundColor}>
         <div css={Header}>
@@ -328,7 +316,8 @@ const Priority = css`
 
 const BackGroundColor = css`
   background-color: #fdfcff;
-  margin: -2rem -1.8rem;
+  margin: -2rem -1.8rem -4rem;
+  padding-top: 9.4rem;
 `;
 const Header = css`
   background-color: #fdfcff;
@@ -341,6 +330,8 @@ const Header = css`
   align-items: flex-end;
   justify-content: center;
   box-shadow: 0 0 3rem rgba(217, 203, 245, 0.37);
+  position: fixed;
+  top: 0;
 
   .prev {
     display: block;
@@ -461,6 +452,7 @@ const InputBox = css`
   & input {
     height: 4rem;
     box-shadow: 0 0 1rem rgba(217, 203, 245, 0.37);
+    font-size: 1.7rem;
   }
 
   & button {
