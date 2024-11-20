@@ -71,7 +71,7 @@ const EmotionStress = () => {
         },
         axisLine: {
           lineStyle: {
-            width: 20,
+            width: 12,
           },
         },
         splitLine: {
