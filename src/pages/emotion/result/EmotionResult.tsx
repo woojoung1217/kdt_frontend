@@ -103,7 +103,7 @@ const EmotionResult = () => {
 
         <EmotionGraphContainer>
           <div className="flex-box">
-            <EmotionStressBefore record={prevRecord} />
+            <EmotionStressBefore total={prevRecord.total} />
             <EmotionStress />
           </div>
         </EmotionGraphContainer>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
+import EmotionStressBefore from '@pages/emotion/result/EmotionStressBefore';
 
 type EmotionData = {
   essential?: number;
@@ -10,6 +11,7 @@ type EmotionData = {
   relational?: number;
   sexual?: number;
   social?: number;
+  total?: number;
 } | null;
 interface CoupleResult {
   my_emotion: EmotionData;
@@ -118,6 +120,8 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     ],
   };
 
+  console.log(coupleData?.result);
+
   return (
     <CoupleReportContainer>
       <CoupleReportTitle>
@@ -138,7 +142,34 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
           <EChartsReact option={option} />
           {coupleData?.result && (
             <div className="flex-box">
-              <EmotionGraphContainer></EmotionGraphContainer>
+              <EmotionGraphContainer>
+                {selected === 'self' && (
+                  <>
+                    {coupleData?.result?.my_inf_tests[0]?.total && (
+                      <EmotionStressBefore
+                        total={coupleData?.result?.my_inf_tests[0]?.total}
+                        color={variables.colors.primary}
+                      />
+                    )}
+                    {coupleData?.result?.my_emotion?.total && (
+                      <EmotionStressBefore total={coupleData?.result?.my_emotion?.total} text="예상 점수" />
+                    )}
+                  </>
+                )}
+                {selected === 'partner' && (
+                  <>
+                    {coupleData?.result?.spouse_inf_tests[0]?.total && (
+                      <EmotionStressBefore
+                        total={coupleData?.result?.spouse_inf_tests[0]?.total}
+                        color={variables.colors.primary}
+                      />
+                    )}
+                    {coupleData?.result?.spouse_emotion?.total && (
+                      <EmotionStressBefore total={coupleData?.result?.spouse_emotion?.total} text="예상 점수" />
+                    )}
+                  </>
+                )}
+              </EmotionGraphContainer>
             </div>
           )}
         </ChartCover>
@@ -151,10 +182,7 @@ export default CoupleReport;
 
 const EmotionGraphContainer = styled.div`
   width: 100%;
-
-  .flex-box {
-    display: flex;
-  }
+  display: flex;
 `;
 
 const ToggleContainer = styled.div`

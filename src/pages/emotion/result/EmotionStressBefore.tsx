@@ -4,24 +4,20 @@ import ECharts from 'echarts-for-react';
 import useAnalysisStore from '@store/useAnalysisStore';
 import styled from '@emotion/styled';
 
-interface EmotionStressBeforeProps {
-  record: {
-    essential: number;
-    refusing: number;
-    relational: number;
-    sexual: number;
-    social: number;
-    total: number;
-  };
-}
-
-const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
+const EmotionStressBefore = ({
+  total,
+  color = `${variables.colors.secondaryStrong}`,
+  text = '기존 점수',
+}: {
+  total: number;
+  color?: string;
+  text?: string;
+}) => {
   const analysisResult = useAnalysisStore((state) => state.analysis);
-  const value = record.record.total * 0.5;
+  const value = total * 0.5;
 
   console.log(analysisResult);
-  console.log(record.record.total);
-  console.log(record);
+  console.log(total);
 
   const [options] = useState({
     tooltip: {
@@ -36,7 +32,7 @@ const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
         type: 'gauge',
         startAngle: 90,
         endAngle: -270,
-        color: `${variables.colors.secondaryStrong}`,
+        color: color,
 
         pointer: {
           show: false,
@@ -48,12 +44,12 @@ const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
           clip: false,
           itemStyle: {
             borderWidth: 1,
-            borderColor: `${variables.colors.secondaryStrong}`,
+            borderColor: color,
           },
         },
         axisLine: {
           lineStyle: {
-            width: 20,
+            width: 12,
           },
         },
         splitLine: {
@@ -75,7 +71,7 @@ const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
         ],
         detail: {
           fontSize: 22,
-          color: `${variables.colors.secondaryStrong}`,
+          color: color,
           formatter: '{value}',
           offsetCenter: ['0', '0%'],
         },
@@ -86,11 +82,11 @@ const EmotionStressBefore: React.FC<EmotionStressBeforeProps> = (record) => {
   });
 
   return (
-    <StressText>
+    <StressText className="xxx">
       <div className="stress-box">
         <ECharts option={options} opts={{ width: 'auto', height: 'auto' }} />
       </div>
-      <p className="stress-sub-text">기존 점수</p>
+      <p className="stress-sub-text">{text}</p>
     </StressText>
   );
 };
