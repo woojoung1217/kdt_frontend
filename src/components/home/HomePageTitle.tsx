@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
 import { keyframes } from '@emotion/react'; // keyframes 유틸리티 가져오기
-import variables from '@styles/Variables';
+import PageTitle from '@components/common/PageTitle';
 
 const HomePageTitle = () => {
   const userName = localStorage.getItem('userName');
@@ -16,9 +17,13 @@ const HomePageTitle = () => {
   const randomText = alternateTexts[Math.floor(Math.random() * alternateTexts.length)];
 
   return (
-    <PageTitle>
-      {userName ? userName : 'Guest'} 님 {randomText}
-    </PageTitle>
+    <PageTitle
+      titleText={`${userName ? userName : 'Guest'} 님 ${randomText}`}
+      textAlign="left"
+      isFixed={false}
+      pageBack={false}
+      customStyles={TitleAni}
+    />
   );
 };
 
@@ -35,10 +40,6 @@ const fadeIn = keyframes`
   }
 `;
 
-const PageTitle = styled.h2`
-  font-size: ${variables.size.max};
-  margin-bottom: 3.8rem;
-  font-weight: 600;
-
+const TitleAni = css`
   animation: ${fadeIn} 1s ease-in-out;
 `;
