@@ -60,14 +60,13 @@ const Counseling = () => {
         - '5. 대화 요약', '6. 바로 직전 대화'를 참고하여 다음 중 한 가지로 따뜻한 상담사 어조로 상담을 해줘.
           1) user에게서 인지적 왜곡이나 부정적인 사고가 관찰된다면, 다양한 관점을 깨달을 수 있도록 소크라테스식 질문을 해줘.
           2) user가 다른 관점을 생각하지 못한다면, '대화 요약'을 참고해서 다른 관점을 제시해줘.
-          3) user가 부적절한 방식으로 반응을 한다면, 상황에 따라 적절한 반응을 깨달을 수 있는 질문을 해줘.
-          4) 대화 횟수가 10회 이상이고, user의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
+          3) 대화 횟수가 10회 이상이고, user의 핵심 신념이 비합리적이라면 직면할 수 있는 질문을 해줘.
         - user의 메시지는 '대화 요약'을 참고하고, '바로 직전 대화'와 이어지는 내용이니까 꼭! 참고해서 답변해줘.
         - 종종 말 줄임표를 사용하고, 이미 파악된 내용은 다시 물어보지 말아줘.
         - 130자 이내로 존댓말을 사용해 줘.
-        - 만약 user가 자살과 관련 얘기를 한다면 자살예방상담전화(109) 정보를 제공해줘.
+        - user가 자살 관련 언급을 할 경우 즉시 자살 예방 상담 전화(109)의 정보를 제공해.
       2) summary: 
-        - user의 답변과 system의 답변을 높임체 없이 '~함' 등 간략한 말투로 요약해줘.
+        - user의 답변과 system의 답변이 어떤 질문으로 이어갔는지를 높임체 없이 '~함' 등 간략한 말투로 요약해줘.
         - 이후에 summary를 보면 system이 대화 내용을 유추하고 이어서 대화할 수 있도록 구체적인 내용을 포함해줘.
         - system의 답변은 질문의 내용까지 구체적으로 포함해줘.
       3) caseFoumulation: { 
@@ -228,8 +227,6 @@ const Counseling = () => {
     fetchScaleData();
   }, []);
 
-  console.log(step);
-
   return (
     <>
       {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />}
@@ -338,7 +335,7 @@ const end = css`
 const ScrollBox = css`
   max-width: 50rem;
   width: 100%;
-  height: calc(100svh - 6rem);
+  height: calc(100svh - 14rem);
   overflow: hidden auto;
   padding: 1.8rem;
   box-sizing: border-box;
@@ -384,7 +381,7 @@ const MessageBox = css`
 
   .gpt {
     display: flex;
-    gap: ${variables.size.big};
+    gap: ${variables.size.medium};
     align-items: flex-end;
 
     & p {
@@ -400,8 +397,9 @@ const MessageBox = css`
       background-repeat: no-repeat;
       background-position: center;
       background-size: contain;
-      width: 4.8rem;
-      height: 4.8rem;
+      width: 4.4rem;
+      aspect-ratio: 1/1;
+      flex-shrink: 0;
     }
   }
 
