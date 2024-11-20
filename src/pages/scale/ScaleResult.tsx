@@ -13,17 +13,24 @@ import prevIcon from '/img/icon-page-prev.svg';
 
 const SCALEDATA_URL = 'https://www.wishkr.site/infertility/tests/';
 
+interface ScaleResponse {
+  before_test: ScaleData;
+  current_test: ScaleData;
+}
+
 const ScaleResult = () => {
-  const [scaleData, setScaleData] = useState<ScaleData>();
+  const [scaleData, setScaleData] = useState<ScaleResponse>();
   const userName = localStorage.getItem('userName');
   const params = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const hasInURL = location.pathname.includes('list');
+  const memeberId = localStorage.getItem('MemberId');
 
   const fetchScaleData = async (): Promise<ScaleData | undefined> => {
     try {
       const res = await axios.get(`${SCALEDATA_URL}${params.id}/`, {
+        params: { member_id: memeberId },
         headers: {
           'content-type': 'application/json',
           accept: 'application/json',
@@ -39,6 +46,8 @@ const ScaleResult = () => {
   useEffect(() => {
     fetchScaleData();
   }, []);
+
+  console.log(scaleData);
   return (
     <>
       <div css={BackGroundColor}>
@@ -61,8 +70,8 @@ const ScaleResult = () => {
         )}
 
         <div css={ContentWrapper}>
-          <ScaleTotalGraph scaleData={scaleData} />
-          <ScaleTypeGraph scaleData={scaleData} />
+          <ScaleTotalGraph currentTest={scaleData?.current_test} beforeTest={scaleData?.before_test} />
+          <ScaleTypeGraph currentTest={scaleData?.current_test} beforeTest={scaleData?.before_test} />
 
           <Button
             text="스트레스 척도 리스트로 돌아가기 "

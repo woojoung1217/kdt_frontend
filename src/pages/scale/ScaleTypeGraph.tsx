@@ -7,8 +7,6 @@ import closeIcon from '/img/icon-counsling-record-delete.svg';
 import { ScaleData } from './ScaleList';
 import { useState } from 'react';
 
-const data = [{ essential: '26', refusing: '22', relational: '24', sexual: '24', social: '24', total: '120' }];
-
 interface scaleAnalysisDataType {
   id: number;
   type: string;
@@ -48,9 +46,16 @@ const scaleAnalysisData: scaleAnalysisDataType[] = [
   },
 ];
 
-const ScaleTypeGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => {
+const ScaleTypeGraph = ({
+  currentTest,
+  beforeTest,
+}: {
+  currentTest: ScaleData | undefined;
+  beforeTest: ScaleData | undefined;
+}) => {
   const [isModal, setIsModal] = useState(false);
   const [modalData, setModalData] = useState<scaleAnalysisDataType>();
+
   const typeOption = {
     tooltip: {
       trigger: 'axis',
@@ -103,11 +108,11 @@ const ScaleTypeGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => 
           },
         },
         data: [
-          `${data[0].social}`,
-          `${data[0].relational}`,
-          `${data[0].sexual}`,
-          `${data[0].refusing}`,
-          `${data[0].essential}`,
+          `${beforeTest?.social}`,
+          `${beforeTest?.relational}`,
+          `${beforeTest?.sexual}`,
+          `${beforeTest?.refusing}`,
+          `${beforeTest?.essential}`,
         ],
       },
       {
@@ -124,11 +129,11 @@ const ScaleTypeGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => 
           },
         },
         data: [
-          `${scaleData?.social}`,
-          `${scaleData?.relational}`,
-          `${scaleData?.sexual}`,
-          `${scaleData?.refusing}`,
-          `${scaleData?.essential}`,
+          `${currentTest?.social}`,
+          `${currentTest?.relational}`,
+          `${currentTest?.sexual}`,
+          `${currentTest?.refusing}`,
+          `${currentTest?.essential}`,
         ],
       },
     ],
