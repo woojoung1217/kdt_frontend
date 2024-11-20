@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ListGraph from './ListGraph';
 import noRecord from '/img/no-counseling-record.svg';
+import PageTitle from '@components/common/PageTitle';
 
 export interface Scale {
   total: number;
@@ -72,19 +73,27 @@ const ScaleList = () => {
 
   return (
     <div css={ScaleWr}>
-      <div css={TitleWr}>
-        <h2>난임 스트레스 검사 기록</h2>
-      </div>
+      <PageTitle
+        titleText="난임 스트레스 검사 기록"
+        textAlign="center"
+        pageBack={false}
+        isFixed={false}
+        backcolor="#fff"
+      />
+
       {data === null ? (
-        <div css={NoDataWr} className="noDatawr">
-          <img src={noRecord} alt="검사 목록이 없습니다." />
+        <>
+          <div css={ScaleNoRecord} className="noDatawr">
+            <img src={noRecord} alt="검사 목록이 없습니다." />
+          </div>
           <Button
             onClick={() => navigate('/scale/testing/')}
             text="난임 스트레스 검사 하러가기"
-            size="medium"
+            size="large"
             disabled={false}
+            fixed={true}
           />
-        </div>
+        </>
       ) : (
         <>
           <div css={ScaleChart} className="scaleChart">
@@ -130,37 +139,21 @@ const ScaleList = () => {
 
 export default ScaleList;
 
-const TitleWr = css`
-  background: #fff;
-  position: relative;
-  padding: ${variables.layoutPadding} 0 0;
-  h2 {
-    font-size: ${variables.size.large};
-    font-weight: 500;
-    text-align: center;
-  }
-`;
 const ScaleWr = css`
-  margin: -2rem calc(${variables.layoutPadding}*-1);
+  margin: 0 calc(${variables.layoutPadding}*-1);
   background-color: ${variables.colors.gray5};
-  min-height: 100vh;
+  min-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+`;
 
-  .scaleChart button,
-  .noDatawr button {
-    display: block;
-    margin-top: 3rem;
-    background-color: ${variables.colors.primaryStrong};
-    color: ${variables.colors.white};
-    height: 4.6rem;
-    line-height: 4.4rem;
-    border-radius: 0.8rem;
-    font-size: ${variables.size.big};
-    box-shadow: 0 0.4rem 0.4rem ${variables.colors.primarySoft};
-    transition: all ${variables.TransitionDuration};
-    padding: 0;
-    &:hover {
-      background-color: ${variables.colors.primary};
-    }
+const ScaleNoRecord = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  & img {
+    object-fit: cover;
   }
 `;
 
@@ -168,16 +161,16 @@ const ScaleChart = css`
   text-align: center;
   background-color: ${variables.colors.white};
   padding: 2rem ${variables.layoutPadding} 2.5rem;
-  box-shadow: 0 0 1.25rem rgba(217, 217, 217, 0.5);
+  box-shadow: 0 1rem 1.25rem rgba(217, 217, 217, 0.5);
 
   .chart {
-    margin-top: 4rem;
     .desc {
       display: flex;
       gap: 0.6rem;
       align-items: center;
       justify-content: center;
       margin-top: 2rem;
+      margin-bottom: 2rem;
       color: ${variables.colors.gray100};
       position: relative;
       &::before {
@@ -255,9 +248,4 @@ const Modal = css`
       gap: ${variables.size.min};
     }
   }
-`;
-
-const NoDataWr = css`
-  padding: 10rem ${variables.layoutPadding} 3rem;
-  background: #fff;
 `;
