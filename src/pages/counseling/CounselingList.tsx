@@ -25,32 +25,30 @@ const CounselingList = () => {
   const id = localStorage.getItem('MemberId');
   const navigate = useNavigate();
 
-  // const fetchCounselingData = async (): Promise<CounselingListData | undefined> => {
-  //   try {
-  //     const res = await axios.get(`${COUNSELINGLIST_URL}?member_id=${id}`, {
-  //       headers: {
-  //         'content-type': 'application/json',
-  //         accept: 'application/json',
-  //       },
-  //     });
+  const fetchCounselingData = async (): Promise<CounselingListData | undefined> => {
+    try {
+      const res = await axios.get(`${COUNSELINGLIST_URL}?member_id=${id}`, {
+        headers: {
+          'content-type': 'application/json',
+          accept: 'application/json',
+        },
+      });
 
-  //     console.log(res.data.result.totalRecords);
-  //     if (res.status === 200) setCounselingRecord(res.data.result.totalRecords);
-  //   } catch (err) {
-  //     console.error(err);
-  //     return undefined;
-  //   }
-  // };
+      console.log(res.data.result.totalRecords);
+      if (res.status === 200) setCounselingRecord(res.data.result.totalRecords);
+    } catch (err) {
+      console.error(err);
+      return undefined;
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchCounselingData();
-  // }, []);
+  useEffect(() => {
+    fetchCounselingData();
+  }, []);
 
-  // console.log(counselingRecord);
-
-  // const counselingRecordItem = counselingRecord?.map((item) => (
-  //   <CounselingListItem key={item.id} item={item} setCounselingRecord={setCounselingRecord} />
-  // ));
+  const counselingRecordItem = counselingRecord?.map((item) => (
+    <CounselingListItem key={item.id} item={item} setCounselingRecord={setCounselingRecord} />
+  ));
 
   return (
     <div css={CounselingListWrapper}>
