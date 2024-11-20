@@ -11,6 +11,7 @@ interface TitleProps {
   pageBack: boolean; // 페이지 뒤로가기 버튼 필요 여부
   backcolor?: string; // 배경 색상
   children?: React.ReactNode;
+  customStyles?: ReturnType<typeof css>;
 }
 
 const PageTitle = ({
@@ -20,6 +21,7 @@ const PageTitle = ({
   pageBack = false,
   backcolor = `${variables.colors.white}`,
   children,
+  customStyles,
 }: TitleProps) => {
   const navigate = useNavigate();
 
@@ -32,12 +34,12 @@ const PageTitle = ({
       transform: translateX(-50%);
       max-width: 50rem;
       width: 100%;
-      z-index:50;`
+      z-index:50;
+      box-shadow: 0 0 1.25rem rgba(217, 217, 217, 0.5);`
     }
 
     background-color: ${backcolor};
     padding: .5rem 1.8rem 1rem;
-    box-shadow: 0 0 1.25rem rgba(217, 217, 217, 0.5);
     display: flex;
     align-items: center;
 
@@ -45,7 +47,7 @@ const PageTitle = ({
     & h2 {
       line-height: 4rem;
       font-size: ${variables.size.large};
-      font-weight: 500;
+      font-weight: 700;
       flex-grow: 1;
       text-align: ${textAlign};
       ${pageBack && ` margin-right: 5rem;`}
@@ -67,7 +69,7 @@ const PageTitle = ({
   `;
 
   return (
-    <div css={Styles}>
+    <div css={[Styles, customStyles]}>
       {pageBack && (
         <button className="prev" type="button" onClick={() => navigate(-1)}>
           <span className="hidden">뒤로가기</span>

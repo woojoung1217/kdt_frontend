@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
+import EmotionStressBefore from '@pages/emotion/result/EmotionStressBefore';
 
 type EmotionData = {
   essential?: number;
@@ -10,6 +11,7 @@ type EmotionData = {
   relational?: number;
   sexual?: number;
   social?: number;
+  total?: number;
 } | null;
 interface CoupleResult {
   my_emotion: EmotionData;
@@ -62,14 +64,17 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     sexual: spouseInfSexual = 0,
     social: spouseInfSocial = 0,
   } = coupleData?.result?.spouse_inf_tests[0] || {};
-
   const option = {
+    legend: {
+      show: true,
+      bottom: '0',
+    },
     radar: {
       indicator: [
         { name: '사회적' },
         { name: '성적' },
         { name: '필요성' },
-        { name: '아이가 없는 일상에 대한 거부' },
+        { name: '아이가 없는 일상' },
         { name: '관계적' },
       ],
       splitNumber: 10,
@@ -98,7 +103,7 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
             itemStyle: {
               color: variables.colors.primary,
             },
-            name: selected === 'self' ? '나' : '배우자',
+            name: selected === 'self' ? '검사 점수' : '배우자',
           },
           {
             value:
@@ -114,6 +119,8 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
       },
     ],
   };
+
+  console.log(coupleData?.result);
 
   return (
     <CoupleReportContainer>
@@ -133,6 +140,38 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
         <CoupleReportDescription>난임 스트레스 예상 점수</CoupleReportDescription>
         <ChartCover>
           <EChartsReact option={option} />
+          {coupleData?.result && (
+            <div className="flex-box">
+              <EmotionGraphContainer>
+                {selected === 'self' && (
+                  <>
+                    {coupleData?.result?.my_inf_tests[0]?.total && (
+                      <EmotionStressBefore
+                        total={coupleData?.result?.my_inf_tests[0]?.total}
+                        color={variables.colors.primary}
+                      />
+                    )}
+                    {coupleData?.result?.my_emotion?.total && (
+                      <EmotionStressBefore total={coupleData?.result?.my_emotion?.total} text="예상 점수" />
+                    )}
+                  </>
+                )}
+                {selected === 'partner' && (
+                  <>
+                    {coupleData?.result?.spouse_inf_tests[0]?.total && (
+                      <EmotionStressBefore
+                        total={coupleData?.result?.spouse_inf_tests[0]?.total}
+                        color={variables.colors.primary}
+                      />
+                    )}
+                    {coupleData?.result?.spouse_emotion?.total && (
+                      <EmotionStressBefore total={coupleData?.result?.spouse_emotion?.total} text="예상 점수" />
+                    )}
+                  </>
+                )}
+              </EmotionGraphContainer>
+            </div>
+          )}
         </ChartCover>
       </CoupleReportLineChartContainer>
     </CoupleReportContainer>
@@ -140,6 +179,11 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
 };
 
 export default CoupleReport;
+
+const EmotionGraphContainer = styled.div`
+  width: 100%;
+  display: flex;
+`;
 
 const ToggleContainer = styled.div`
   display: flex;

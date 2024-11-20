@@ -10,34 +10,16 @@ import Button from '@components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import usePrevRecordStore from '@store/usePrevRecordStore';
 import useEmotionStore from '@store/useEmotionStore';
+import EmotionStressBefore from './EmotionStressBefore';
 
 const EmotionResult = () => {
+  const name = localStorage.getItem('userName');
   const analysisResult = useAnalysisStore((state) => state.analysis);
   const prevRecord = usePrevRecordStore((state) => state.record);
   const resetEmotion = useEmotionStore((state) => state.reset);
   const resetAnalysisResult = useAnalysisStore((state) => state.reset);
   const resetPrevRecord = useAnalysisStore((state) => state.reset);
   const navigate = useNavigate();
-
-  console.log(prevRecord);
-  console.log(analysisResult);
-  // const [data, setData] = useState(null);
-  // const result_pk = 1;
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch(`https://www.wishkr.site/emotions/results/${result_pk}`);
-  //       const result = await res.json();
-  //       setData(result);
-  //     } catch (error) {
-  //       console.error('fetching error:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, [result_pk]);
-
-  // if (!data) return <div>로딩중.. 데이터가 없음</div>;
 
   const handleClick = () => {
     resetEmotion();
@@ -46,20 +28,20 @@ const EmotionResult = () => {
     navigate('/');
   };
 
-  console.log(analysisResult.keywords);
+  console.log(prevRecord);
+  console.log(analysisResult);
 
   const option = {
     radar: {
       indicator: [
-        { name: '사회적', max: 6500 },
-        { name: '성적', max: 16000 },
-        { name: '필요성', max: 30000 },
+        { name: '사회적' },
+        { name: '성적' },
+        { name: '필요성' },
         {
           name: `아이가 없는
 일상에대한 거부`,
-          max: 38000,
         },
-        { name: '관계적', max: 25000 },
+        { name: '관계적' },
       ],
       splitLine: {},
       axisLine: {},
@@ -70,25 +52,36 @@ const EmotionResult = () => {
         type: 'radar',
         data: [
           {
-            value: [4200, 3000, 20000, 35000, 18000],
+            value: [
+              prevRecord.social,
+              prevRecord.sexual,
+              prevRecord.essential,
+              prevRecord.refusing,
+              prevRecord.relational,
+            ],
             name: 'Allocated Budget',
             itemStyle: {
-              color: variables.colors.primary,
+              color: variables.colors.secondaryStrong,
             },
           },
           {
-            value: [5000, 14000, 28000, 26000, 21000],
+            value: [
+              analysisResult.prediction.social,
+              analysisResult.prediction.sexual,
+              analysisResult.prediction.essential,
+              analysisResult.prediction.refusing,
+              analysisResult.prediction.relational,
+            ],
+
             name: 'Actual Spending',
             itemStyle: {
-              color: variables.colors.secondaryStrong,
+              color: variables.colors.primary,
             },
           },
         ],
       },
     ],
   };
-
-  const name = localStorage.getItem('userName');
 
   return (
     <>
@@ -110,7 +103,7 @@ const EmotionResult = () => {
 
         <EmotionGraphContainer>
           <div className="flex-box">
-            <EmotionStress />
+            <EmotionStressBefore total={prevRecord.total} />
             <EmotionStress />
           </div>
         </EmotionGraphContainer>
@@ -180,9 +173,9 @@ export const EmotionGraphContainer = styled.div`
   margin-bottom: 1rem;
 
   & > div {
+    background-color: #ffffff;
     border-radius: 1rem;
     border: 1px solid ${variables.colors.gray10};
-    background-color: #ffffff;
     box-shadow: 0px 0px 4px rgba(217, 203, 245, 0.3);
   }
 

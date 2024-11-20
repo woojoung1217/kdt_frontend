@@ -38,7 +38,9 @@ const OurKeyword = ({ coupleData }: OurKeywordProps) => {
           <OurKeywordDescription>우리의 관심사</OurKeywordDescription>
           <KeywordContainer>
             {[...myKeywordArray, ...spouseKeywordArray].map((keyword, index) => (
-              <KeywordBox key={index}>#{keyword.trim()}</KeywordBox>
+              <KeywordBox key={index} colorIndex={index}>
+                #{keyword.trim()}
+              </KeywordBox>
             ))}
           </KeywordContainer>
         </OurKeywordLineChartContainer>
@@ -80,12 +82,23 @@ const KeywordContainer = styled.div`
   margin-top: 3.5rem;
 `;
 
-const KeywordBox = styled.div`
+const KeywordBox = styled.div<{ colorIndex: number }>`
   padding: 0.8rem 1.6rem;
-  background-color: ${variables.colors.secondaryStrong};
+  background-color: ${({ colorIndex }) => {
+    switch (colorIndex % 3) {
+      case 0:
+        return variables.colors.primaryStrong;
+      case 1:
+        return variables.colors.primaryStrong;
+      case 2:
+        return variables.colors.secondaryStrong;
+      default:
+        return variables.colors.secondaryStrong;
+    }
+  }};
   border-radius: 0.5rem;
-  font-size: ${variables.size.small};
-  color: ${variables.colors.tertiarySoft};
+  font-size: ${variables.size.medium};
+  color: ${variables.colors.white};
 `;
 
 const OurKeywordContainer = styled.div`
