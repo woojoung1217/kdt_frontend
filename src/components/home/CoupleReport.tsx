@@ -62,7 +62,6 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     sexual: spouseInfSexual = 0,
     social: spouseInfSocial = 0,
   } = coupleData?.result?.spouse_inf_tests[0] || {};
-
   const option = {
     radar: {
       indicator: [
