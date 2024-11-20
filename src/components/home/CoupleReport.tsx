@@ -136,6 +136,11 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
         <CoupleReportDescription>난임 스트레스 예상 점수</CoupleReportDescription>
         <ChartCover>
           <EChartsReact option={option} />
+          {coupleData?.result && (
+            <div className="flex-box">
+              <EmotionGraphContainer></EmotionGraphContainer>
+            </div>
+          )}
         </ChartCover>
       </CoupleReportLineChartContainer>
     </CoupleReportContainer>
@@ -143,6 +148,14 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
 };
 
 export default CoupleReport;
+
+const EmotionGraphContainer = styled.div`
+  width: 100%;
+
+  .flex-box {
+    display: flex;
+  }
+`;
 
 const ToggleContainer = styled.div`
   display: flex;
