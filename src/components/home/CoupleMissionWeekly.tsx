@@ -1,19 +1,67 @@
 import styled from '@emotion/styled';
 import variables from '@styles/Variables';
+import fetchMissionStatusWeekly from '@hooks/useCheckMissionStatus';
+import { useEffect, useState } from 'react';
 
-type DotStatus = 'completed' | 'current' | 'locked';
+type DotStatus = 'bothCompleted' | 'oneCompleted' | 'locked';
+
+interface MissionData {
+  is_complement: boolean;
+  created_at: string;
+}
+
+interface WeeklyStatusType {
+  user_is_complement: {
+    [key: string]: MissionData[];
+  };
+  spouse_is_complement: {
+    [key: string]: MissionData[];
+  };
+}
 
 const CoupleMissionWeekly = () => {
-  // 각 날짜의 상태를 정의
-  const dotStatuses: DotStatus[] = [
-    'completed', // 월요일 - 완료
-    'completed', // 화요일 - 완료
-    'completed', // 수요일 - 완료
-    'current', // 목요일 - 현재
-    'locked', // 금요일 - 잠김
-    'locked', // 토요일 - 잠김
-    'locked', // 일요일 - 잠김
-  ];
+  const [weeklyStatus, setWeeklyStatus] = useState<WeeklyStatusType | null>(null);
+
+  useEffect(() => {
+    const MemberId = localStorage.getItem('MemberId');
+    if (MemberId) {
+      const fetchStatus = async () => {
+        const data = await fetchMissionStatusWeekly(MemberId);
+        if (data) {
+          setWeeklyStatus(data);
+        }
+      };
+      fetchStatus();
+    }
+  }, []);
+
+  const getDotStatus = (day: string): DotStatus => {
+    if (!weeklyStatus) return 'locked';
+
+    const userMission = weeklyStatus.user_is_complement[day]?.[0];
+    const spouseMission = weeklyStatus.spouse_is_complement[day]?.[0];
+
+    const userCompleted = userMission?.is_complement || false;
+    const spouseCompleted = spouseMission?.is_complement || false;
+
+    if (userCompleted && spouseCompleted) {
+      return 'bothCompleted';
+    } else if (userCompleted || spouseCompleted) {
+      return 'oneCompleted';
+    }
+    return 'locked';
+  };
+
+  const days = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  const today = new Date().getDay(); // 0(일요일)부터 6(토요일)
+  const mondayOffset = today === 0 ? 6 : today - 1; // 월요일 기준으로 조정
+
+  const dotStatuses: DotStatus[] = days.map((day, index) => {
+    if (index > mondayOffset) {
+      return 'locked';
+    }
+    return getDotStatus(day);
+  });
 
   return (
     <CoupleMissionWeeklyUI>
@@ -55,12 +103,12 @@ const Dot = styled.div<{ status: DotStatus }>`
   height: 2.4rem;
   background-color: ${({ status }) => {
     switch (status) {
-      case 'completed':
-        return variables.colors.primary;
-      case 'current':
-        return variables.colors.secondary;
+      case 'bothCompleted':
+        return variables.colors.primary; // 파란색 - 둘 다 완료
+      case 'oneCompleted':
+        return variables.colors.secondary; // 빨간색 - 한 명만 완료
       case 'locked':
-        return variables.colors.gray50;
+        return variables.colors.gray50; // 회색 - 미완료 또는 잠김
       default:
         return variables.colors.gray50;
     }
