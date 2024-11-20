@@ -4,7 +4,13 @@ import variables from '@styles/Variables';
 import EChartsReact from 'echarts-for-react';
 import { ScaleData } from './ScaleList';
 
-const ScaleTotalGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) => {
+const ScaleTotalGraph = ({
+  currentTest,
+  beforeTest,
+}: {
+  currentTest: ScaleData | undefined;
+  beforeTest: ScaleData | undefined;
+}) => {
   const toTalOption = {
     angleAxis: {
       max: 230,
@@ -38,7 +44,7 @@ const ScaleTotalGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) =>
         name: 'Scale',
         type: 'bar',
         //[최근결과 , 오늘의 결과]
-        data: [`180`, `${scaleData?.total}`],
+        data: [`${beforeTest?.total}`, `${currentTest?.total}`],
         coordinateSystem: 'polar',
         colorBy: 'data',
         roundCap: true,
@@ -58,13 +64,13 @@ const ScaleTotalGraph = ({ scaleData }: { scaleData: ScaleData | undefined }) =>
         <div className="toDayResult">
           <p>
             오늘의 결과
-            <span>{scaleData?.total}점</span>
+            <span>{currentTest?.total}점</span>
           </p>
         </div>
         <div className="latestResults">
           <p>
             최근 검사 결과
-            <span>210점</span>
+            <span>{beforeTest?.total ? beforeTest?.total : 0}점</span>
           </p>
         </div>
       </div>
