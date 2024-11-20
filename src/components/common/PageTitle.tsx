@@ -45,7 +45,7 @@ const PageTitle = ({
     & h2 {
       line-height: 4rem;
       font-size: ${variables.size.large};
-      font-weight: 500;
+      font-weight: 700;
       flex-grow: 1;
       text-align: ${textAlign};
       ${pageBack && ` margin-right: 5rem;`}
