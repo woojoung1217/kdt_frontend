@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCoupleInfo } from '@hooks/useCoupleInfo';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import CoupleMissionWeekly from './CoupleMissionWeekly';
 
 // TODO : 미션 등록 이번주 미션 해야함
 interface InfTest {
@@ -57,6 +58,27 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
       return '미션을 수행하면 배우자의 한마디를 볼 수 있어요';
     }
   };
+
+  const [prevEmotionId, setPrevEmotionId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const emotion = coupleData?.result?.my_emotion;
+    const currentEmotionId = emotion?.id;
+
+    // 이전 이모션 ID와 현재 이모션 ID가 다르면 새로운 미션으로 간주
+    if (currentEmotionId && prevEmotionId !== currentEmotionId) {
+      setSelfMessage(emotion?.self_message || '');
+      setMission(emotion?.mission_content || '');
+      setIsMissionDone(false); // 새로운 미션이므로 미션 수행 여부 초기화
+      setPrevEmotionId(currentEmotionId); // 현재 이모션 ID 저장
+    } else if (!currentEmotionId) {
+      // 이모션이 없는 경우 초기화
+      setSelfMessage('');
+      setMission('');
+      setIsMissionDone(false);
+      setPrevEmotionId(null);
+    }
+  }, [coupleData?.result?.my_emotion?.id, prevEmotionId]);
 
   /** 미션 수행 등록 함수 {PUT} */
   const handleMissionToggle = async () => {
@@ -126,10 +148,12 @@ const CoupleInformation = ({ coupleData }: OurReportProps) => {
       <CoupleMission>
         {partnerName ? getMissionStatusMessage() : '배우자 연동을 하면 미션 등록이 가능해요'}
       </CoupleMission>
+      <CoupleMissionWeekly></CoupleMissionWeekly>
     </CoupleInformationContainer>
   );
 };
 export default CoupleInformation;
+
 const CompletedLabel = styled.span`
   color: ${variables.colors.primary};
   font-weight: 600;

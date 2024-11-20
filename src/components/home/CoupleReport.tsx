@@ -63,12 +63,16 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
     social: spouseInfSocial = 0,
   } = coupleData?.result?.spouse_inf_tests[0] || {};
   const option = {
+    legend: {
+      show: true,
+      bottom: '0',
+    },
     radar: {
       indicator: [
         { name: '사회적' },
         { name: '성적' },
         { name: '필요성' },
-        { name: '아이가 없는 일상에 대한 거부' },
+        { name: '아이가 없는 일상' },
         { name: '관계적' },
       ],
       splitNumber: 10,
@@ -97,7 +101,7 @@ const CoupleReport = ({ coupleData }: CoupleReportProps) => {
             itemStyle: {
               color: variables.colors.primary,
             },
-            name: selected === 'self' ? '나' : '배우자',
+            name: selected === 'self' ? '검사 점수' : '배우자',
           },
           {
             value:
