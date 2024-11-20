@@ -7,9 +7,9 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import fetchGPT from '../../hooks/useGPT';
 import CounselingGuide from './CounslingGuide';
-import prevIcon from '/img/icon-page-prev.svg';
 import sendIcon from '/img/icon-send.svg';
 import wishIcon from '/img/icon-wish-profile.svg';
+import PageTitle from '@components/common/PageTitle';
 
 interface Message {
   sender?: string;
@@ -215,6 +215,7 @@ const Counseling = () => {
   useEffect(() => {
     if (step === 4) {
       setGuideVisible(false);
+      setStep(0);
     }
   }, [step]);
 
@@ -227,20 +228,25 @@ const Counseling = () => {
     fetchScaleData();
   }, []);
 
+  console.log(step);
+
   return (
     <>
       {guideVisible && <CounselingGuide step={step} setStep={setStep} guideVisible={guideVisible} />}
 
       <div css={BackGroundColor}>
-        <div css={Header}>
-          <button className="prev" type="button">
-            <span className="hidden">뒤로가기</span>
-          </button>
-          <h2>심리상담사 위시</h2>
-          <button css={step === 3 && Priority} className="end" type="button" onClick={() => handleConsultationEnd()}>
-            종료
-          </button>
-        </div>
+        <PageTitle
+          titleText="심리삼담사 위시"
+          textAlign="center"
+          isFixed={true}
+          pageBack={true}
+          backcolor="#fdfcff"
+          children={
+            <button css={end} className="end" type="button" onClick={() => handleConsultationEnd()}>
+              종료
+            </button>
+          }
+        />
 
         <div className="scroll-box" ref={scrollBoxRef} css={ScrollBox}>
           <p className="dateText">{toDay}</p>
@@ -309,59 +315,30 @@ const Counseling = () => {
 export default Counseling;
 
 const Priority = css`
-  background-color: #fdfcff;
-  position: relative;
-  z-index: 3;
+  position: fixed;
+  z-index: 60;
 `;
 
 const BackGroundColor = css`
   background-color: #fdfcff;
-  margin: -2rem -1.8rem -4rem;
-  padding-top: 9.4rem;
+  margin: -2rem -1.8rem -6rem;
+  padding-top: 8rem;
 `;
-const Header = css`
-  background-color: #fdfcff;
-  display: flex;
-  max-width: 50rem;
-  width: 100%;
-  padding: 2rem 1.8rem;
-  box-sizing: border-box;
-  min-height: ${variables.headerHeight};
-  align-items: flex-end;
-  justify-content: center;
-  box-shadow: 0 0 3rem rgba(217, 203, 245, 0.37);
-  position: fixed;
-  top: 0;
-
-  .prev {
-    display: block;
-    background-image: url(${prevIcon});
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cotain;
-    width: 5rem;
-    height: 2rem;
-  }
-
-  h2 {
-    font-size: ${variables.size.large};
-    font-weight: 700;
-    margin: 0 auto;
-  }
-
-  .end {
-    font-size: ${variables.size.big};
-    background-color: ${variables.colors.secondarySoft};
-    color: ${variables.colors.secondaryStrong};
-    padding: 0.6rem 1rem;
-    border-radius: 0.6rem;
-  }
+const end = css`
+  font-size: ${variables.size.big};
+  background-color: ${variables.colors.secondarySoft};
+  color: ${variables.colors.secondaryStrong};
+  border-radius: 0.6rem;
+  width: 4.8rem;
+  height: 3.5rem;
+  text-align: center;
+  line-height: 3.5rem;
 `;
 
 const ScrollBox = css`
   max-width: 50rem;
   width: 100%;
-  height: calc(100svh - ${variables.headerHeight} - 10rem);
+  height: calc(100svh - 6rem);
   overflow: hidden auto;
   padding: 1.8rem;
   box-sizing: border-box;
@@ -437,13 +414,13 @@ const MessageBox = css`
 `;
 
 const InputBox = css`
-  background-color: #f8f4ff;
   position: fixed;
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
   max-width: 50rem;
   width: 100%;
+  background-color: #f8f4ff;
   padding: 2rem 1.8rem;
   box-sizing: border-box;
   display: flex;

@@ -78,12 +78,21 @@ const CounselingGuide = ({
     `};
   `;
 
+  const Priority = css`
+    display: block;
+    position: absolute;
+    right: 1.8rem;
+    top: 0.52em;
+    z-index: 60;
+  `;
+
   return (
     <>
       <button css={StepLayer} onClick={handleStep} type="button">
         <button className="skip">건너뛰기</button>
       </button>
       <div css={[GuideDim, guideVisible ? FadeInAni : FadeOutAni]}>
+        <div css={[end, [step === 3 && Priority]]}>종료</div>
         <div className="paginationBox">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className={`pagination ${step > i ? 'active' : ''}`} />
@@ -149,7 +158,7 @@ const GuideDim = css`
   bottom: 0;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.3);
-  z-index: 3;
+  z-index: 60;
   backdrop-filter: blur(0.3rem);
   color: ${variables.colors.white};
 
@@ -175,6 +184,18 @@ const GuideDim = css`
   }
 `;
 
+const end = css`
+  display: none;
+  font-size: ${variables.size.big};
+  background-color: ${variables.colors.secondarySoft};
+  color: ${variables.colors.secondaryStrong};
+  width: 4.8rem;
+  height: 3.5rem;
+  text-align: center;
+  line-height: 3.5rem;
+  border-radius: 0.6rem;
+`;
+
 const StepLayer = css`
   position: absolute;
   max-width: 50rem;
@@ -183,7 +204,7 @@ const StepLayer = css`
   top: 0;
   bottom: 0;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 70;
   color: ${variables.colors.white};
 
   .skip {
