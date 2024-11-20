@@ -10,6 +10,7 @@ import CounselingGuide from './CounslingGuide';
 import sendIcon from '/img/icon-send.svg';
 import wishIcon from '/img/icon-wish-profile.svg';
 import PageTitle from '@components/common/PageTitle';
+import TypingEffect from '@hooks/useTyping';
 
 interface Message {
   sender?: string;
@@ -269,7 +270,11 @@ const Counseling = () => {
 
             {messages.map(({ sender, message }, idx) => (
               <li key={`${sender}-${message!.slice(0, 10)}-${idx}`} className={sender}>
-                <p>{message}</p>
+                {message && sender === 'gpt' ? (
+                  <TypingEffect text={message} container={scrollBoxRef.current!} />
+                ) : (
+                  <p>{message}</p>
+                )}
               </li>
             ))}
 
