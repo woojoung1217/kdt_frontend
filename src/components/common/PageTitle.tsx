@@ -39,7 +39,7 @@ const PageTitle = ({
     }
 
     background-color: ${backcolor};
-    padding: .5rem 1.8rem 1rem;
+    padding: 1rem 1.8rem 1rem;
     display: flex;
     align-items: center;
 
